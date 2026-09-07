@@ -8,6 +8,7 @@ import {
   Mail,
   MailCheck,
   Sparkles,
+  User,
 } from 'lucide-react'
 import { supabase } from '../config/supabase'
 
@@ -27,6 +28,7 @@ const AUTH_MESSAGES = {
 
 function Register() {
   const navigate = useNavigate()
+  const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState({})
@@ -36,6 +38,10 @@ function Register() {
 
   const validate = () => {
     const nextErrors = {}
+
+    if (username.trim().length < 3) {
+      nextErrors.username = 'El nombre de usuario debe tener al menos 3 caracteres.'
+    }
 
     if (!EMAIL_REGEX.test(email)) {
       nextErrors.email = 'Introduce un email válido.'
@@ -58,10 +64,43 @@ function Register() {
     }
 
     setIsSubmitting(true)
-    const { data, error } = await supabase.auth.signUp({ email, password })
+    const trimmedUsername = username.trim()
+
+    const { data: taken, error: lookupError } = await supabase
+      .from('profiles')
+      .select('id')
+      .ilike('username', trimmedUsername)
+      .maybeSingle()
+
+    if (lookupError) {
+      setIsSubmitting(false)
+      setAuthError(`No se pudo comprobar el nombre de usuario: ${lookupError.message}`)
+      return
+    }
+
+    if (taken) {
+      setIsSubmitting(false)
+      setErrors((current) => ({
+        ...current,
+        username: 'Ese nombre de usuario ya está en uso.',
+      }))
+      return
+    }
+
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: { data: { username: trimmedUsername } },
+    })
     setIsSubmitting(false)
 
     if (error) {
+      // El trigger de la base de datos rechaza el alta si el nombre se ocupo
+      // entre la comprobacion y el registro.
+      if (error.message?.toLowerCase().includes('database error')) {
+        setAuthError('Ese nombre de usuario acaba de ser ocupado. Prueba con otro.')
+        return
+      }
       setAuthError(AUTH_MESSAGES[error.code] ?? error.message)
       return
     }
@@ -138,6 +177,31 @@ function Register() {
                 <p>{authError}</p>
               </div>
             )}
+
+            <div>
+              <label
+                htmlFor="username"
+                className="mb-2 block text-[13px] font-medium tracking-wide text-zinc-400"
+              >
+                Nombre de usuario
+              </label>
+              <div className="relative">
+                <input
+                  id="username"
+                  type="text"
+                  value={username}
+                  onChange={(event) => setUsername(event.target.value)}
+                  placeholder="¿Cómo quieres que te llamemos?"
+                  className={inputClasses(errors.username)}
+                />
+                <User className={iconClasses(errors.username)} />
+              </div>
+              {errors.username && (
+                <p className="mt-2 text-[13px] text-red-400/90">
+                  {errors.username}
+                </p>
+              )}
+            </div>
 
             <div>
               <label

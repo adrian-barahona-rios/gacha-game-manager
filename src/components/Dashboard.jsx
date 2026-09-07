@@ -4,59 +4,16 @@ import {
   AlertCircle,
   Check,
   Gamepad2,
+  Info,
   Loader2,
-  LogOut,
   Plus,
   Trash2,
-  Users,
+  User,
   X,
 } from 'lucide-react'
 import { supabase } from '../config/supabase'
-
-// Drop a file named <game id>.png/jpg/webp/svg into src/assets/games/ and the
-// card picks it up automatically — no code change needed.
-const gameImages = import.meta.glob(
-  '../assets/games/*.{png,jpg,jpeg,webp,avif,svg}',
-  { eager: true, query: '?url', import: 'default' },
-)
-
-const imageByGameId = Object.fromEntries(
-  Object.entries(gameImages).map(([path, url]) => [
-    path.split('/').pop().replace(/\.[^.]+$/, ''),
-    url,
-  ]),
-)
-
-const GAME_CATALOG = [
-  {
-    id: 'genshin-impact',
-    name: 'Genshin Impact',
-    short: 'GI',
-    banner: 'from-sky-500/45 via-cyan-500/15 to-transparent',
-    glow: 'text-sky-200',
-  },
-  {
-    id: 'honkai-star-rail',
-    name: 'Honkai: Star Rail',
-    short: 'HSR',
-    banner: 'from-indigo-500/45 via-violet-500/15 to-transparent',
-    glow: 'text-indigo-200',
-  },
-  {
-    id: 'high-school-dxd-opi',
-    name: 'High School DxD: OPI',
-    short: 'DxD',
-    banner: 'from-rose-500/45 via-red-500/15 to-transparent',
-    glow: 'text-rose-200',
-  },
-  {
-    id: 'zenless-zone-zero',
-    name: 'Zenless Zone Zero',
-    short: 'ZZZ',
-    banner: 'from-amber-500/45 via-orange-500/15 to-transparent',
-    glow: 'text-amber-200',
-  },
-]
+import { GAME_CATALOG } from '../data/games'
+import GameArtwork from './GameArtwork'
 
 const PARTICLES = [
   'left-[8%] top-[18%] [animation-duration:5s] [animation-delay:0s]',
@@ -94,31 +51,6 @@ function AnimatedBackground() {
   )
 }
 
-function GameArtwork({ game, className }) {
-  const image = imageByGameId[game.id]
-
-  if (image) {
-    return (
-      <img
-        src={image}
-        alt={game.name}
-        loading="lazy"
-        className={`h-full w-full object-cover ${className ?? ''}`}
-      />
-    )
-  }
-
-  return (
-    <div
-      className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${game.banner} ${className ?? ''}`}
-    >
-      <span className={`text-3xl font-bold tracking-tight ${game.glow}`}>
-        {game.short}
-      </span>
-    </div>
-  )
-}
-
 function GameCard({ game, delayClass, isRemoving, onOpen, onDelete }) {
   const [shown, setShown] = useState(false)
 
@@ -140,6 +72,7 @@ function GameCard({ game, delayClass, isRemoving, onOpen, onDelete }) {
       <div className="mb-5 h-36 overflow-hidden rounded-xl ring-1 ring-white/10">
         <GameArtwork
           game={game}
+          fill
           className="transition-transform duration-500 group-hover:scale-105"
         />
       </div>
@@ -154,8 +87,8 @@ function GameCard({ game, delayClass, isRemoving, onOpen, onDelete }) {
           onClick={() => onOpen(game)}
           className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-white px-3 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-purple-600 hover:text-white hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] focus:outline-none focus:ring-4 focus:ring-purple-500/30 active:scale-95 active:bg-[#0066ff] active:shadow-[0_0_25px_rgba(0,102,255,0.7)]"
         >
-          <Users className="h-4 w-4" />
-          Ver personajes
+          <Info className="h-4 w-4" />
+          Información
         </button>
 
         <button
@@ -217,6 +150,8 @@ function Dashboard() {
   }, [navigate])
 
   const userId = user?.id
+  const displayName =
+    user?.user_metadata?.username ?? user?.email?.split('@')[0] ?? 'Mi perfil'
 
   useEffect(() => {
     if (!userId) {
@@ -306,46 +241,34 @@ function Dashboard() {
     setRemovingIds((current) => current.filter((id) => id !== game.id))
   }
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut()
-    navigate('/login', { replace: true })
-  }
-
-  const availableGames = GAME_CATALOG.filter(
-    (game) => !games.some((item) => item.id === game.id),
-  )
-
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
       <AnimatedBackground />
 
       <header className="sticky top-0 z-20 border-b-2 border-blue-600/70 bg-[#0a0a0a]/90 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-7xl flex-col items-center gap-4 px-4 py-4 sm:px-6 md:flex-row md:justify-between md:gap-6">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-b from-white/15 to-white/[0.03] ring-1 ring-white/10">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-b from-white/15 to-white/[0.03] ring-1 ring-white/10">
               <Gamepad2 className="h-5 w-5 text-white" />
             </div>
-            <span className="text-lg font-semibold tracking-tight text-white">
+            <span className="truncate text-lg font-semibold tracking-tight text-white">
               Gacha Game Manager
             </span>
           </div>
 
           <button
             type="button"
-            onClick={() => setIsAdding(true)}
-            className="flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-[#0066ff] hover:text-white hover:shadow-[0_0_25px_rgba(0,102,255,0.65)] focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95"
+            onClick={() => navigate('/profile')}
+            title="Ver tu perfil"
+            aria-label="Ver tu perfil"
+            className="flex shrink-0 items-center gap-2.5 rounded-full border border-white/10 bg-white/5 py-1.5 pl-1.5 pr-1.5 text-sm text-zinc-300 transition-all duration-300 hover:border-[#0066ff] hover:bg-[#0066ff]/15 hover:text-white hover:shadow-[0_0_20px_rgba(0,102,255,0.3)] focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95 sm:pr-4"
           >
-            <Plus className="h-4 w-4" />
-            Agregar Juego
-          </button>
-
-          <button
-            type="button"
-            onClick={handleLogout}
-            className="flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-red-600 hover:text-white hover:shadow-[0_0_25px_rgba(220,38,38,0.6)] focus:outline-none focus:ring-4 focus:ring-red-500/30 active:scale-95"
-          >
-            <LogOut className="h-4 w-4" />
-            Cerrar sesión
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10">
+              <User className="h-4 w-4" />
+            </span>
+            <span className="hidden max-w-[10rem] truncate sm:inline">
+              {displayName}
+            </span>
           </button>
         </div>
       </header>
@@ -385,17 +308,9 @@ function Dashboard() {
         ) : games.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-14 text-center">
             <Gamepad2 className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
-            <p className="mb-5 text-zinc-400">
+            <p className="text-zinc-400">
               Todavía no has añadido ningún juego.
             </p>
-            <button
-              type="button"
-              onClick={() => setIsAdding(true)}
-              className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-[#0066ff] hover:text-white hover:shadow-[0_0_25px_rgba(0,102,255,0.65)] focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95"
-            >
-              <Plus className="h-4 w-4" />
-              Agregar Juego
-            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -413,60 +328,95 @@ function Dashboard() {
             ))}
           </div>
         )}
+
+        {!isLoading && (
+          <button
+            type="button"
+            onClick={() => setIsAdding(true)}
+            className="group mt-8 flex w-full items-center justify-center gap-3 rounded-2xl border border-dashed border-white/20 bg-transparent py-8 text-sm font-semibold text-zinc-400 transition-all duration-300 hover:border-[#0066ff] hover:bg-[#0066ff]/10 hover:text-white hover:shadow-[0_0_35px_rgba(0,102,255,0.25)] focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-[0.99] active:border-[#0066ff] active:bg-[#0066ff]/25 active:text-white"
+          >
+            <Plus className="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
+            Agregar juego
+          </button>
+        )}
       </main>
 
       {isAdding && (
         <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/70 px-4 py-10 backdrop-blur-sm">
-          <div className="max-h-full w-full max-w-md overflow-y-auto rounded-2xl border border-white/10 bg-[#1a1a1a] p-6 shadow-2xl shadow-black/80">
-            <div className="mb-5 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-white">Agregar juego</h2>
+          <div className="max-h-full w-full max-w-4xl overflow-y-auto rounded-3xl border border-white/10 bg-[#111114] p-6 shadow-2xl shadow-black/80 sm:p-8">
+            <div className="mb-7 flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold tracking-tight text-white sm:text-2xl">
+                  Agregar juego
+                </h2>
+                <p className="mt-1.5 text-sm text-zinc-500">
+                  {games.length} de {GAME_CATALOG.length} en tu biblioteca
+                </p>
+              </div>
               <button
                 type="button"
                 onClick={() => setIsAdding(false)}
                 aria-label="Cerrar"
-                className="rounded-lg p-1.5 text-zinc-400 transition-colors duration-300 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
+                className="shrink-0 rounded-lg p-2 text-zinc-400 transition-colors duration-300 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
               >
-                <X className="h-4 w-4" />
+                <X className="h-5 w-5" />
               </button>
             </div>
 
-            {availableGames.length === 0 ? (
-              <p className="py-6 text-center text-sm text-zinc-400">
-                Ya has añadido todos los juegos disponibles.
-              </p>
-            ) : (
-              <ul className="space-y-3">
-                {availableGames.map((game) => (
+            <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {GAME_CATALOG.map((game) => {
+                const isAdded = games.some((item) => item.id === game.id)
+
+                return (
                   <li key={game.id}>
                     <button
                       type="button"
                       onClick={() => handleAdd(game)}
-                      disabled={pendingId !== null}
-                      className="flex w-full items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-left transition-all duration-300 hover:border-blue-500/50 hover:bg-white/[0.07] hover:shadow-[0_0_25px_rgba(0,102,255,0.2)] focus:outline-none focus:ring-4 focus:ring-blue-500/20 active:scale-[0.98] disabled:opacity-50"
+                      disabled={isAdded || pendingId !== null}
+                      className={`flex w-full items-center gap-4 rounded-2xl border p-4 text-left transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/20 ${
+                        isAdded
+                          ? 'cursor-default border-white/5 bg-white/[0.01]'
+                          : 'border-white/10 bg-white/[0.03] hover:border-[#0066ff] hover:bg-[#0066ff]/10 hover:shadow-[0_0_30px_rgba(0,102,255,0.22)] active:scale-[0.98] disabled:opacity-50'
+                      }`}
                     >
-                      <span className="h-12 w-12 shrink-0 overflow-hidden rounded-lg ring-1 ring-white/10">
+                      <span
+                        className={`h-16 w-16 shrink-0 overflow-hidden rounded-xl ring-1 ring-white/10 transition-all duration-300 ${
+                          isAdded ? 'opacity-30 grayscale' : ''
+                        }`}
+                      >
                         <GameArtwork game={game} />
                       </span>
-                      <span className="flex-1 text-sm font-medium text-white">
-                        {game.name}
+
+                      <span className="min-w-0 flex-1">
+                        <span
+                          className={`block truncate text-[15px] font-medium ${
+                            isAdded ? 'text-zinc-600' : 'text-white'
+                          }`}
+                        >
+                          {game.name}
+                        </span>
+                        {isAdded ? (
+                          <span className="mt-1 flex items-center gap-1.5 text-xs text-zinc-600">
+                            <Check className="h-3.5 w-3.5" />
+                            Añadido
+                          </span>
+                        ) : (
+                          <span className="mt-1 block truncate text-xs text-zinc-500">
+                            {game.genre}
+                          </span>
+                        )}
                       </span>
+
                       {pendingId === game.id ? (
-                        <Loader2 className="h-4 w-4 animate-spin text-blue-400" />
+                        <Loader2 className="h-5 w-5 shrink-0 animate-spin text-blue-400" />
                       ) : (
-                        <Plus className="h-4 w-4 text-zinc-500" />
+                        !isAdded && <Plus className="h-5 w-5 shrink-0 text-zinc-500" />
                       )}
                     </button>
                   </li>
-                ))}
-              </ul>
-            )}
-
-            {games.length > 0 && (
-              <p className="mt-5 flex items-center gap-2 text-xs text-zinc-500">
-                <Check className="h-3.5 w-3.5" />
-                {games.length} ya en tu biblioteca
-              </p>
-            )}
+                )
+              })}
+            </ul>
           </div>
         </div>
       )}
