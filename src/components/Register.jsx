@@ -1,18 +1,28 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { createUserWithEmailAndPassword } from 'firebase/auth'
-import { AlertCircle, ArrowRight, Loader2, Lock, Mail, Sparkles } from 'lucide-react'
-import { auth } from '../config/firebase'
+import {
+  AlertCircle,
+  ArrowRight,
+  Loader2,
+  Lock,
+  Mail,
+  MailCheck,
+  Sparkles,
+} from 'lucide-react'
+import { supabase } from '../config/supabase'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const AUTH_MESSAGES = {
-  'auth/email-already-in-use': 'Ya existe una cuenta con ese email.',
-  'auth/invalid-email': 'El email no es válido.',
-  'auth/weak-password': 'La contraseña es demasiado débil.',
-  'auth/network-request-failed': 'Sin conexión con el servidor. Revisa tu red.',
-  'auth/operation-not-allowed':
-    'El registro por email y contraseña no está habilitado en Firebase.',
+  user_already_exists: 'Ya existe una cuenta con ese email.',
+  email_exists: 'Ya existe una cuenta con ese email.',
+  weak_password: 'La contraseña es demasiado débil.',
+  signup_disabled: 'El registro está deshabilitado en Supabase.',
+  email_provider_disabled:
+    'El registro por email no está habilitado en Supabase.',
+  over_email_send_rate_limit:
+    'Demasiados emails enviados. Prueba de nuevo en unos minutos.',
+  validation_failed: 'Revisa el email y la contraseña.',
 }
 
 function Register() {
@@ -22,6 +32,7 @@ function Register() {
   const [errors, setErrors] = useState({})
   const [authError, setAuthError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [needsConfirmation, setNeedsConfirmation] = useState(false)
 
   const validate = () => {
     const nextErrors = {}
@@ -47,14 +58,22 @@ function Register() {
     }
 
     setIsSubmitting(true)
-    try {
-      await createUserWithEmailAndPassword(auth, email, password)
-      navigate('/dashboard', { replace: true })
-    } catch (error) {
-      setAuthError(AUTH_MESSAGES[error.code] ?? 'No se pudo crear la cuenta.')
-    } finally {
-      setIsSubmitting(false)
+    const { data, error } = await supabase.auth.signUp({ email, password })
+    setIsSubmitting(false)
+
+    if (error) {
+      setAuthError(AUTH_MESSAGES[error.code] ?? error.message)
+      return
     }
+
+    // Con "Confirm email" activado, Supabase crea el usuario pero no devuelve
+    // sesion hasta que se confirma desde el correo.
+    if (!data.session) {
+      setNeedsConfirmation(true)
+      return
+    }
+
+    navigate('/dashboard', { replace: true })
   }
 
   const inputClasses = (hasError) =>
@@ -77,6 +96,29 @@ function Register() {
 
       <div className="relative w-full max-w-md rounded-[26px] bg-gradient-to-b from-white/20 via-white/[0.08] to-white/[0.02] p-px shadow-2xl shadow-black/80">
         <div className="rounded-[25px] bg-[#0c0c0f]/95 p-8 backdrop-blur-2xl sm:p-10">
+          {needsConfirmation ? (
+            <div className="flex flex-col items-center text-center">
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-b from-white/15 to-white/[0.03] ring-1 ring-white/10">
+                <MailCheck className="h-6 w-6 text-white" />
+              </div>
+              <h1 className="text-[26px] font-semibold leading-tight tracking-tight text-white sm:text-3xl">
+                Confirma tu email
+              </h1>
+              <p className="mt-3 text-sm leading-relaxed text-zinc-500">
+                Hemos enviado un enlace de confirmación a{' '}
+                <span className="text-zinc-300">{email}</span>. Ábrelo y vuelve
+                aquí para iniciar sesión.
+              </p>
+              <button
+                type="button"
+                onClick={() => navigate('/')}
+                className="mt-8 w-full rounded-xl bg-white py-3.5 text-[15px] font-semibold text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-zinc-100 focus:outline-none focus:ring-4 focus:ring-white/20 active:translate-y-0"
+              >
+                Ir a iniciar sesión
+              </button>
+            </div>
+          ) : (
+          <>
           <div className="mb-9 flex flex-col items-center text-center">
             <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-b from-white/15 to-white/[0.03] ring-1 ring-white/10">
               <Sparkles className="h-6 w-6 text-white" />
@@ -174,6 +216,8 @@ function Register() {
               Inicia sesión
             </button>
           </p>
+          </>
+          )}
         </div>
       </div>
     </div>

@@ -1,21 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { signInWithEmailAndPassword } from 'firebase/auth'
 import { AlertCircle, ArrowRight, Gamepad2, Loader2, Lock, Mail } from 'lucide-react'
-import { auth } from '../config/firebase'
+import { supabase } from '../config/supabase'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const AUTH_MESSAGES = {
-  'auth/invalid-credential': 'Email o contraseña incorrectos.',
-  'auth/invalid-email': 'El email no es válido.',
-  'auth/user-not-found': 'No existe ninguna cuenta con ese email.',
-  'auth/wrong-password': 'Email o contraseña incorrectos.',
-  'auth/user-disabled': 'Esta cuenta está deshabilitada.',
-  'auth/too-many-requests': 'Demasiados intentos. Prueba de nuevo en unos minutos.',
-  'auth/network-request-failed': 'Sin conexión con el servidor. Revisa tu red.',
-  'auth/operation-not-allowed':
-    'El acceso por email y contraseña no está habilitado en Firebase.',
+  invalid_credentials: 'Email o contraseña incorrectos.',
+  email_not_confirmed:
+    'Todavía no has confirmado tu email. Revisa tu bandeja de entrada.',
+  user_banned: 'Esta cuenta está bloqueada.',
+  over_request_rate_limit:
+    'Demasiados intentos. Prueba de nuevo en unos minutos.',
+  validation_failed: 'Revisa el email y la contraseña.',
 }
 
 function Login() {
@@ -50,14 +47,15 @@ function Login() {
     }
 
     setIsSubmitting(true)
-    try {
-      await signInWithEmailAndPassword(auth, email, password)
-      navigate('/dashboard', { replace: true })
-    } catch (error) {
-      setAuthError(AUTH_MESSAGES[error.code] ?? 'No se pudo iniciar sesión.')
-    } finally {
-      setIsSubmitting(false)
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    setIsSubmitting(false)
+
+    if (error) {
+      setAuthError(AUTH_MESSAGES[error.code] ?? error.message)
+      return
     }
+
+    navigate('/dashboard', { replace: true })
   }
 
   const inputClasses = (hasError) =>

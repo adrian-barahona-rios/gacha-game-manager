@@ -1,16 +1,5 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { onAuthStateChanged, signOut } from 'firebase/auth'
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  orderBy,
-  query,
-  serverTimestamp,
-  setDoc,
-} from 'firebase/firestore'
 import {
   AlertCircle,
   Check,
@@ -22,7 +11,7 @@ import {
   Users,
   X,
 } from 'lucide-react'
-import { auth, db } from '../config/firebase'
+import { supabase } from '../config/supabase'
 
 // Drop a file named <game id>.png/jpg/webp/svg into src/assets/games/ and the
 // card picks it up automatically — no code change needed.
@@ -198,87 +187,127 @@ function Dashboard() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    return onAuthStateChanged(auth, (currentUser) => {
-      if (!currentUser) {
+    let active = true
+
+    supabase.auth.getSession().then(({ data }) => {
+      if (!active) {
+        return
+      }
+      if (!data.session) {
         navigate('/login', { replace: true })
         return
       }
-      setUser(currentUser)
+      setUser(data.session.user)
     })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) {
+        navigate('/login', { replace: true })
+        return
+      }
+      setUser(session.user)
+    })
+
+    return () => {
+      active = false
+      subscription.unsubscribe()
+    }
   }, [navigate])
 
-  const loadGames = useCallback(async (userId) => {
-    setIsLoading(true)
-    try {
-      const snapshot = await getDocs(
-        query(
-          collection(db, 'users', userId, 'userGames'),
-          orderBy('addedDate', 'asc'),
-        ),
-      )
-      const stored = snapshot.docs.map((entry) => {
-        const data = entry.data()
-        const fromCatalog = GAME_CATALOG.find((item) => item.id === data.gameId)
-        return { ...fromCatalog, id: data.gameId, name: data.gameName }
-      })
-      setGames(stored)
-      setError('')
-    } catch (loadError) {
-      setError(`No se pudieron cargar tus juegos: ${loadError.message}`)
-    } finally {
-      setIsLoading(false)
-    }
-  }, [])
+  const userId = user?.id
 
   useEffect(() => {
-    if (user) {
-      loadGames(user.uid)
+    if (!userId) {
+      return
     }
-  }, [user, loadGames])
+
+    let active = true
+
+    supabase
+      .from('user_games')
+      .select('game_id, game_name')
+      .eq('user_id', userId)
+      .order('added_date', { ascending: true })
+      .then(({ data, error: loadError }) => {
+        if (!active) {
+          return
+        }
+
+        if (loadError) {
+          setError(`No se pudieron cargar tus juegos: ${loadError.message}`)
+        } else {
+          setGames(
+            data.map((row) => {
+              const fromCatalog = GAME_CATALOG.find(
+                (item) => item.id === row.game_id,
+              )
+              return { ...fromCatalog, id: row.game_id, name: row.game_name }
+            }),
+          )
+          setError('')
+        }
+
+        setIsLoading(false)
+      })
+
+    return () => {
+      active = false
+    }
+  }, [userId])
 
   const handleAdd = async (game) => {
-    if (!user || games.some((item) => item.id === game.id)) {
+    if (!userId || games.some((item) => item.id === game.id)) {
       return
     }
 
     setPendingId(game.id)
-    try {
-      await setDoc(doc(db, 'users', user.uid, 'userGames', game.id), {
-        userId: user.uid,
-        gameId: game.id,
-        gameName: game.name,
-        addedDate: serverTimestamp(),
-      })
-      setGames((current) => [...current, game])
-      setError('')
-      setIsAdding(false)
-    } catch (addError) {
+
+    const { error: addError } = await supabase.from('user_games').insert({
+      user_id: userId,
+      game_id: game.id,
+      game_name: game.name,
+    })
+
+    setPendingId(null)
+
+    if (addError) {
       setError(`No se pudo guardar el juego: ${addError.message}`)
-    } finally {
-      setPendingId(null)
+      return
     }
+
+    setGames((current) => [...current, game])
+    setError('')
+    setIsAdding(false)
   }
 
   const handleDelete = async (game) => {
-    if (!user) {
+    if (!userId) {
       return
     }
 
     setRemovingIds((current) => [...current, game.id])
-    try {
-      await deleteDoc(doc(db, 'users', user.uid, 'userGames', game.id))
+
+    const { error: deleteError } = await supabase
+      .from('user_games')
+      .delete()
+      .eq('user_id', userId)
+      .eq('game_id', game.id)
+
+    if (deleteError) {
+      setError(`No se pudo eliminar el juego: ${deleteError.message}`)
+    } else {
       await new Promise((resolve) => setTimeout(resolve, 320))
       setGames((current) => current.filter((item) => item.id !== game.id))
       setError('')
-    } catch (deleteError) {
-      setError(`No se pudo eliminar el juego: ${deleteError.message}`)
-    } finally {
-      setRemovingIds((current) => current.filter((id) => id !== game.id))
     }
+
+    setRemovingIds((current) => current.filter((id) => id !== game.id))
   }
 
   const handleLogout = async () => {
-    await signOut(auth)
+    await supabase.auth.signOut()
     navigate('/login', { replace: true })
   }
 
