@@ -1,20 +1,72 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Gamepad2, LogOut, Plus, Trash2, Users, X } from 'lucide-react'
+import { onAuthStateChanged, signOut } from 'firebase/auth'
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  serverTimestamp,
+  setDoc,
+} from 'firebase/firestore'
+import {
+  AlertCircle,
+  Check,
+  Gamepad2,
+  Loader2,
+  LogOut,
+  Plus,
+  Trash2,
+  Users,
+  X,
+} from 'lucide-react'
+import { auth, db } from '../config/firebase'
 
-const BANNERS = [
-  'from-blue-500/40 via-blue-500/10 to-transparent',
-  'from-purple-500/40 via-purple-500/10 to-transparent',
-  'from-cyan-500/40 via-cyan-500/10 to-transparent',
-  'from-fuchsia-500/40 via-fuchsia-500/10 to-transparent',
-  'from-indigo-500/40 via-indigo-500/10 to-transparent',
-  'from-sky-500/40 via-sky-500/10 to-transparent',
-]
+// Drop a file named <game id>.png/jpg/webp/svg into src/assets/games/ and the
+// card picks it up automatically — no code change needed.
+const gameImages = import.meta.glob(
+  '../assets/games/*.{png,jpg,jpeg,webp,avif,svg}',
+  { eager: true, query: '?url', import: 'default' },
+)
 
-const INITIAL_GAMES = [
-  { id: 'genshin', name: 'Genshin Impact', banner: BANNERS[0] },
-  { id: 'hsr', name: 'Honkai: Star Rail', banner: BANNERS[1] },
-  { id: 'zzz', name: 'Zenless Zone Zero', banner: BANNERS[2] },
+const imageByGameId = Object.fromEntries(
+  Object.entries(gameImages).map(([path, url]) => [
+    path.split('/').pop().replace(/\.[^.]+$/, ''),
+    url,
+  ]),
+)
+
+const GAME_CATALOG = [
+  {
+    id: 'genshin-impact',
+    name: 'Genshin Impact',
+    short: 'GI',
+    banner: 'from-sky-500/45 via-cyan-500/15 to-transparent',
+    glow: 'text-sky-200',
+  },
+  {
+    id: 'honkai-star-rail',
+    name: 'Honkai: Star Rail',
+    short: 'HSR',
+    banner: 'from-indigo-500/45 via-violet-500/15 to-transparent',
+    glow: 'text-indigo-200',
+  },
+  {
+    id: 'high-school-dxd-opi',
+    name: 'High School DxD: OPI',
+    short: 'DxD',
+    banner: 'from-rose-500/45 via-red-500/15 to-transparent',
+    glow: 'text-rose-200',
+  },
+  {
+    id: 'zenless-zone-zero',
+    name: 'Zenless Zone Zero',
+    short: 'ZZZ',
+    banner: 'from-amber-500/45 via-orange-500/15 to-transparent',
+    glow: 'text-amber-200',
+  },
 ]
 
 const PARTICLES = [
@@ -30,14 +82,7 @@ const PARTICLES = [
   'left-[92%] top-[14%] [animation-duration:7.8s] [animation-delay:1.5s]',
 ]
 
-const CARD_DELAYS = [
-  'delay-0',
-  'delay-100',
-  'delay-200',
-  'delay-300',
-  'delay-500',
-  'delay-700',
-]
+const CARD_DELAYS = ['delay-0', 'delay-100', 'delay-200', 'delay-300']
 
 function AnimatedBackground() {
   return (
@@ -60,7 +105,32 @@ function AnimatedBackground() {
   )
 }
 
-function GameCard({ game, delayClass, onOpen, onDelete }) {
+function GameArtwork({ game, className }) {
+  const image = imageByGameId[game.id]
+
+  if (image) {
+    return (
+      <img
+        src={image}
+        alt={game.name}
+        loading="lazy"
+        className={`h-full w-full object-cover ${className ?? ''}`}
+      />
+    )
+  }
+
+  return (
+    <div
+      className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${game.banner} ${className ?? ''}`}
+    >
+      <span className={`text-3xl font-bold tracking-tight ${game.glow}`}>
+        {game.short}
+      </span>
+    </div>
+  )
+}
+
+function GameCard({ game, delayClass, isRemoving, onOpen, onDelete }) {
   const [shown, setShown] = useState(false)
 
   useEffect(() => {
@@ -68,16 +138,21 @@ function GameCard({ game, delayClass, onOpen, onDelete }) {
     return () => cancelAnimationFrame(frame)
   }, [])
 
+  const visible = shown && !isRemoving
+
   return (
     <article
-      className={`group rounded-2xl border border-white/10 bg-[#1a1a1a] p-5 transition-all duration-700 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-blue-500/40 hover:shadow-[0_0_40px_rgba(0,102,255,0.15)] ${delayClass} ${
-        shown ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+      className={`group rounded-2xl border border-white/10 bg-[#1a1a1a] p-5 transition-all duration-500 ease-out hover:-translate-y-1 hover:scale-[1.02] hover:border-blue-500/40 hover:shadow-[0_0_40px_rgba(0,102,255,0.15)] ${delayClass} ${
+        visible
+          ? 'translate-y-0 scale-100 opacity-100'
+          : 'translate-y-6 scale-95 opacity-0'
       }`}
     >
-      <div
-        className={`mb-5 flex h-36 items-center justify-center rounded-xl bg-gradient-to-br ring-1 ring-white/10 transition-transform duration-500 group-hover:scale-[1.01] ${game.banner}`}
-      >
-        <Gamepad2 className="h-11 w-11 text-white/90 transition-transform duration-500 group-hover:scale-110" />
+      <div className="mb-5 h-36 overflow-hidden rounded-xl ring-1 ring-white/10">
+        <GameArtwork
+          game={game}
+          className="transition-transform duration-500 group-hover:scale-105"
+        />
       </div>
 
       <h3 className="mb-5 truncate text-lg font-semibold text-white" title={game.name}>
@@ -96,11 +171,16 @@ function GameCard({ game, delayClass, onOpen, onDelete }) {
 
         <button
           type="button"
-          onClick={() => onDelete(game.id)}
+          onClick={() => onDelete(game)}
+          disabled={isRemoving}
           aria-label={`Eliminar ${game.name}`}
-          className="flex items-center justify-center rounded-lg bg-white px-3 py-2.5 text-black transition-all duration-300 hover:bg-red-600 hover:text-white hover:shadow-[0_0_25px_rgba(220,38,38,0.6)] focus:outline-none focus:ring-4 focus:ring-red-500/30 active:scale-95 active:bg-[#0066ff] active:shadow-[0_0_25px_rgba(0,102,255,0.7)]"
+          className="flex items-center justify-center rounded-lg bg-white px-3 py-2.5 text-black transition-all duration-300 hover:bg-red-600 hover:text-white hover:shadow-[0_0_25px_rgba(220,38,38,0.6)] focus:outline-none focus:ring-4 focus:ring-red-500/30 active:scale-95 active:bg-[#0066ff] active:shadow-[0_0_25px_rgba(0,102,255,0.7)] disabled:opacity-50"
         >
-          <Trash2 className="h-4 w-4" />
+          {isRemoving ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            <Trash2 className="h-4 w-4" />
+          )}
         </button>
       </div>
     </article>
@@ -109,42 +189,102 @@ function GameCard({ game, delayClass, onOpen, onDelete }) {
 
 function Dashboard() {
   const navigate = useNavigate()
-  const [games, setGames] = useState(INITIAL_GAMES)
+  const [user, setUser] = useState(null)
+  const [games, setGames] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
   const [isAdding, setIsAdding] = useState(false)
-  const [newGame, setNewGame] = useState('')
+  const [pendingId, setPendingId] = useState(null)
+  const [removingIds, setRemovingIds] = useState([])
   const [error, setError] = useState('')
 
-  const handleAdd = (event) => {
-    event.preventDefault()
-    const name = newGame.trim()
+  useEffect(() => {
+    return onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
+        navigate('/login', { replace: true })
+        return
+      }
+      setUser(currentUser)
+    })
+  }, [navigate])
 
-    if (!name) {
-      setError('Escribe el nombre del juego.')
+  const loadGames = useCallback(async (userId) => {
+    setIsLoading(true)
+    try {
+      const snapshot = await getDocs(
+        query(
+          collection(db, 'users', userId, 'userGames'),
+          orderBy('addedDate', 'asc'),
+        ),
+      )
+      const stored = snapshot.docs.map((entry) => {
+        const data = entry.data()
+        const fromCatalog = GAME_CATALOG.find((item) => item.id === data.gameId)
+        return { ...fromCatalog, id: data.gameId, name: data.gameName }
+      })
+      setGames(stored)
+      setError('')
+    } catch (loadError) {
+      setError(`No se pudieron cargar tus juegos: ${loadError.message}`)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (user) {
+      loadGames(user.uid)
+    }
+  }, [user, loadGames])
+
+  const handleAdd = async (game) => {
+    if (!user || games.some((item) => item.id === game.id)) {
       return
     }
 
-    setGames((current) => [
-      ...current,
-      {
-        id: `${Date.now()}`,
-        name,
-        banner: BANNERS[current.length % BANNERS.length],
-      },
-    ])
-    setNewGame('')
-    setError('')
-    setIsAdding(false)
+    setPendingId(game.id)
+    try {
+      await setDoc(doc(db, 'users', user.uid, 'userGames', game.id), {
+        userId: user.uid,
+        gameId: game.id,
+        gameName: game.name,
+        addedDate: serverTimestamp(),
+      })
+      setGames((current) => [...current, game])
+      setError('')
+      setIsAdding(false)
+    } catch (addError) {
+      setError(`No se pudo guardar el juego: ${addError.message}`)
+    } finally {
+      setPendingId(null)
+    }
   }
 
-  const handleDelete = (id) => {
-    setGames((current) => current.filter((game) => game.id !== id))
+  const handleDelete = async (game) => {
+    if (!user) {
+      return
+    }
+
+    setRemovingIds((current) => [...current, game.id])
+    try {
+      await deleteDoc(doc(db, 'users', user.uid, 'userGames', game.id))
+      await new Promise((resolve) => setTimeout(resolve, 320))
+      setGames((current) => current.filter((item) => item.id !== game.id))
+      setError('')
+    } catch (deleteError) {
+      setError(`No se pudo eliminar el juego: ${deleteError.message}`)
+    } finally {
+      setRemovingIds((current) => current.filter((id) => id !== game.id))
+    }
   }
 
-  const closeModal = () => {
-    setIsAdding(false)
-    setNewGame('')
-    setError('')
+  const handleLogout = async () => {
+    await signOut(auth)
+    navigate('/login', { replace: true })
   }
+
+  const availableGames = GAME_CATALOG.filter(
+    (game) => !games.some((item) => item.id === game.id),
+  )
 
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
@@ -172,7 +312,7 @@ function Dashboard() {
 
           <button
             type="button"
-            onClick={() => navigate('/login')}
+            onClick={handleLogout}
             className="flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-red-600 hover:text-white hover:shadow-[0_0_25px_rgba(220,38,38,0.6)] focus:outline-none focus:ring-4 focus:ring-red-500/30 active:scale-95"
           >
             <LogOut className="h-4 w-4" />
@@ -186,15 +326,47 @@ function Dashboard() {
           <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
             Mis Juegos
           </h1>
-          <span className="text-sm text-zinc-500">
-            {games.length} {games.length === 1 ? 'juego' : 'juegos'}
-          </span>
+          {!isLoading && (
+            <span className="text-sm text-zinc-500">
+              {games.length} {games.length === 1 ? 'juego' : 'juegos'}
+            </span>
+          )}
         </div>
 
-        {games.length === 0 ? (
+        {error && (
+          <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <p>{error}</p>
+          </div>
+        )}
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[0, 1, 2].map((slot) => (
+              <div
+                key={slot}
+                className="animate-pulse rounded-2xl border border-white/10 bg-[#1a1a1a] p-5"
+              >
+                <div className="mb-5 h-36 rounded-xl bg-white/5" />
+                <div className="mb-5 h-5 w-2/3 rounded bg-white/5" />
+                <div className="h-10 rounded-lg bg-white/5" />
+              </div>
+            ))}
+          </div>
+        ) : games.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-14 text-center">
             <Gamepad2 className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
-            <p className="text-zinc-400">Todavía no has añadido ningún juego.</p>
+            <p className="mb-5 text-zinc-400">
+              Todavía no has añadido ningún juego.
+            </p>
+            <button
+              type="button"
+              onClick={() => setIsAdding(true)}
+              className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-[#0066ff] hover:text-white hover:shadow-[0_0_25px_rgba(0,102,255,0.65)] focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95"
+            >
+              <Plus className="h-4 w-4" />
+              Agregar Juego
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -203,8 +375,9 @@ function Dashboard() {
                 key={game.id}
                 game={game}
                 delayClass={CARD_DELAYS[index % CARD_DELAYS.length]}
+                isRemoving={removingIds.includes(game.id)}
                 onOpen={(target) =>
-                  navigate(`/game/${encodeURIComponent(target.name)}`)
+                  navigate(`/game/${encodeURIComponent(target.id)}`)
                 }
                 onDelete={handleDelete}
               />
@@ -214,13 +387,13 @@ function Dashboard() {
       </main>
 
       {isAdding && (
-        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/70 px-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-[#1a1a1a] p-6 shadow-2xl shadow-black/80">
+        <div className="fixed inset-0 z-30 flex items-center justify-center bg-black/70 px-4 py-10 backdrop-blur-sm">
+          <div className="max-h-full w-full max-w-md overflow-y-auto rounded-2xl border border-white/10 bg-[#1a1a1a] p-6 shadow-2xl shadow-black/80">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-white">Agregar juego</h2>
               <button
                 type="button"
-                onClick={closeModal}
+                onClick={() => setIsAdding(false)}
                 aria-label="Cerrar"
                 className="rounded-lg p-1.5 text-zinc-400 transition-colors duration-300 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
               >
@@ -228,31 +401,43 @@ function Dashboard() {
               </button>
             </div>
 
-            <form onSubmit={handleAdd} noValidate>
-              <input
-                autoFocus
-                value={newGame}
-                onChange={(event) => {
-                  setNewGame(event.target.value)
-                  setError('')
-                }}
-                placeholder="Nombre del juego"
-                className={`w-full rounded-xl border bg-white/[0.03] px-4 py-3 text-[15px] text-white placeholder:text-zinc-600 transition-all duration-300 focus:bg-white/[0.06] focus:outline-none focus:ring-4 ${
-                  error
-                    ? 'border-red-500/40 focus:border-red-500/70 focus:ring-red-500/10'
-                    : 'border-white/10 focus:border-blue-500/60 focus:ring-blue-500/10'
-                }`}
-              />
-              {error && <p className="mt-2 text-[13px] text-red-400/90">{error}</p>}
+            {availableGames.length === 0 ? (
+              <p className="py-6 text-center text-sm text-zinc-400">
+                Ya has añadido todos los juegos disponibles.
+              </p>
+            ) : (
+              <ul className="space-y-3">
+                {availableGames.map((game) => (
+                  <li key={game.id}>
+                    <button
+                      type="button"
+                      onClick={() => handleAdd(game)}
+                      disabled={pendingId !== null}
+                      className="flex w-full items-center gap-4 rounded-xl border border-white/10 bg-white/[0.03] p-3 text-left transition-all duration-300 hover:border-blue-500/50 hover:bg-white/[0.07] hover:shadow-[0_0_25px_rgba(0,102,255,0.2)] focus:outline-none focus:ring-4 focus:ring-blue-500/20 active:scale-[0.98] disabled:opacity-50"
+                    >
+                      <span className="h-12 w-12 shrink-0 overflow-hidden rounded-lg ring-1 ring-white/10">
+                        <GameArtwork game={game} />
+                      </span>
+                      <span className="flex-1 text-sm font-medium text-white">
+                        {game.name}
+                      </span>
+                      {pendingId === game.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin text-blue-400" />
+                      ) : (
+                        <Plus className="h-4 w-4 text-zinc-500" />
+                      )}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
 
-              <button
-                type="submit"
-                className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-white py-3 text-sm font-semibold text-black transition-all duration-300 hover:bg-[#0066ff] hover:text-white hover:shadow-[0_0_25px_rgba(0,102,255,0.65)] focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95"
-              >
-                <Plus className="h-4 w-4" />
-                Agregar
-              </button>
-            </form>
+            {games.length > 0 && (
+              <p className="mt-5 flex items-center gap-2 text-xs text-zinc-500">
+                <Check className="h-3.5 w-3.5" />
+                {games.length} ya en tu biblioteca
+              </p>
+            )}
           </div>
         </div>
       )}

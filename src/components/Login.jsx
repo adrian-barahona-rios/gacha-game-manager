@@ -1,14 +1,30 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowRight, Gamepad2, Lock, Mail } from 'lucide-react'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { AlertCircle, ArrowRight, Gamepad2, Loader2, Lock, Mail } from 'lucide-react'
+import { auth } from '../config/firebase'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+const AUTH_MESSAGES = {
+  'auth/invalid-credential': 'Email o contraseña incorrectos.',
+  'auth/invalid-email': 'El email no es válido.',
+  'auth/user-not-found': 'No existe ninguna cuenta con ese email.',
+  'auth/wrong-password': 'Email o contraseña incorrectos.',
+  'auth/user-disabled': 'Esta cuenta está deshabilitada.',
+  'auth/too-many-requests': 'Demasiados intentos. Prueba de nuevo en unos minutos.',
+  'auth/network-request-failed': 'Sin conexión con el servidor. Revisa tu red.',
+  'auth/operation-not-allowed':
+    'El acceso por email y contraseña no está habilitado en Firebase.',
+}
 
 function Login() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState({})
+  const [authError, setAuthError] = useState('')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validate = () => {
     const nextErrors = {}
@@ -25,14 +41,23 @@ function Login() {
     return Object.keys(nextErrors).length === 0
   }
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault()
+    setAuthError('')
 
     if (!validate()) {
       return
     }
 
-    navigate('/dashboard')
+    setIsSubmitting(true)
+    try {
+      await signInWithEmailAndPassword(auth, email, password)
+      navigate('/dashboard', { replace: true })
+    } catch (error) {
+      setAuthError(AUTH_MESSAGES[error.code] ?? 'No se pudo iniciar sesión.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const inputClasses = (hasError) =>
@@ -68,6 +93,13 @@ function Login() {
           </div>
 
           <form onSubmit={handleSubmit} noValidate className="space-y-5">
+            {authError && (
+              <div className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-[13px] text-red-200">
+                <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                <p>{authError}</p>
+              </div>
+            )}
+
             <div>
               <label
                 htmlFor="email"
@@ -118,10 +150,20 @@ function Login() {
 
             <button
               type="submit"
-              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3.5 text-[15px] font-semibold text-black shadow-lg shadow-white/5 transition-all duration-300 hover:-translate-y-0.5 hover:bg-zinc-100 hover:shadow-xl hover:shadow-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:translate-y-0"
+              disabled={isSubmitting}
+              className="group flex w-full items-center justify-center gap-2 rounded-xl bg-white py-3.5 text-[15px] font-semibold text-black shadow-lg shadow-white/5 transition-all duration-300 hover:-translate-y-0.5 hover:bg-zinc-100 hover:shadow-xl hover:shadow-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:translate-y-0 disabled:cursor-not-allowed disabled:opacity-60 disabled:hover:translate-y-0"
             >
-              Iniciar sesión
-              <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" />
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="h-[18px] w-[18px] animate-spin" />
+                  Entrando…
+                </>
+              ) : (
+                <>
+                  Iniciar sesión
+                  <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" />
+                </>
+              )}
             </button>
           </form>
 
