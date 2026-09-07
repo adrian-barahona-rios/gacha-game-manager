@@ -1,6 +1,7 @@
 import genshinLogo from '../assets/games/GenshinImpactLogo.jpg'
 import starRailLogo from '../assets/games/HonkaiStarRailLogo.jpg'
 import dxdArt from '../assets/games/hIghschooldxdOPILogo.jpg'
+import umamusumeArt from '../assets/games/Umamusume-Pretty-Derby-logo.jpg'
 import zzzLogo from '../assets/games/ZenlesszonezeroLogo.jpg'
 
 // imageFit 'logo': el archivo es un logo sobre fondo blanco, asi que va
@@ -78,6 +79,33 @@ export const GAME_CATALOG = [
       'Más de 60 personajes de la serie, con arte exclusivo del juego.',
       'Tecnología HTML5: se juega en el navegador, sin instalar nada.',
       'Free to play, con compras opcionales dentro del juego.',
+    ],
+  },
+  {
+    id: 'umamusume-pretty-derby',
+    name: 'Umamusume: Pretty Derby',
+    short: 'UMA',
+    image: umamusumeArt,
+    imageFit: 'cover',
+    // El logotipo esta en la franja baja del arte: el encuadre baja para que
+    // entre en la tarjeta en lugar de quedarse fuera.
+    imagePosition: 'object-[50%_85%]',
+    theme: 'umamusume',
+    banner: 'from-amber-700/45 via-yellow-600/15 to-transparent',
+    glow: 'text-amber-100',
+    accent: 'text-amber-200',
+    accentRing: 'ring-amber-300/30',
+    tagline: 'Entrena, corre y conquista la pista',
+    developer: 'Cygames',
+    release: '24 de febrero de 2021 (Japón) · 26 de junio de 2025 (versión en inglés)',
+    genre: 'Simulación de entrenamiento y carreras',
+    platforms: 'PC (Steam), iOS y Android',
+    description:
+      'Umamusume: Pretty Derby es un juego de simulación de Cygames dentro del proyecto Umamusume, una franquicia que abarca anime, manga y música. Te pone al mando del entrenamiento de una umamusume, una chica caballo inspirada en un purasangre japonés real, y te encarga llevarla a lo más alto de las carreras.',
+    highlights: [
+      'Entrenamiento por turnos que moldea las estadísticas y aptitudes de cada umamusume.',
+      'Personajes basados en purasangres japoneses reales y sus trayectorias.',
+      'Carreras en 3D con comentarios en directo durante la competición.',
     ],
   },
   {

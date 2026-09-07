@@ -8,7 +8,7 @@ function GameArtwork({ game, className, fill }) {
         src={game.image}
         alt={game.name}
         loading="lazy"
-        className={`h-full w-full object-cover ${className ?? ''}`}
+        className={`h-full w-full object-cover ${game.imagePosition ?? ''} ${className ?? ''}`}
       />
     )
   }

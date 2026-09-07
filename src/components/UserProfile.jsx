@@ -1,17 +1,22 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import {
   AlertCircle,
   ArrowLeft,
   Check,
+  Copy,
   KeyRound,
   Loader2,
   LogOut,
   Mail,
   Send,
   User,
+  UserPlus,
+  Users,
 } from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { loadFriendships } from '../data/friends'
+import AddFriendModal from './AddFriendModal'
 
 function UserProfile() {
   const navigate = useNavigate()
@@ -24,6 +29,11 @@ function UserProfile() {
   const [isSendingReset, setIsSendingReset] = useState(false)
   const [resetSent, setResetSent] = useState(false)
   const [resetError, setResetError] = useState('')
+  const [isCopied, setIsCopied] = useState(false)
+  const [isAddingFriend, setIsAddingFriend] = useState(false)
+  const [relations, setRelations] = useState([])
+  const [friendCount, setFriendCount] = useState(0)
+  const [pendingCount, setPendingCount] = useState(0)
 
   useEffect(() => {
     let active = true
@@ -121,6 +131,53 @@ function UserProfile() {
     setIsSaved(true)
   }
 
+  const applyFriends = useCallback((result) => {
+    if (result.error) {
+      return
+    }
+
+    setRelations([
+      ...result.friends.map((item) => ({ ...item, direction: 'friend' })),
+      ...result.incoming.map((item) => ({ ...item, direction: 'incoming' })),
+      ...result.outgoing.map((item) => ({ ...item, direction: 'outgoing' })),
+    ])
+    setFriendCount(result.friends.length)
+    setPendingCount(result.incoming.length)
+  }, [])
+
+  const refreshFriends = (currentUserId) =>
+    loadFriendships(currentUserId).then(applyFriends)
+
+  const currentUserId = user?.id
+
+  useEffect(() => {
+    if (!currentUserId) {
+      return
+    }
+
+    let active = true
+
+    loadFriendships(currentUserId).then((result) => {
+      if (active) {
+        applyFriends(result)
+      }
+    })
+
+    return () => {
+      active = false
+    }
+  }, [currentUserId, applyFriends])
+
+  const handleCopyId = async () => {
+    try {
+      await navigator.clipboard.writeText(user.id)
+      setIsCopied(true)
+      setTimeout(() => setIsCopied(false), 2000)
+    } catch {
+      setError('Tu navegador no permitió copiar. Selecciona el ID a mano.')
+    }
+  }
+
   const handleSendReset = async () => {
     setResetError('')
     setResetSent(false)
@@ -194,6 +251,76 @@ function UserProfile() {
               <Mail className="h-4 w-4 shrink-0" />
               <span className="truncate">{user?.email ?? '—'}</span>
             </p>
+          </div>
+        </section>
+
+        <section className="mb-6 rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
+          <h2 className="mb-1.5 text-lg font-semibold tracking-tight text-white">
+            Tu ID de cuenta
+          </h2>
+          <p className="mb-5 text-sm text-zinc-500">
+            Compártelo para que otras personas puedan agregarte.
+          </p>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <code className="min-w-0 flex-1 truncate rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 font-mono text-[13px] text-zinc-300">
+              {user?.id ?? '—'}
+            </code>
+            <button
+              type="button"
+              onClick={handleCopyId}
+              disabled={!user}
+              className="flex shrink-0 items-center justify-center gap-2 rounded-xl border border-white/15 bg-transparent px-4 py-3 text-sm font-semibold text-zinc-300 transition-all duration-300 hover:border-[#0066ff] hover:bg-[#0066ff]/10 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95 disabled:opacity-50"
+            >
+              {isCopied ? (
+                <>
+                  <Check className="h-4 w-4 text-emerald-400" />
+                  Copiado
+                </>
+              ) : (
+                <>
+                  <Copy className="h-4 w-4" />
+                  Copiar
+                </>
+              )}
+            </button>
+          </div>
+        </section>
+
+        <section className="mb-6 rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
+          <h2 className="mb-1.5 flex items-center gap-2.5 text-lg font-semibold tracking-tight text-white">
+            <Users className="h-5 w-5 text-zinc-400" />
+            Amigos
+          </h2>
+          <p className="mb-6 text-sm text-zinc-500">
+            {friendCount} {friendCount === 1 ? 'amigo' : 'amigos'}
+            {pendingCount > 0 &&
+              ` · ${pendingCount} ${pendingCount === 1 ? 'solicitud pendiente' : 'solicitudes pendientes'}`}
+          </p>
+
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={() => setIsAddingFriend(true)}
+              className="flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#0066ff] hover:text-white hover:shadow-[0_0_25px_rgba(0,102,255,0.65)] focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:translate-y-0 active:scale-95"
+            >
+              <UserPlus className="h-4 w-4" />
+              Buscar amigos
+            </button>
+
+            <button
+              type="button"
+              onClick={() => navigate('/profile/friends')}
+              className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-transparent px-5 py-3 text-sm font-semibold text-zinc-300 transition-all duration-300 hover:border-[#0066ff] hover:bg-[#0066ff]/10 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95"
+            >
+              <Users className="h-4 w-4" />
+              Menú de amigos
+              {pendingCount > 0 && (
+                <span className="ml-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs font-semibold text-white">
+                  {pendingCount}
+                </span>
+              )}
+            </button>
           </div>
         </section>
 
@@ -311,6 +438,15 @@ function UserProfile() {
           )}
         </section>
       </main>
+
+      {isAddingFriend && user && (
+        <AddFriendModal
+          userId={user.id}
+          relations={relations}
+          onClose={() => setIsAddingFriend(false)}
+          onSent={() => refreshFriends(user.id)}
+        />
+      )}
     </div>
   )
 }

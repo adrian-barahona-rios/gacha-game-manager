@@ -127,12 +127,13 @@ function DxdBackground() {
 function ZzzBackground() {
   return (
     <>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(245,158,11,0.16),transparent_58%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(16,185,129,0.16),transparent_58%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_80%,rgba(34,211,238,0.12),transparent_55%)]" />
 
-      <div className="absolute inset-[-48px] animate-scan bg-[linear-gradient(to_right,rgba(245,158,11,0.10)_1px,transparent_1px),linear-gradient(to_bottom,rgba(245,158,11,0.10)_1px,transparent_1px)] bg-[size:48px_48px]" />
+      <div className="absolute inset-[-48px] animate-scan bg-[linear-gradient(to_right,rgba(16,185,129,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(16,185,129,0.12)_1px,transparent_1px)] bg-[size:48px_48px]" />
 
       <svg
-        className="absolute left-[8%] top-[18%] h-24 w-24 animate-hex text-amber-400/40"
+        className="absolute left-[8%] top-[18%] h-24 w-24 animate-hex text-emerald-400/45"
         viewBox="0 0 100 100"
         aria-hidden="true"
       >
@@ -144,7 +145,7 @@ function ZzzBackground() {
         />
       </svg>
       <svg
-        className="absolute right-[12%] top-[52%] h-32 w-32 animate-hex text-orange-400/35 [animation-delay:4s]"
+        className="absolute right-[12%] top-[52%] h-32 w-32 animate-hex text-cyan-400/40 [animation-delay:4s]"
         viewBox="0 0 100 100"
         aria-hidden="true"
       >
@@ -156,7 +157,7 @@ function ZzzBackground() {
         />
       </svg>
       <svg
-        className="absolute left-[62%] top-[10%] h-16 w-16 animate-hex text-yellow-300/30 [animation-delay:8s]"
+        className="absolute left-[62%] top-[10%] h-16 w-16 animate-hex text-teal-300/35 [animation-delay:8s]"
         viewBox="0 0 100 100"
         aria-hidden="true"
       >
@@ -168,16 +169,110 @@ function ZzzBackground() {
         />
       </svg>
 
-      <div className="absolute inset-y-0 left-[18%] w-px animate-flicker bg-gradient-to-b from-transparent via-amber-400/70 to-transparent shadow-[0_0_18px_rgba(251,191,36,0.8)]" />
-      <div className="absolute inset-y-0 right-[24%] w-px animate-flicker bg-gradient-to-b from-transparent via-orange-500/70 to-transparent shadow-[0_0_18px_rgba(249,115,22,0.8)] [animation-delay:2.5s]" />
-      <div className="absolute inset-x-0 top-[28%] h-px animate-flicker bg-gradient-to-r from-transparent via-yellow-300/60 to-transparent [animation-delay:4s]" />
+      <div className="absolute inset-y-0 left-[18%] w-px animate-flicker bg-gradient-to-b from-transparent via-emerald-400/70 to-transparent shadow-[0_0_18px_rgba(52,211,153,0.85)]" />
+      <div className="absolute inset-y-0 right-[24%] w-px animate-flicker bg-gradient-to-b from-transparent via-cyan-400/70 to-transparent shadow-[0_0_18px_rgba(34,211,238,0.85)] [animation-delay:2.5s]" />
+      <div className="absolute inset-x-0 top-[28%] h-px animate-flicker bg-gradient-to-r from-transparent via-emerald-300/60 to-transparent [animation-delay:4s]" />
 
       {FLOATERS.map((floater) => (
         <span
           key={floater}
-          className={`absolute h-1 w-1 animate-rise bg-amber-300 shadow-[0_0_10px_rgba(252,211,77,0.9)] ${floater}`}
+          className={`absolute h-1 w-1 animate-rise bg-emerald-300 shadow-[0_0_10px_rgba(110,231,183,0.9)] ${floater}`}
         />
       ))}
+    </>
+  )
+}
+
+const SPEED_LINES = [
+  'top-[46%] w-40 [animation-delay:0s] [animation-duration:3.4s]',
+  'top-[54%] w-56 [animation-delay:0.8s] [animation-duration:4.2s]',
+  'top-[62%] w-32 [animation-delay:1.6s] [animation-duration:3s]',
+  'top-[70%] w-64 [animation-delay:2.3s] [animation-duration:4.8s]',
+  'top-[78%] w-44 [animation-delay:3.1s] [animation-duration:3.8s]',
+  'top-[86%] w-52 [animation-delay:1.1s] [animation-duration:4.5s]',
+]
+
+const RUNNERS = [
+  'bottom-[16%] h-16 [animation-delay:0s] [animation-duration:10s]',
+  'bottom-[9%] h-20 [animation-delay:2.5s] [animation-duration:8.5s]',
+  'bottom-[24%] h-12 [animation-delay:5.5s] [animation-duration:12s]',
+]
+
+function GallopingHorse() {
+  return (
+    <svg viewBox="0 0 110 60" className="h-full w-auto" aria-hidden="true">
+      <g fill="currentColor">
+        <ellipse cx="52" cy="28" rx="22" ry="9.5" />
+        <path d="M68,22 L86,10 L92,17 L74,29 Z" />
+        <path d="M84,7 L100,12 L98,21 L82,17 Z" />
+        <path d="M32,22 C20,13 12,13 4,17 C14,20 24,26 31,31 Z" />
+        <rect
+          x="64"
+          y="32"
+          width="5"
+          height="23"
+          rx="2.5"
+          transform="rotate(32 66.5 33)"
+        />
+        <rect
+          x="57"
+          y="32"
+          width="5"
+          height="20"
+          rx="2.5"
+          transform="rotate(14 59.5 33)"
+        />
+        <rect
+          x="40"
+          y="32"
+          width="5"
+          height="23"
+          rx="2.5"
+          transform="rotate(-36 42.5 33)"
+        />
+        <rect
+          x="46"
+          y="32"
+          width="5"
+          height="20"
+          rx="2.5"
+          transform="rotate(-14 48.5 33)"
+        />
+      </g>
+    </svg>
+  )
+}
+
+function UmamusumeBackground() {
+  return (
+    <>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_10%,rgba(217,164,65,0.18),transparent_60%)]" />
+      <div className="absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(to_top,rgba(88,50,22,0.75),rgba(62,36,16,0.35),transparent)]" />
+
+      <div className="absolute inset-x-0 bottom-[6%] h-px bg-gradient-to-r from-transparent via-amber-100/25 to-transparent" />
+      <div className="absolute inset-x-0 bottom-[20%] h-px bg-gradient-to-r from-transparent via-amber-100/20 to-transparent" />
+      <div className="absolute inset-x-0 bottom-[34%] h-px bg-gradient-to-r from-transparent via-amber-100/12 to-transparent" />
+
+      {SPEED_LINES.map((line) => (
+        <span
+          key={line}
+          className={`absolute left-0 h-[2px] animate-dash rounded-full bg-gradient-to-r from-transparent via-amber-200/70 to-transparent ${line}`}
+        />
+      ))}
+
+      {RUNNERS.map((runner) => (
+        <span
+          key={runner}
+          className={`absolute left-0 animate-gallop text-amber-950/70 ${runner}`}
+        >
+          <span className="flex h-full animate-bob">
+            <GallopingHorse />
+          </span>
+        </span>
+      ))}
+
+      <div className="absolute bottom-[8%] left-[18%] h-40 w-40 animate-smoke rounded-full bg-amber-700/20 blur-[70px]" />
+      <div className="absolute bottom-[12%] right-[22%] h-48 w-48 animate-smoke rounded-full bg-yellow-600/15 blur-[80px] [animation-delay:8s]" />
     </>
   )
 }
@@ -187,13 +282,22 @@ const BACKGROUNDS = {
   genshin: GenshinBackground,
   dxd: DxdBackground,
   zzz: ZzzBackground,
+  umamusume: UmamusumeBackground,
 }
 
+// Umamusume todavia no tiene personajes cargados en la base de datos.
+const GAMES_WITH_CHARACTERS = [
+  'genshin-impact',
+  'honkai-star-rail',
+  'high-school-dxd-opi',
+  'zenless-zone-zero',
+]
+
 const MENU_ITEMS = [
-  { id: 'inicio', label: 'Inicio', icon: Home, ready: true },
-  { id: 'personajes', label: 'Ver personajes', icon: Users, ready: false },
-  { id: 'tierlist', label: 'Tier list', icon: ListOrdered, ready: false },
-  { id: 'guias', label: 'Guías', icon: BookOpen, ready: false },
+  { id: 'inicio', label: 'Inicio', icon: Home },
+  { id: 'personajes', label: 'Ver personajes', icon: Users },
+  { id: 'tierlist', label: 'Tier list', icon: ListOrdered },
+  { id: 'guias', label: 'Guías', icon: BookOpen },
 ]
 
 function GamePage() {
@@ -224,6 +328,7 @@ function GamePage() {
   }
 
   const Background = BACKGROUNDS[game.theme]
+  const hasCharacters = GAMES_WITH_CHARACTERS.includes(game.id)
 
   return (
     <div className="relative min-h-screen scheme-dark overflow-hidden bg-black">
@@ -285,22 +390,34 @@ function GamePage() {
                 >
                   {MENU_ITEMS.map((item) => {
                     const Icon = item.icon
+                    const isCurrent = item.id === 'inicio'
+                    const isCharacters = item.id === 'personajes'
+                    const isEnabled =
+                      isCurrent || (isCharacters && hasCharacters)
+
                     return (
                       <button
                         key={item.id}
                         type="button"
                         role="menuitem"
-                        disabled={!item.ready}
-                        onClick={() => setIsMenuOpen(false)}
+                        disabled={!isEnabled}
+                        onClick={() => {
+                          setIsMenuOpen(false)
+                          if (isCharacters) {
+                            navigate(`/game/${gameId}/characters`)
+                          }
+                        }}
                         className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors duration-200 ${
-                          item.ready
+                          isCurrent
                             ? 'bg-white/10 font-medium text-white'
-                            : 'text-zinc-500 hover:bg-white/5 disabled:cursor-not-allowed'
+                            : isEnabled
+                              ? 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                              : 'text-zinc-500 hover:bg-white/5 disabled:cursor-not-allowed'
                         }`}
                       >
                         <Icon className="h-4 w-4 shrink-0" />
                         <span className="flex-1">{item.label}</span>
-                        {!item.ready && (
+                        {!isEnabled && (
                           <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-zinc-500">
                             Pronto
                           </span>

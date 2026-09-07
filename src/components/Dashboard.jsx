@@ -9,6 +9,7 @@ import {
   Plus,
   Trash2,
   User,
+  Users,
   X,
 } from 'lucide-react'
 import { supabase } from '../config/supabase'
@@ -256,6 +257,17 @@ function Dashboard() {
             </span>
           </div>
 
+          <div className="flex shrink-0 items-center gap-2">
+          <button
+            type="button"
+            onClick={() => navigate('/profile/friends')}
+            title="Menú de amigos"
+            aria-label="Menú de amigos"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-zinc-300 transition-all duration-300 hover:border-[#0066ff] hover:bg-[#0066ff]/15 hover:text-white hover:shadow-[0_0_20px_rgba(0,102,255,0.3)] focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95"
+          >
+            <Users className="h-4 w-4" />
+          </button>
+
           <button
             type="button"
             onClick={() => navigate('/profile')}
@@ -270,6 +282,7 @@ function Dashboard() {
               {displayName}
             </span>
           </button>
+          </div>
         </div>
       </header>
 

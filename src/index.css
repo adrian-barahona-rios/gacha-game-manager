@@ -11,6 +11,9 @@
   --animate-scan: scan 11s linear infinite;
   --animate-hex: hex 16s ease-in-out infinite;
   --animate-flicker: flicker 6s ease-in-out infinite;
+  --animate-dash: dash 4s linear infinite;
+  --animate-gallop: gallop 11s linear infinite;
+  --animate-bob: bob 0.5s ease-in-out infinite;
 
   @keyframes twinkle {
     0%,
@@ -122,6 +125,52 @@
     50% {
       transform: translate3d(0, -1.8rem, 0) rotate(25deg);
       opacity: 0.6;
+    }
+  }
+
+  /* Lineas de velocidad cruzando la pista de lado a lado. */
+  @keyframes dash {
+    0% {
+      transform: translate3d(-20vw, 0, 0) scaleX(0.6);
+      opacity: 0;
+    }
+    10% {
+      opacity: 1;
+    }
+    80% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(120vw, 0, 0) scaleX(1.4);
+      opacity: 0;
+    }
+  }
+
+  /* Avance del caballo; el balanceo va aparte, en bob, para que sea mas rapido. */
+  @keyframes gallop {
+    0% {
+      transform: translate3d(-25vw, 0, 0);
+      opacity: 0;
+    }
+    7% {
+      opacity: 1;
+    }
+    88% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(125vw, 0, 0);
+      opacity: 0;
+    }
+  }
+
+  @keyframes bob {
+    0%,
+    100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -0.4rem, 0);
     }
   }
 
