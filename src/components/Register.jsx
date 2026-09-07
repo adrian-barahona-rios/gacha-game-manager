@@ -32,7 +32,7 @@ function Register() {
       return
     }
 
-    console.log('Register:', { email, password })
+    navigate('/dashboard')
   }
 
   const inputClasses = (hasError) =>

@@ -32,7 +32,7 @@ function Login() {
       return
     }
 
-    console.log('Login:', { email, password })
+    navigate('/dashboard')
   }
 
   const inputClasses = (hasError) =>
