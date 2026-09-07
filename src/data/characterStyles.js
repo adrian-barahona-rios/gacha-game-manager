@@ -17,6 +17,8 @@ const ELEMENT_STYLES = {
   Imaginario: { badge: 'bg-yellow-500/15 text-yellow-300 ring-yellow-400/30', tile: 'from-yellow-500/40 to-yellow-900/10' },
   Eléctrico: { badge: 'bg-blue-500/15 text-blue-300 ring-blue-400/30', tile: 'from-blue-500/40 to-blue-900/10' },
   Éter: { badge: 'bg-fuchsia-500/15 text-fuchsia-300 ring-fuchsia-400/30', tile: 'from-fuchsia-500/40 to-fuchsia-900/10' },
+  Etéreo: { badge: 'bg-fuchsia-500/15 text-fuchsia-300 ring-fuchsia-400/30', tile: 'from-fuchsia-500/40 to-fuchsia-900/10' },
+  'Multi-elemento': { badge: 'bg-pink-500/15 text-pink-300 ring-pink-400/30', tile: 'from-pink-500/40 to-indigo-900/10' },
 }
 
 const FALLBACK_STYLE = {

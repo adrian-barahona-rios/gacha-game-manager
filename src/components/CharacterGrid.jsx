@@ -47,7 +47,7 @@ function CharacterGrid() {
 
     supabase
       .from('characters')
-      .select('id, name, image_url, rarity, element, description')
+      .select('id, name, image_url, rarity, element, role, path, description')
       .eq('game_id', gameId)
       .order('rarity', { ascending: false })
       .order('name', { ascending: true })
@@ -138,9 +138,13 @@ function CharacterGrid() {
               const elementStyle = getElementStyle(character.element)
 
               return (
-                <article
+                <button
                   key={character.id}
-                  className="group rounded-2xl border border-white/10 bg-[#1a1a1a] p-5 transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-[0_0_40px_rgba(0,102,255,0.15)]"
+                  type="button"
+                  onClick={() =>
+                    navigate(`/game/${gameId}/characters/${character.id}`)
+                  }
+                  className="group flex flex-col rounded-2xl border border-white/10 bg-[#1a1a1a] p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-[0_0_40px_rgba(0,102,255,0.15)] focus:outline-none focus:ring-4 focus:ring-blue-500/30"
                 >
                   <div className="mb-5 h-48 overflow-hidden rounded-xl ring-1 ring-white/10">
                     <CharacterPortrait
@@ -156,7 +160,7 @@ function CharacterGrid() {
                     {character.name}
                   </h2>
 
-                  <div className="mb-5 flex flex-wrap gap-2">
+                  <div className="mb-3 flex flex-wrap gap-2">
                     {character.rarity && (
                       <span
                         className={`rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${getRarityStyle(character.rarity)}`}
@@ -171,18 +175,21 @@ function CharacterGrid() {
                         {character.element}
                       </span>
                     )}
+                    {character.path && (
+                      <span className="rounded-full bg-white/5 px-2.5 py-1 text-xs font-medium text-zinc-300 ring-1 ring-white/15">
+                        {character.path}
+                      </span>
+                    )}
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={() =>
-                      navigate(`/game/${gameId}/characters/${character.id}`)
-                    }
-                    className="w-full rounded-lg bg-white px-3 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-purple-600 hover:text-white hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] focus:outline-none focus:ring-4 focus:ring-purple-500/30 active:scale-95 active:bg-[#0066ff]"
-                  >
+                  {character.role && (
+                    <p className="mb-4 text-sm text-zinc-400">{character.role}</p>
+                  )}
+
+                  <span className="mt-auto block w-full rounded-lg bg-white px-3 py-2.5 text-center text-sm font-semibold text-black transition-all duration-300 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-[0_0_25px_rgba(147,51,234,0.6)]">
                     Ver detalles
-                  </button>
-                </article>
+                  </span>
+                </button>
               )
             })}
           </div>

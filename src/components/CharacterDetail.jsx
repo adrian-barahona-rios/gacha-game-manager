@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowLeft, Heart, Loader2 } from 'lucide-react'
+import { AlertCircle, ArrowLeft, BookOpen, Heart, Loader2 } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { getGameById } from '../data/games'
 import {
@@ -9,8 +9,21 @@ import {
   getRarityStyle,
 } from '../data/characterStyles'
 
+const TABS = [
+  { id: 'detalles', label: 'Detalles' },
+  { id: 'biografia', label: 'Biografía' },
+  { id: 'stats', label: 'Stats' },
+]
+
+// Cada juego llama distinto a lo mismo: Via en Star Rail, Especialidad en Zenless.
+const PATH_LABELS = {
+  'honkai-star-rail': ['Vía', 'Cono de luz'],
+  'zenless-zone-zero': ['Especialidad', 'Motor-W'],
+}
+
 function CharacterDetail() {
   const { gameId, characterId } = useParams()
+  const [activeTab, setActiveTab] = useState('detalles')
   const navigate = useNavigate()
   const game = getGameById(gameId)
   const [character, setCharacter] = useState(null)
@@ -104,6 +117,10 @@ function CharacterDetail() {
   }
 
   const elementStyle = getElementStyle(character?.element)
+  const [pathLabel, signatureLabel] = PATH_LABELS[gameId] ?? [
+    'Especialidad',
+    'Equipo recomendado',
+  ]
 
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
@@ -201,30 +218,89 @@ function CharacterDetail() {
                 )}
               </div>
 
-              {character.description && (
-                <p className="mb-8 text-[15px] leading-relaxed text-zinc-300">
-                  {character.description}
-                </p>
+              <div className="mb-6 flex gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1">
+                {TABS.filter(
+                  (tab) => tab.id !== 'stats' || character.level_cap,
+                ).map((tab) => (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/30 ${
+                      activeTab === tab.id
+                        ? 'bg-white text-black'
+                        : 'text-zinc-400 hover:bg-white/5 hover:text-white'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                ))}
+              </div>
+
+              {activeTab === 'detalles' && (
+                <dl className="mb-8 grid grid-cols-2 gap-4">
+                  {[
+                    ['Rareza', character.rarity ? formatRarity(character.rarity) : 'Sin definir'],
+                    ['Elemento', character.element ?? 'Sin definir'],
+                    ['Rol', character.role ?? 'Sin definir'],
+                    [pathLabel, character.path ?? 'Sin definir'],
+                    [signatureLabel, character.signature ?? 'Sin definir'],
+                    ['Juego', game?.name ?? gameId],
+                  ].map(([label, value]) => (
+                    <div
+                      key={label}
+                      className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
+                    >
+                      <dt className="mb-1.5 text-[11px] uppercase tracking-wide text-zinc-500">
+                        {label}
+                      </dt>
+                      <dd className="text-sm font-medium text-white">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
               )}
 
-              <dl className="mb-8 grid grid-cols-2 gap-4">
-                {[
-                  ['Rareza', character.rarity ? formatRarity(character.rarity) : 'Sin definir'],
-                  ['Elemento', character.element ?? 'Sin definir'],
-                  ['Nivel máximo', character.level_cap ?? 'Sin definir'],
-                  ['Juego', game?.name ?? gameId],
-                ].map(([label, value]) => (
-                  <div
-                    key={label}
-                    className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
-                  >
-                    <dt className="mb-1.5 text-[11px] uppercase tracking-wide text-zinc-500">
-                      {label}
-                    </dt>
-                    <dd className="text-sm font-medium text-white">{value}</dd>
-                  </div>
-                ))}
-              </dl>
+              {activeTab === 'biografia' && (
+                <div className="mb-8">
+                  {character.biography ? (
+                    <p className="whitespace-pre-line text-[15px] leading-relaxed text-zinc-300">
+                      {character.biography}
+                    </p>
+                  ) : (
+                    <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-10 text-center">
+                      <BookOpen className="mx-auto mb-4 h-9 w-9 text-zinc-600" />
+                      <p className="text-sm text-zinc-400">
+                        La biografía de este personaje todavía no está cargada.
+                      </p>
+                    </div>
+                  )}
+
+                  {character.description && (
+                    <p className="mt-6 text-sm text-zinc-500">
+                      {character.description}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'stats' && (
+                <dl className="mb-8 grid grid-cols-2 gap-4">
+                  {[
+                    ['Nivel máximo', character.level_cap ?? 'Sin definir'],
+                    ['Rareza', character.rarity ? formatRarity(character.rarity) : 'Sin definir'],
+                  ].map(([label, value]) => (
+                    <div
+                      key={label}
+                      className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
+                    >
+                      <dt className="mb-1.5 text-[11px] uppercase tracking-wide text-zinc-500">
+                        {label}
+                      </dt>
+                      <dd className="text-sm font-medium text-white">{value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
 
               <button
                 type="button"

@@ -1,8 +1,17 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowLeft, Loader2, User, UserMinus } from 'lucide-react'
+import {
+  AlertCircle,
+  ArrowLeft,
+  Gamepad2,
+  Loader2,
+  User,
+  UserMinus,
+} from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { loadFriendships, removeFriendship } from '../data/friends'
+import { getGameById } from '../data/games'
+import GameArtwork from './GameArtwork'
 
 function FriendProfile() {
   const { friendId } = useParams()
@@ -12,6 +21,8 @@ function FriendProfile() {
   const [isLoading, setIsLoading] = useState(true)
   const [isRemoving, setIsRemoving] = useState(false)
   const [error, setError] = useState('')
+  const [games, setGames] = useState([])
+  const [isLoadingGames, setIsLoadingGames] = useState(true)
 
   useEffect(() => {
     let active = true
@@ -57,6 +68,26 @@ function FriendProfile() {
       }
 
       setIsLoading(false)
+
+      // La policy de Supabase decide si esto devuelve algo: si no sois amigos
+      // aceptados, llega vacio en lugar de fallar.
+      const { data: friendGames } = await supabase
+        .from('user_games')
+        .select('game_id, game_name')
+        .eq('user_id', friendId)
+        .order('added_date', { ascending: true })
+
+      if (!active) {
+        return
+      }
+
+      setGames(
+        (friendGames ?? []).map((row) => {
+          const fromCatalog = getGameById(row.game_id)
+          return { ...fromCatalog, id: row.game_id, name: row.game_name }
+        }),
+      )
+      setIsLoadingGames(false)
     }
 
     load()
@@ -137,6 +168,64 @@ function FriendProfile() {
                   {relation ? 'Sois amigos' : 'Todavía no sois amigos'}
                 </p>
               </div>
+            </section>
+
+            <section className="mb-6 rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
+              <h2 className="mb-1.5 flex items-center gap-2.5 text-lg font-semibold tracking-tight text-white">
+                <Gamepad2 className="h-5 w-5 text-zinc-400" />
+                Sus juegos
+              </h2>
+              <p className="mb-6 text-sm text-zinc-500">
+                {isLoadingGames
+                  ? 'Cargando…'
+                  : `${games.length} ${games.length === 1 ? 'juego' : 'juegos'} en su biblioteca`}
+              </p>
+
+              {isLoadingGames ? (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {[0, 1, 2].map((slot) => (
+                    <div
+                      key={slot}
+                      className="animate-pulse rounded-2xl border border-white/10 bg-[#1a1a1a] p-4"
+                    >
+                      <div className="mb-4 h-28 rounded-xl bg-white/5" />
+                      <div className="h-4 w-2/3 rounded bg-white/5" />
+                    </div>
+                  ))}
+                </div>
+              ) : games.length === 0 ? (
+                <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-10 text-center">
+                  <Gamepad2 className="mx-auto mb-4 h-9 w-9 text-zinc-600" />
+                  <p className="text-sm text-zinc-400">
+                    {relation
+                      ? 'Todavía no ha añadido ningún juego.'
+                      : 'Solo puedes ver los juegos de tus amigos.'}
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {games.map((game) => (
+                    <article
+                      key={game.id}
+                      className="group rounded-2xl border border-white/10 bg-[#1a1a1a] p-4 transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-[0_0_35px_rgba(0,102,255,0.15)]"
+                    >
+                      <div className="mb-4 h-28 overflow-hidden rounded-xl ring-1 ring-white/10">
+                        <GameArtwork
+                          game={game}
+                          fill
+                          className="transition-transform duration-500 group-hover:scale-105"
+                        />
+                      </div>
+                      <h3
+                        className="truncate text-sm font-semibold text-white"
+                        title={game.name}
+                      >
+                        {game.name}
+                      </h3>
+                    </article>
+                  ))}
+                </div>
+              )}
             </section>
 
             {relation && (
