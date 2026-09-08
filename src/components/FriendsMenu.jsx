@@ -179,7 +179,7 @@ function FriendsMenu() {
                         onClick={() => handleAccept(request.id)}
                         disabled={pendingId === request.id}
                         aria-label={t('friends.accept')}
-                        title="Aceptar"
+                        title={t('friends.accept')}
                         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-black transition-all duration-300 hover:bg-emerald-500 hover:text-white hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] focus:outline-none focus:ring-4 focus:ring-emerald-500/30 active:scale-95 disabled:opacity-50"
                       >
                         {pendingId === request.id ? (
@@ -194,7 +194,7 @@ function FriendsMenu() {
                         onClick={() => handleRemove(request.id)}
                         disabled={pendingId === request.id}
                         aria-label={t('friends.reject')}
-                        title="Rechazar"
+                        title={t('friends.reject')}
                         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-transparent text-zinc-400 transition-all duration-300 hover:border-red-500 hover:bg-red-500/15 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-500/30 active:scale-95 disabled:opacity-50"
                       >
                         <X className="h-4 w-4" />

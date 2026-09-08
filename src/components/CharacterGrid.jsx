@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowLeft, Users } from 'lucide-react'
+import { AlertCircle, ArrowLeft, Heart, Loader2, Users } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
+import { useFavorites } from '../data/useFavorites'
 import { getGameById } from '../data/games'
 import {
   formatRarity,
@@ -43,6 +44,8 @@ function CharacterGrid() {
   const [isLoading, setIsLoading] = useState(true)
   const { t } = useI18n()
   const [error, setError] = useState('')
+  const [view, setView] = useState('todos')
+  const favorites = useFavorites('favorite_characters', null)
 
   useEffect(() => {
     let active = true
@@ -70,6 +73,16 @@ function CharacterGrid() {
       active = false
     }
   }, [gameId, t])
+
+  const showingFavorites = view === 'favoritos'
+  const visible = showingFavorites
+    ? characters.filter((character) => favorites.favoriteIds.has(character.id))
+    : characters
+
+  const TABS = [
+    { id: 'todos', label: t('favorites.all'), count: characters.length },
+    { id: 'favoritos', label: t('favorites.title'), count: favorites.favoriteIds.size },
+  ]
 
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
@@ -100,7 +113,7 @@ function CharacterGrid() {
 
           {!isLoading && (
             <span className="shrink-0 text-sm text-zinc-500">
-              {characters.length}
+              {visible.length}
             </span>
           )}
         </div>
@@ -113,6 +126,40 @@ function CharacterGrid() {
             <p>{error}</p>
           </div>
         )}
+
+        {favorites.error && (
+          <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+            <p>{t('favorites.error', { message: favorites.error })}</p>
+          </div>
+        )}
+
+        <div className="mb-8 inline-flex gap-1.5 rounded-2xl border border-white/10 bg-white/[0.02] p-1.5">
+          {TABS.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setView(tab.id)}
+              className={`flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/20 ${
+                view === tab.id
+                  ? 'bg-white text-black'
+                  : 'text-zinc-400 hover:bg-white/5 hover:text-white'
+              }`}
+            >
+              {tab.id === 'favoritos' && (
+                <Heart className={`h-4 w-4 ${view === tab.id ? '' : 'text-rose-400'}`} />
+              )}
+              {tab.label}
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs ${
+                  view === tab.id ? 'bg-black/10 text-black/70' : 'bg-white/5 text-zinc-500'
+                }`}
+              >
+                {tab.count}
+              </span>
+            </button>
+          ))}
+        </div>
 
         {isLoading ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -127,71 +174,111 @@ function CharacterGrid() {
               </div>
             ))}
           </div>
-        ) : characters.length === 0 ? (
+        ) : visible.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-14 text-center">
-            <Users className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
+            {showingFavorites ? (
+              <Heart className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
+            ) : (
+              <Users className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
+            )}
             <p className="text-zinc-400">
-              {t('characters.empty')}
+              {!showingFavorites
+                ? t('characters.empty')
+                : favorites.userId
+                  ? t('favorites.empty')
+                  : t('favorites.signedOut')}
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {characters.map((character) => {
+            {visible.map((character) => {
               const elementStyle = getElementStyle(character.element)
+              const isFavorite = favorites.favoriteIds.has(character.id)
 
               return (
-                <button
+                <article
                   key={character.id}
-                  type="button"
-                  onClick={() =>
-                    navigate(`/game/${gameId}/characters/${character.id}`)
-                  }
-                  className="group flex flex-col rounded-2xl border border-white/10 bg-[#1a1a1a] p-5 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-[0_0_40px_rgba(0,102,255,0.15)] focus:outline-none focus:ring-4 focus:ring-blue-500/30"
+                  className="group relative rounded-2xl border border-white/10 bg-[#1a1a1a] transition-all duration-300 hover:-translate-y-1 hover:border-blue-500/40 hover:shadow-[0_0_40px_rgba(0,102,255,0.15)]"
                 >
-                  <div className="mb-5 h-48 overflow-hidden rounded-xl ring-1 ring-white/10">
-                    <CharacterPortrait
-                      character={character}
-                      className="transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-
-                  <h2
-                    className="mb-3 truncate text-lg font-semibold text-white"
-                    title={character.name}
-                  >
-                    {character.name}
-                  </h2>
-
-                  <div className="mb-3 flex flex-wrap gap-2">
-                    {character.rarity && (
-                      <span
-                        className={`rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${getRarityStyle(character.rarity)}`}
-                      >
-                        {formatRarity(character.rarity)}
-                      </span>
-                    )}
-                    {character.element && (
-                      <span
-                        className={`rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${elementStyle.badge}`}
-                      >
-                        {character.element}
-                      </span>
-                    )}
-                    {character.path && (
-                      <span className="rounded-full bg-white/5 px-2.5 py-1 text-xs font-medium text-zinc-300 ring-1 ring-white/15">
-                        {character.path}
-                      </span>
-                    )}
-                  </div>
-
-                  {character.role && (
-                    <p className="mb-4 text-sm text-zinc-400">{character.role}</p>
+                  {favorites.userId && (
+                    <button
+                      type="button"
+                      onClick={() => favorites.toggle(character.id)}
+                      disabled={favorites.pendingId === character.id}
+                      aria-pressed={isFavorite}
+                      aria-label={t(
+                        isFavorite ? 'favorites.remove' : 'favorites.add',
+                        { name: character.name },
+                      )}
+                      title={t(isFavorite ? 'favorites.remove' : 'favorites.add', {
+                        name: character.name,
+                      })}
+                      className={`absolute right-3 top-3 z-10 flex h-10 w-10 items-center justify-center rounded-full border backdrop-blur-md transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-rose-500/30 active:scale-90 disabled:opacity-60 ${
+                        isFavorite
+                          ? 'border-rose-500/50 bg-rose-500/25 text-rose-200 hover:bg-rose-500/35'
+                          : 'border-white/15 bg-black/50 text-zinc-300 hover:border-rose-500/60 hover:bg-rose-500/20 hover:text-white'
+                      }`}
+                    >
+                      {favorites.pendingId === character.id ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
+                      )}
+                    </button>
                   )}
 
-                  <span className="mt-auto block w-full rounded-lg bg-white px-3 py-2.5 text-center text-sm font-semibold text-black transition-all duration-300 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-[0_0_25px_rgba(147,51,234,0.6)]">
-                    {t('characters.viewDetails')}
-                  </span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      navigate(`/game/${gameId}/characters/${character.id}`)
+                    }
+                    className="flex w-full flex-col p-5 text-left focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500/30"
+                  >
+                    <div className="mb-5 h-48 overflow-hidden rounded-xl ring-1 ring-white/10">
+                      <CharacterPortrait
+                        character={character}
+                        className="transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+
+                    <h2
+                      className="mb-3 truncate text-lg font-semibold text-white"
+                      title={character.name}
+                    >
+                      {character.name}
+                    </h2>
+
+                    <div className="mb-3 flex flex-wrap gap-2">
+                      {character.rarity && (
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${getRarityStyle(character.rarity)}`}
+                        >
+                          {formatRarity(character.rarity)}
+                        </span>
+                      )}
+                      {character.element && (
+                        <span
+                          className={`rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${elementStyle.badge}`}
+                        >
+                          {character.element}
+                        </span>
+                      )}
+                      {character.path && (
+                        <span className="rounded-full bg-white/5 px-2.5 py-1 text-xs font-medium text-zinc-300 ring-1 ring-white/15">
+                          {character.path}
+                        </span>
+                      )}
+                    </div>
+
+                    {character.role && (
+                      <p className="mb-4 text-sm text-zinc-400">{character.role}</p>
+                    )}
+
+                    <span className="mt-auto block w-full rounded-lg bg-white px-3 py-2.5 text-center text-sm font-semibold text-black transition-all duration-300 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-[0_0_25px_rgba(147,51,234,0.6)]">
+                      {t('characters.viewDetails')}
+                    </span>
+                  </button>
+                </article>
               )
             })}
           </div>

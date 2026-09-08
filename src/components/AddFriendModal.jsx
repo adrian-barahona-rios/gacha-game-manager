@@ -83,7 +83,7 @@ function AddFriendModal({ userId, relations, onClose, onSent }) {
           <button
             type="button"
             onClick={onClose}
-            aria-label="Cerrar"
+            aria-label={t('common.close')}
             className="shrink-0 rounded-lg p-2 text-zinc-400 transition-colors duration-300 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
           >
             <X className="h-5 w-5" />

@@ -242,6 +242,8 @@ const es = {
   'uma.noCardMatches': 'Ninguna carta coincide con los filtros.',
   'uma.cardCategory': 'Categoría cartas',
   'uma.noCardsOfType': 'No hay cartas de este tipo en esta versión.',
+  'uma.traineeCount': '{count} entrenadoras',
+  'uma.error.trainees': 'No se pudieron cargar las entrenadoras: {message}',
   'uma.tierSource': 'Tiers de uma.moe. Las cartas del grupo “—” aún no tienen tier asignado.',
   'uma.noTiers':
     'Esta versión todavía no tiene tiers cargados, así que las cartas se agrupan por rareza.',
@@ -276,6 +278,15 @@ const es = {
   'admin.error.name': 'El nombre debe tener al menos 2 caracteres.',
   'admin.error.duplicate': 'Ya existe un personaje con el identificador {id}.',
   'admin.error.insert': 'No se pudo agregar el personaje: {message}',
+
+  // Favoritos
+  'favorites.title': 'Favoritos',
+  'favorites.all': 'Todos',
+  'favorites.add': 'Añadir {name} a favoritos',
+  'favorites.remove': 'Quitar {name} de favoritos',
+  'favorites.empty': 'Todavía no has marcado ningún favorito. Usa el corazón de cada tarjeta.',
+  'favorites.signedOut': 'Inicia sesión para guardar tus personajes favoritos.',
+  'favorites.error': 'No se pudieron guardar los favoritos: {message}',
 }
 
 const en = {
@@ -516,6 +527,8 @@ const en = {
   'uma.cardCategory': 'Card category',
   'uma.noCardsOfType': 'There are no cards of this type in this version.',
   'uma.tierSource': 'Tiers from uma.moe. Cards in the “—” group have no tier assigned yet.',
+  'uma.traineeCount': '{count} trainees',
+  'uma.error.trainees': 'The trainees could not be loaded: {message}',
   'uma.noTiers': 'This version has no tiers loaded yet, so cards are grouped by rarity.',
 
   // Admin panel
@@ -548,6 +561,15 @@ const en = {
   'admin.error.name': 'The name must be at least 2 characters long.',
   'admin.error.duplicate': 'A character with the identifier {id} already exists.',
   'admin.error.insert': 'The character could not be added: {message}',
+
+  // Favorites
+  'favorites.title': 'Favorites',
+  'favorites.all': 'All',
+  'favorites.add': 'Add {name} to favorites',
+  'favorites.remove': 'Remove {name} from favorites',
+  'favorites.empty': "You haven't marked any favorites yet. Use the heart on each card.",
+  'favorites.signedOut': 'Sign in to save your favorite characters.',
+  'favorites.error': 'The favorites could not be saved: {message}',
 }
 
 export const STRINGS = { es, en }
