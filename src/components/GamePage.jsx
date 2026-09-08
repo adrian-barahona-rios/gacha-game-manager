@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   BookOpen,
   ChevronDown,
+  Globe,
   Home,
   ListOrdered,
   Users,
@@ -300,6 +301,13 @@ const MENU_ITEMS = [
   { id: 'guias', label: 'Guías', icon: BookOpen },
 ]
 
+// Umamusume no se organiza por secciones sino por version del juego.
+const UMAMUSUME_MENU = [
+  { id: 'inicio', label: 'Inicio', icon: Home, to: null },
+  { id: 'japan', label: 'Versión japonesa', icon: Globe, to: 'japan' },
+  { id: 'global', label: 'Versión global', icon: Globe, to: 'global' },
+]
+
 function GamePage() {
   const { gameId } = useParams()
   const navigate = useNavigate()
@@ -328,7 +336,9 @@ function GamePage() {
   }
 
   const Background = BACKGROUNDS[game.theme]
-  const hasCharacters = GAMES_WITH_CHARACTERS.includes(game.id)
+  // Umamusume tiene su propio sistema, con dos versiones del juego.
+  const isUmamusume = game.id === 'umamusume-pretty-derby'
+  const hasCharacters = isUmamusume || GAMES_WITH_CHARACTERS.includes(game.id)
 
   return (
     <div className="relative min-h-screen scheme-dark overflow-hidden bg-black">
@@ -388,43 +398,74 @@ function GamePage() {
                   role="menu"
                   className="absolute right-0 z-20 mt-2 w-56 overflow-hidden rounded-xl border border-white/10 bg-[#0e0e12]/95 p-1.5 shadow-2xl shadow-black/80 backdrop-blur-xl"
                 >
-                  {MENU_ITEMS.map((item) => {
-                    const Icon = item.icon
-                    const isCurrent = item.id === 'inicio'
-                    const isCharacters = item.id === 'personajes'
-                    const isEnabled =
-                      isCurrent || (isCharacters && hasCharacters)
+                  {isUmamusume
+                    ? UMAMUSUME_MENU.map((item) => {
+                        const Icon = item.icon
+                        const isCurrent = item.id === 'inicio'
 
-                    return (
-                      <button
-                        key={item.id}
-                        type="button"
-                        role="menuitem"
-                        disabled={!isEnabled}
-                        onClick={() => {
-                          setIsMenuOpen(false)
-                          if (isCharacters) {
-                            navigate(`/game/${gameId}/characters`)
-                          }
-                        }}
-                        className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors duration-200 ${
-                          isCurrent
-                            ? 'bg-white/10 font-medium text-white'
-                            : isEnabled
-                              ? 'text-zinc-300 hover:bg-white/5 hover:text-white'
-                              : 'text-zinc-500 hover:bg-white/5 disabled:cursor-not-allowed'
-                        }`}
-                      >
-                        <Icon className="h-4 w-4 shrink-0" />
-                        <span className="flex-1">{item.label}</span>
-                        {!isEnabled && (
-                          <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-zinc-500">
-                            Pronto
-                          </span>
-                        )}
-                      </button>
-                    )
-                  })}
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            role="menuitem"
+                            onClick={() => {
+                              setIsMenuOpen(false)
+                              if (item.to) {
+                                navigate(`/game/umamusume/${item.to}/characters`)
+                              }
+                            }}
+                            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors duration-200 ${
+                              isCurrent
+                                ? 'bg-white/10 font-medium text-white'
+                                : 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                            }`}
+                          >
+                            <Icon className="h-4 w-4 shrink-0" />
+                            {item.label}
+                          </button>
+                        )
+                      })
+                    : MENU_ITEMS.map((item) => {
+                        const Icon = item.icon
+                        const isCurrent = item.id === 'inicio'
+                        const isCharacters = item.id === 'personajes'
+                        const isTierList = item.id === 'tierlist'
+                        const isEnabled =
+                          isCurrent ||
+                          ((isCharacters || isTierList) && hasCharacters)
+
+                        return (
+                          <button
+                            key={item.id}
+                            type="button"
+                            role="menuitem"
+                            disabled={!isEnabled}
+                            onClick={() => {
+                              setIsMenuOpen(false)
+                              if (isCharacters) {
+                                navigate(`/game/${gameId}/characters`)
+                              } else if (isTierList) {
+                                navigate(`/game/${gameId}/tierlist/official`)
+                              }
+                            }}
+                            className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors duration-200 ${
+                              isCurrent
+                                ? 'bg-white/10 font-medium text-white'
+                                : isEnabled
+                                  ? 'text-zinc-300 hover:bg-white/5 hover:text-white'
+                                  : 'text-zinc-500 hover:bg-white/5 disabled:cursor-not-allowed'
+                            }`}
+                          >
+                            <Icon className="h-4 w-4 shrink-0" />
+                            <span className="flex-1">{item.label}</span>
+                            {!isEnabled && (
+                              <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-zinc-500">
+                                Pronto
+                              </span>
+                            )}
+                          </button>
+                        )
+                      })}
                 </div>
               </>
             )}
