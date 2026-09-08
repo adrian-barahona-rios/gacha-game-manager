@@ -9,6 +9,7 @@ import {
   Loader2,
   LogOut,
   Mail,
+  NotebookPen,
   Send,
   User,
   UserPlus,
@@ -255,6 +256,22 @@ function UserProfile() {
               <span className="truncate">{user?.email ?? '—'}</span>
             </p>
           </div>
+        </section>
+
+        <section className="mb-6 rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
+          <h2 className="mb-1.5 text-lg font-semibold tracking-tight text-white">
+            {t('guides.mine.title')}
+          </h2>
+          <p className="mb-5 text-sm text-zinc-500">{t('guides.mine.subtitle')}</p>
+
+          <button
+            type="button"
+            onClick={() => navigate('/profile/my-guides')}
+            className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-transparent px-5 py-3 text-sm font-semibold text-zinc-300 transition-all duration-300 hover:border-[#0066ff] hover:bg-[#0066ff]/10 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95"
+          >
+            <NotebookPen className="h-4 w-4" />
+            {t('guides.mine.open')}
+          </button>
         </section>
 
         <section className="mb-6 rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">

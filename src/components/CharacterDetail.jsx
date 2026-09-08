@@ -366,6 +366,7 @@ function CharacterDetail() {
                 </dl>
               )}
 
+              <div className="flex flex-wrap gap-3">
               <button
                 type="button"
                 onClick={toggleFavorite}
@@ -385,6 +386,16 @@ function CharacterDetail() {
                 )}
                 {isFavorite ? t('character.inFavorites') : t('character.addFavorite')}
               </button>
+
+              <button
+                type="button"
+                onClick={() => navigate(`/game/${gameId}/characters/${characterId}/guides`)}
+                className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-transparent px-5 py-3 text-sm font-semibold text-zinc-300 transition-all duration-300 hover:border-amber-400 hover:bg-amber-400/10 hover:text-white focus:outline-none focus:ring-4 focus:ring-amber-500/30 active:scale-95"
+              >
+                <BookOpen className="h-4 w-4" />
+                {t('guides.title')}
+              </button>
+              </div>
             </div>
           </div>
         )}

@@ -3,6 +3,10 @@ import AdminGuard from './components/AdminGuard'
 import AdminPanel from './components/AdminPanel'
 import CharacterDetail from './components/CharacterDetail'
 import CharacterGrid from './components/CharacterGrid'
+import CharacterGuides from './components/CharacterGuides'
+import GuideDetail from './components/GuideDetail'
+import GuideForm from './components/GuideForm'
+import MyGuides from './components/MyGuides'
 import Dashboard from './components/Dashboard'
 import FriendProfile from './components/FriendProfile'
 import FriendsMenu from './components/FriendsMenu'
@@ -45,6 +49,10 @@ function App() {
         element={<CharacterDetail />}
       />
       <Route
+        path="/game/:gameId/characters/:characterId/guides"
+        element={<CharacterGuides />}
+      />
+      <Route
         path="/game/:gameId/tierlist/official"
         element={<TierListOfficial />}
       />
@@ -53,6 +61,10 @@ function App() {
         element={<TierListPersonal />}
       />
       <Route path="/profile" element={<UserProfile />} />
+      <Route path="/profile/my-guides" element={<MyGuides />} />
+      <Route path="/profile/my-guides/new" element={<GuideForm />} />
+      <Route path="/profile/my-guides/:guideId" element={<GuideDetail />} />
+      <Route path="/profile/my-guides/:guideId/edit" element={<GuideForm />} />
       <Route path="/profile/friends" element={<FriendsMenu />} />
       <Route path="/profile/friends/:friendId" element={<FriendProfile />} />
       <Route path="/reset-password" element={<ResetPassword />} />

@@ -1,15 +1,17 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, BookOpen, ListOrdered, ShieldCheck, UserPlus } from 'lucide-react'
+import { ArrowLeft, BookOpen, ListOrdered, ShieldCheck, Swords, UserPlus } from 'lucide-react'
 import { useI18n } from '../i18n/useI18n'
 import AdminBiographyEditor from './AdminBiographyEditor'
 import AdminCharacterForm from './AdminCharacterForm'
+import AdminMetaGuides from './AdminMetaGuides'
 import AdminTierEditor from './AdminTierEditor'
 
 const SECTIONS = [
   { id: 'personajes', labelKey: 'admin.tab.characters', icon: UserPlus },
   { id: 'tierlist', labelKey: 'admin.tab.tierLists', icon: ListOrdered },
   { id: 'biografias', labelKey: 'admin.tab.biographies', icon: BookOpen },
+  { id: 'guias', labelKey: 'admin.tab.metaGuides', icon: Swords },
 ]
 
 function AdminPanel() {
@@ -73,6 +75,7 @@ function AdminPanel() {
           {section === 'personajes' && <AdminCharacterForm />}
           {section === 'tierlist' && <AdminTierEditor />}
           {section === 'biografias' && <AdminBiographyEditor />}
+          {section === 'guias' && <AdminMetaGuides />}
         </section>
       </main>
     </div>
