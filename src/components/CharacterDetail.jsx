@@ -1,7 +1,15 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowLeft, BookOpen, Heart, Loader2 } from 'lucide-react'
+import {
+  AlertCircle,
+  ArrowLeft,
+  BookOpen,
+  ExternalLink,
+  Heart,
+  Loader2,
+} from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
 import {
   formatRarity,
@@ -10,19 +18,28 @@ import {
 } from '../data/characterStyles'
 
 const TABS = [
-  { id: 'detalles', label: 'Detalles' },
-  { id: 'biografia', label: 'Biografía' },
-  { id: 'stats', label: 'Stats' },
+  { id: 'detalles', labelKey: 'character.tab.details' },
+  { id: 'biografia', labelKey: 'character.tab.biography' },
+  { id: 'stats', labelKey: 'character.tab.stats' },
 ]
+
+// Las biografias vienen de las wikis con saltos de linea: los volvemos parrafos.
+function splitParagraphs(text) {
+  return text
+    .split(/\n+/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean)
+}
 
 // Cada juego llama distinto a lo mismo: Via en Star Rail, Especialidad en Zenless.
 const PATH_LABELS = {
-  'honkai-star-rail': ['Vía', 'Cono de luz'],
-  'zenless-zone-zero': ['Especialidad', 'Motor-W'],
+  'honkai-star-rail': ['character.path.hsr', 'character.signature.hsr'],
+  'zenless-zone-zero': ['character.path.zzz', 'character.signature.zzz'],
 }
 
 function CharacterDetail() {
   const { gameId, characterId } = useParams()
+  const { t, activeLanguage } = useI18n()
   const [activeTab, setActiveTab] = useState('detalles')
   const navigate = useNavigate()
   const game = getGameById(gameId)
@@ -46,7 +63,7 @@ function CharacterDetail() {
           return
         }
         if (loadError) {
-          setError(`No se pudo cargar el personaje: ${loadError.message}`)
+          setError(t('character.error.load', { message: loadError.message }))
         } else {
           setCharacter(data)
         }
@@ -56,7 +73,7 @@ function CharacterDetail() {
     return () => {
       active = false
     }
-  }, [characterId])
+  }, [characterId, t])
 
   useEffect(() => {
     let active = true
@@ -108,7 +125,7 @@ function CharacterDetail() {
     setIsTogglingFavorite(false)
 
     if (favoriteError) {
-      setError(`No se pudo actualizar el favorito: ${favoriteError.message}`)
+      setError(t('character.error.favorite', { message: favoriteError.message }))
       return
     }
 
@@ -117,10 +134,22 @@ function CharacterDetail() {
   }
 
   const elementStyle = getElementStyle(character?.element)
-  const [pathLabel, signatureLabel] = PATH_LABELS[gameId] ?? [
-    'Especialidad',
-    'Equipo recomendado',
+  const [pathKey, signatureKey] = PATH_LABELS[gameId] ?? [
+    'character.path.default',
+    'character.signature.default',
   ]
+  const pathLabel = t(pathKey)
+  const signatureLabel = t(signatureKey)
+
+  // Cada idioma tiene su propia columna; si falta, se usa la inglesa.
+  const biography =
+    (activeLanguage === 'es' ? character?.biography_es : character?.biography_en) ??
+    character?.biography_en ??
+    character?.biography
+  const biographySource =
+    (activeLanguage === 'es' ? character?.biography_source_es : character?.biography_source_en) ??
+    character?.biography_source_en
+  const isTranslated = activeLanguage === 'es' && character?.biography_es_translated === true
 
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
@@ -137,7 +166,7 @@ function CharacterDetail() {
             className="flex shrink-0 items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-sm font-medium text-white transition-all duration-300 hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:scale-95"
           >
             <ArrowLeft className="h-4 w-4" />
-            Volver
+            {t('common.back')}
           </button>
           <span className={`truncate text-sm ${game?.accent ?? 'text-zinc-500'}`}>
             {game?.name ?? gameId}
@@ -165,7 +194,7 @@ function CharacterDetail() {
         ) : !character ? (
           <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-14 text-center">
             <p className="mb-6 text-zinc-400">
-              No encontramos ningún personaje con ese identificador.
+              {t('character.notFound')}
             </p>
             <button
               type="button"
@@ -173,7 +202,7 @@ function CharacterDetail() {
               className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-[#0066ff] hover:text-white active:scale-95"
             >
               <ArrowLeft className="h-4 w-4" />
-              Ver todos los personajes
+              {t('character.viewAll')}
             </button>
           </div>
         ) : (
@@ -232,7 +261,7 @@ function CharacterDetail() {
                         : 'text-zinc-400 hover:bg-white/5 hover:text-white'
                     }`}
                   >
-                    {tab.label}
+                    {t(tab.labelKey)}
                   </button>
                 ))}
               </div>
@@ -240,12 +269,15 @@ function CharacterDetail() {
               {activeTab === 'detalles' && (
                 <dl className="mb-8 grid grid-cols-2 gap-4">
                   {[
-                    ['Rareza', character.rarity ? formatRarity(character.rarity) : 'Sin definir'],
-                    ['Elemento', character.element ?? 'Sin definir'],
-                    ['Rol', character.role ?? 'Sin definir'],
-                    [pathLabel, character.path ?? 'Sin definir'],
-                    [signatureLabel, character.signature ?? 'Sin definir'],
-                    ['Juego', game?.name ?? gameId],
+                    [
+                      t('character.rarity'),
+                      character.rarity ? formatRarity(character.rarity) : t('character.undefined'),
+                    ],
+                    [t('character.element'), character.element ?? t('character.undefined')],
+                    [t('character.role'), character.role ?? t('character.undefined')],
+                    [pathLabel, character.path ?? t('character.undefined')],
+                    [signatureLabel, character.signature ?? t('character.undefined')],
+                    [t('character.game'), game?.name ?? gameId],
                   ].map(([label, value]) => (
                     <div
                       key={label}
@@ -262,15 +294,44 @@ function CharacterDetail() {
 
               {activeTab === 'biografia' && (
                 <div className="mb-8">
-                  {character.biography ? (
-                    <p className="whitespace-pre-line text-[15px] leading-relaxed text-zinc-300">
-                      {character.biography}
-                    </p>
+                  {biography ? (
+                    <article className="space-y-5">
+                      {splitParagraphs(biography).map((paragraph, index) => (
+                        <p
+                          key={index}
+                          className={`text-[15px] leading-7 ${
+                            index === 0
+                              ? 'border-l-2 border-white/20 pl-5 text-zinc-200'
+                              : 'text-zinc-400'
+                          }`}
+                        >
+                          {paragraph}
+                        </p>
+                      ))}
+
+                      {isTranslated && (
+                        <p className="text-[13px] italic text-zinc-500">
+                          {t('character.translatedNotice')}
+                        </p>
+                      )}
+
+                      {biographySource && (
+                        <a
+                          href={biographySource}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-2 text-xs text-zinc-500 transition hover:text-white"
+                        >
+                          <ExternalLink className="h-3.5 w-3.5" />
+                          {t('character.officialSource')}
+                        </a>
+                      )}
+                    </article>
                   ) : (
                     <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-10 text-center">
                       <BookOpen className="mx-auto mb-4 h-9 w-9 text-zinc-600" />
                       <p className="text-sm text-zinc-400">
-                        La biografía de este personaje todavía no está cargada.
+                        {t('character.noBiography')}
                       </p>
                     </div>
                   )}
@@ -286,8 +347,11 @@ function CharacterDetail() {
               {activeTab === 'stats' && (
                 <dl className="mb-8 grid grid-cols-2 gap-4">
                   {[
-                    ['Nivel máximo', character.level_cap ?? 'Sin definir'],
-                    ['Rareza', character.rarity ? formatRarity(character.rarity) : 'Sin definir'],
+                    [t('character.levelCap'), character.level_cap ?? t('character.undefined')],
+                    [
+                      t('character.rarity'),
+                      character.rarity ? formatRarity(character.rarity) : t('character.undefined'),
+                    ],
                   ].map(([label, value]) => (
                     <div
                       key={label}
@@ -319,7 +383,7 @@ function CharacterDetail() {
                     className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`}
                   />
                 )}
-                {isFavorite ? 'En favoritos' : 'Guardar como favorito'}
+                {isFavorite ? t('character.inFavorites') : t('character.addFavorite')}
               </button>
             </div>
           </div>

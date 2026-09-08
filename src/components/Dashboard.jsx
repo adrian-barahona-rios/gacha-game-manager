@@ -13,7 +13,8 @@ import {
   X,
 } from 'lucide-react'
 import { supabase } from '../config/supabase'
-import { GAME_CATALOG } from '../data/games'
+import { useI18n } from '../i18n/useI18n'
+import { GAME_CATALOG, getGameCopy } from '../data/games'
 import GameArtwork from './GameArtwork'
 
 const PARTICLES = [
@@ -53,6 +54,7 @@ function AnimatedBackground() {
 }
 
 function GameCard({ game, delayClass, isRemoving, onOpen, onDelete }) {
+  const { t } = useI18n()
   const [shown, setShown] = useState(false)
 
   useEffect(() => {
@@ -89,14 +91,14 @@ function GameCard({ game, delayClass, isRemoving, onOpen, onDelete }) {
           className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-white px-3 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-purple-600 hover:text-white hover:shadow-[0_0_25px_rgba(147,51,234,0.6)] focus:outline-none focus:ring-4 focus:ring-purple-500/30 active:scale-95 active:bg-[#0066ff] active:shadow-[0_0_25px_rgba(0,102,255,0.7)]"
         >
           <Info className="h-4 w-4" />
-          Información
+          {t('dashboard.info')}
         </button>
 
         <button
           type="button"
           onClick={() => onDelete(game)}
           disabled={isRemoving}
-          aria-label={`Eliminar ${game.name}`}
+          aria-label={t('dashboard.remove', { game: game.name })}
           className="flex items-center justify-center rounded-lg bg-white px-3 py-2.5 text-black transition-all duration-300 hover:bg-red-600 hover:text-white hover:shadow-[0_0_25px_rgba(220,38,38,0.6)] focus:outline-none focus:ring-4 focus:ring-red-500/30 active:scale-95 active:bg-[#0066ff] active:shadow-[0_0_25px_rgba(0,102,255,0.7)] disabled:opacity-50"
         >
           {isRemoving ? (
@@ -118,6 +120,7 @@ function Dashboard() {
   const [isAdding, setIsAdding] = useState(false)
   const [pendingId, setPendingId] = useState(null)
   const [removingIds, setRemovingIds] = useState([])
+  const { t, activeLanguage } = useI18n()
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -152,7 +155,7 @@ function Dashboard() {
 
   const userId = user?.id
   const displayName =
-    user?.user_metadata?.username ?? user?.email?.split('@')[0] ?? 'Mi perfil'
+    user?.user_metadata?.username ?? user?.email?.split('@')[0] ?? t('dashboard.myProfile')
 
   useEffect(() => {
     if (!userId) {
@@ -172,7 +175,7 @@ function Dashboard() {
         }
 
         if (loadError) {
-          setError(`No se pudieron cargar tus juegos: ${loadError.message}`)
+          setError(t('dashboard.error.load', { message: loadError.message }))
         } else {
           setGames(
             data.map((row) => {
@@ -191,7 +194,7 @@ function Dashboard() {
     return () => {
       active = false
     }
-  }, [userId])
+  }, [userId, t])
 
   const handleAdd = async (game) => {
     if (!userId || games.some((item) => item.id === game.id)) {
@@ -209,7 +212,7 @@ function Dashboard() {
     setPendingId(null)
 
     if (addError) {
-      setError(`No se pudo guardar el juego: ${addError.message}`)
+      setError(t('dashboard.error.add', { message: addError.message }))
       return
     }
 
@@ -232,7 +235,7 @@ function Dashboard() {
       .eq('game_id', game.id)
 
     if (deleteError) {
-      setError(`No se pudo eliminar el juego: ${deleteError.message}`)
+      setError(t('dashboard.error.remove', { message: deleteError.message }))
     } else {
       await new Promise((resolve) => setTimeout(resolve, 320))
       setGames((current) => current.filter((item) => item.id !== game.id))
@@ -253,7 +256,7 @@ function Dashboard() {
               <Gamepad2 className="h-5 w-5 text-white" />
             </div>
             <span className="truncate text-lg font-semibold tracking-tight text-white">
-              Gacha Game Manager
+              {t('common.appName')}
             </span>
           </div>
 
@@ -261,8 +264,8 @@ function Dashboard() {
           <button
             type="button"
             onClick={() => navigate('/profile/friends')}
-            title="Menú de amigos"
-            aria-label="Menú de amigos"
+            title={t('dashboard.friendsMenu')}
+            aria-label={t('dashboard.friendsMenu')}
             className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-zinc-300 transition-all duration-300 hover:border-[#0066ff] hover:bg-[#0066ff]/15 hover:text-white hover:shadow-[0_0_20px_rgba(0,102,255,0.3)] focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95"
           >
             <Users className="h-4 w-4" />
@@ -271,8 +274,8 @@ function Dashboard() {
           <button
             type="button"
             onClick={() => navigate('/profile')}
-            title="Ver tu perfil"
-            aria-label="Ver tu perfil"
+            title={t('dashboard.yourProfile')}
+            aria-label={t('dashboard.yourProfile')}
             className="flex shrink-0 items-center gap-2.5 rounded-full border border-white/10 bg-white/5 py-1.5 pl-1.5 pr-1.5 text-sm text-zinc-300 transition-all duration-300 hover:border-[#0066ff] hover:bg-[#0066ff]/15 hover:text-white hover:shadow-[0_0_20px_rgba(0,102,255,0.3)] focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95 sm:pr-4"
           >
             <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10">
@@ -289,11 +292,13 @@ function Dashboard() {
       <main className="relative z-10 mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14">
         <div className="mb-8 flex items-baseline gap-3">
           <h1 className="text-2xl font-semibold tracking-tight text-white sm:text-3xl">
-            Mis Juegos
+            {t('dashboard.title')}
           </h1>
           {!isLoading && (
             <span className="text-sm text-zinc-500">
-              {games.length} {games.length === 1 ? 'juego' : 'juegos'}
+              {t(games.length === 1 ? 'dashboard.gameCount' : 'dashboard.gameCountPlural', {
+                count: games.length,
+              })}
             </span>
           )}
         </div>
@@ -322,7 +327,7 @@ function Dashboard() {
           <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-14 text-center">
             <Gamepad2 className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
             <p className="text-zinc-400">
-              Todavía no has añadido ningún juego.
+              {t('dashboard.empty')}
             </p>
           </div>
         ) : (
@@ -349,7 +354,7 @@ function Dashboard() {
             className="group mt-8 flex w-full items-center justify-center gap-3 rounded-2xl border border-dashed border-white/20 bg-transparent py-8 text-sm font-semibold text-zinc-400 transition-all duration-300 hover:border-[#0066ff] hover:bg-[#0066ff]/10 hover:text-white hover:shadow-[0_0_35px_rgba(0,102,255,0.25)] focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-[0.99] active:border-[#0066ff] active:bg-[#0066ff]/25 active:text-white"
           >
             <Plus className="h-5 w-5 transition-transform duration-300 group-hover:rotate-90" />
-            Agregar juego
+            {t('dashboard.addGame')}
           </button>
         )}
       </main>
@@ -360,16 +365,19 @@ function Dashboard() {
             <div className="mb-7 flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-xl font-semibold tracking-tight text-white sm:text-2xl">
-                  Agregar juego
+                  {t('dashboard.addGame')}
                 </h2>
                 <p className="mt-1.5 text-sm text-zinc-500">
-                  {games.length} de {GAME_CATALOG.length} en tu biblioteca
+                  {t('dashboard.libraryCount', {
+                    count: games.length,
+                    total: GAME_CATALOG.length,
+                  })}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsAdding(false)}
-                aria-label="Cerrar"
+                aria-label={t('common.close')}
                 className="shrink-0 rounded-lg p-2 text-zinc-400 transition-colors duration-300 hover:bg-white/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-white/30"
               >
                 <X className="h-5 w-5" />
@@ -411,11 +419,11 @@ function Dashboard() {
                         {isAdded ? (
                           <span className="mt-1 flex items-center gap-1.5 text-xs text-zinc-600">
                             <Check className="h-3.5 w-3.5" />
-                            Añadido
+                            {t('dashboard.added')}
                           </span>
                         ) : (
                           <span className="mt-1 block truncate text-xs text-zinc-500">
-                            {game.genre}
+                            {getGameCopy(game, activeLanguage).genre}
                           </span>
                         )}
                       </span>

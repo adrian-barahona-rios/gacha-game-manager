@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AlertCircle, Info, ListOrdered } from 'lucide-react'
 import { useSupportCards } from '../data/useSupportCards'
+import { useI18n } from '../i18n/useI18n'
 import UmamusumeLayout from './UmamusumeLayout'
 import { SupportCard } from './UmamusumeSupportCards'
 
@@ -28,6 +29,7 @@ const GROUP_STYLES = {
 }
 
 function UmamusumeSupportTierList() {
+  const { t } = useI18n()
   const { version } = useParams()
   const { cards, isLoading, error } = useSupportCards(version)
   const [bonus, setBonus] = useState('Speed')
@@ -66,7 +68,7 @@ function UmamusumeSupportTierList() {
 
   return (
     <UmamusumeLayout
-      title="Tier List de Support"
+      title={t('uma.menu.supportTierList')}
       subtitle={isLoading ? '' : `${cards.length} cartas`}
       current="tierlist-support"
     >
@@ -82,19 +84,17 @@ function UmamusumeSupportTierList() {
           <Info className="mt-0.5 h-4 w-4 shrink-0 text-zinc-500" />
           {hasTiers ? (
             <p>
-              Tiers de uma.moe. Las cartas del grupo “—” aún no tienen tier
-              asignado.
+              {t('uma.tierSource')}
             </p>
           ) : (
             <p>
-              Esta versión todavía no tiene tiers cargados, así que las cartas se
-              agrupan por rareza.
+              {t('uma.noTiers')}
             </p>
           )}
         </div>
       )}
 
-      <p className="mb-3 text-sm font-medium text-zinc-400">Categoría cartas</p>
+      <p className="mb-3 text-sm font-medium text-zinc-400">{t('uma.cardCategory')}</p>
 
       <div className="mb-8 flex flex-wrap gap-2">
         {bonuses.map((option) => (
@@ -126,7 +126,7 @@ function UmamusumeSupportTierList() {
         <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-14 text-center">
           <ListOrdered className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
           <p className="text-zinc-400">
-            No hay cartas de este tipo en esta versión.
+            {t('uma.noCardsOfType')}
           </p>
         </div>
       ) : (

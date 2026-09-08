@@ -15,6 +15,8 @@ import {
   Users,
 } from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { LANGUAGES } from '../i18n/context'
+import { useI18n } from '../i18n/useI18n'
 import { loadFriendships } from '../data/friends'
 import AddFriendModal from './AddFriendModal'
 
@@ -25,6 +27,7 @@ function UserProfile() {
   const [savedUsername, setSavedUsername] = useState('')
   const [isSaving, setIsSaving] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
+  const { t, activeLanguage, setLanguage } = useI18n()
   const [error, setError] = useState('')
   const [isSendingReset, setIsSendingReset] = useState(false)
   const [resetSent, setResetSent] = useState(false)
@@ -88,12 +91,12 @@ function UserProfile() {
     const trimmed = username.trim()
 
     if (trimmed.length < 3) {
-      setError('El nombre de usuario debe tener al menos 3 caracteres.')
+      setError(t('register.error.username'))
       return
     }
 
     if (trimmed.toLowerCase() === savedUsername.toLowerCase()) {
-      setError('Ese ya es tu nombre de usuario.')
+      setError(t('profile.error.sameUsername'))
       return
     }
 
@@ -107,7 +110,7 @@ function UserProfile() {
 
     if (taken && taken.id !== user.id) {
       setIsSaving(false)
-      setError('Ese nombre de usuario ya está en uso.')
+      setError(t('register.error.usernameTaken'))
       return
     }
 
@@ -118,7 +121,7 @@ function UserProfile() {
 
     if (profileError) {
       setIsSaving(false)
-      setError(`No se pudo guardar: ${profileError.message}`)
+      setError(t('tierlist.error.save', { message: profileError.message }))
       return
     }
 
@@ -174,7 +177,7 @@ function UserProfile() {
       setIsCopied(true)
       setTimeout(() => setIsCopied(false), 2000)
     } catch {
-      setError('Tu navegador no permitió copiar. Selecciona el ID a mano.')
+      setError(t('profile.error.copy'))
     }
   }
 
@@ -217,13 +220,13 @@ function UserProfile() {
             <button
               type="button"
               onClick={() => navigate('/dashboard')}
-              aria-label="Volver al dashboard"
+              aria-label={t('game.backToDashboard')}
               className="shrink-0 rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:scale-95"
             >
               <ArrowLeft className="h-4 w-4" />
             </button>
             <span className="text-lg font-semibold tracking-tight text-white">
-              Tu perfil
+              {t('profile.title')}
             </span>
           </div>
 
@@ -233,7 +236,7 @@ function UserProfile() {
             className="flex items-center gap-2 rounded-lg bg-white px-3 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-red-600 hover:text-white hover:shadow-[0_0_25px_rgba(220,38,38,0.6)] focus:outline-none focus:ring-4 focus:ring-red-500/30 active:scale-95 sm:px-4"
           >
             <LogOut className="h-4 w-4" />
-            <span className="hidden sm:inline">Cerrar sesión</span>
+            <span className="hidden sm:inline">{t('profile.signOut')}</span>
           </button>
         </div>
       </header>
@@ -245,7 +248,7 @@ function UserProfile() {
           </div>
           <div className="min-w-0">
             <h1 className="truncate text-2xl font-semibold tracking-tight text-white">
-              {savedUsername || 'Sin nombre de usuario'}
+              {savedUsername || t('profile.noUsername')}
             </h1>
             <p className="mt-1.5 flex items-center justify-center gap-2 text-sm text-zinc-500 sm:justify-start">
               <Mail className="h-4 w-4 shrink-0" />
@@ -256,10 +259,38 @@ function UserProfile() {
 
         <section className="mb-6 rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
           <h2 className="mb-1.5 text-lg font-semibold tracking-tight text-white">
-            Tu ID de cuenta
+            {t('profile.language')}
+          </h2>
+          <p className="mb-5 text-sm text-zinc-500">{t('profile.languageHint')}</p>
+
+          <div className="flex flex-wrap gap-3">
+            {LANGUAGES.map((option) => {
+              const isActive = option.id === activeLanguage
+              return (
+                <button
+                  key={option.id}
+                  type="button"
+                  onClick={() => setLanguage(option.id)}
+                  className={`flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95 ${
+                    isActive
+                      ? 'bg-white text-black'
+                      : 'border border-white/15 bg-transparent text-zinc-300 hover:border-[#0066ff] hover:bg-[#0066ff]/10 hover:text-white'
+                  }`}
+                >
+                  {isActive && <Check className="h-4 w-4" />}
+                  {option.native}
+                </button>
+              )
+            })}
+          </div>
+        </section>
+
+        <section className="mb-6 rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
+          <h2 className="mb-1.5 text-lg font-semibold tracking-tight text-white">
+            {t('profile.accountId')}
           </h2>
           <p className="mb-5 text-sm text-zinc-500">
-            Compártelo para que otras personas puedan agregarte.
+            {t('profile.accountIdHint')}
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
@@ -275,12 +306,12 @@ function UserProfile() {
               {isCopied ? (
                 <>
                   <Check className="h-4 w-4 text-emerald-400" />
-                  Copiado
+                  {t('profile.copied')}
                 </>
               ) : (
                 <>
                   <Copy className="h-4 w-4" />
-                  Copiar
+                  {t('profile.copy')}
                 </>
               )}
             </button>
@@ -290,12 +321,17 @@ function UserProfile() {
         <section className="mb-6 rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
           <h2 className="mb-1.5 flex items-center gap-2.5 text-lg font-semibold tracking-tight text-white">
             <Users className="h-5 w-5 text-zinc-400" />
-            Amigos
+            {t('profile.friends')}
           </h2>
           <p className="mb-6 text-sm text-zinc-500">
-            {friendCount} {friendCount === 1 ? 'amigo' : 'amigos'}
+            {t(friendCount === 1 ? 'profile.friendCount' : 'profile.friendCountPlural', {
+              count: friendCount,
+            })}
             {pendingCount > 0 &&
-              ` · ${pendingCount} ${pendingCount === 1 ? 'solicitud pendiente' : 'solicitudes pendientes'}`}
+              ` · ${t(
+                pendingCount === 1 ? 'profile.pendingCount' : 'profile.pendingCountPlural',
+                { count: pendingCount },
+              )}`}
           </p>
 
           <div className="flex flex-wrap gap-3">
@@ -305,7 +341,7 @@ function UserProfile() {
               className="flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#0066ff] hover:text-white hover:shadow-[0_0_25px_rgba(0,102,255,0.65)] focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:translate-y-0 active:scale-95"
             >
               <UserPlus className="h-4 w-4" />
-              Buscar amigos
+              {t('profile.findFriends')}
             </button>
 
             <button
@@ -314,7 +350,7 @@ function UserProfile() {
               className="flex items-center justify-center gap-2 rounded-xl border border-white/15 bg-transparent px-5 py-3 text-sm font-semibold text-zinc-300 transition-all duration-300 hover:border-[#0066ff] hover:bg-[#0066ff]/10 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95"
             >
               <Users className="h-4 w-4" />
-              Menú de amigos
+              {t('dashboard.friendsMenu')}
               {pendingCount > 0 && (
                 <span className="ml-1 rounded-full bg-blue-600 px-2 py-0.5 text-xs font-semibold text-white">
                   {pendingCount}
@@ -326,10 +362,10 @@ function UserProfile() {
 
         <section className="mb-6 rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
           <h2 className="mb-1.5 text-lg font-semibold tracking-tight text-white">
-            Nombre de usuario
+            {t('common.username')}
           </h2>
           <p className="mb-6 text-sm text-zinc-500">
-            Es el nombre por el que te llamaremos. Debe ser único.
+            {t('profile.usernameHint')}
           </p>
 
           <form onSubmit={handleSaveUsername} noValidate>
@@ -350,7 +386,7 @@ function UserProfile() {
                   setIsSaved(false)
                   setError('')
                 }}
-                placeholder="¿Cómo quieres que te llamemos?"
+                placeholder={t('register.usernamePlaceholder')}
                 className={`peer w-full rounded-xl border bg-white/[0.03] py-3.5 pl-11 pr-4 text-[15px] text-white placeholder:text-zinc-600 transition-all duration-300 focus:bg-white/[0.06] focus:outline-none focus:ring-4 ${
                   error
                     ? 'border-red-500/40 focus:border-red-500/70 focus:ring-red-500/10'
@@ -373,17 +409,17 @@ function UserProfile() {
                 {isSaving ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Guardando…
+                    {t('reset.saving')}
                   </>
                 ) : (
-                  'Guardar cambios'
+                  t('profile.saveChanges')
                 )}
               </button>
 
               {isSaved && (
                 <span className="flex items-center gap-2 text-sm text-emerald-400">
                   <Check className="h-4 w-4" />
-                  Guardado
+                  {t('profile.saved')}
                 </span>
               )}
             </div>
@@ -393,12 +429,12 @@ function UserProfile() {
         <section className="rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
           <h2 className="mb-1.5 flex items-center gap-2.5 text-lg font-semibold tracking-tight text-white">
             <KeyRound className="h-5 w-5 text-zinc-400" />
-            Cambiar contraseña
+            {t('reset.submit')}
           </h2>
           <p className="mb-6 text-sm leading-relaxed text-zinc-500">
-            Te enviaremos un enlace a{' '}
-            <span className="text-zinc-300">{user?.email ?? 'tu email'}</span>{' '}
-            para que elijas una contraseña nueva.
+            {t('profile.resetHintStart')}{' '}
+            <span className="text-zinc-300">{user?.email ?? t('profile.yourEmail')}</span>
+            {t('profile.resetHintEnd')}
           </p>
 
           {resetError && (
@@ -412,8 +448,7 @@ function UserProfile() {
             <div className="flex items-start gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3.5 text-sm text-emerald-200">
               <Check className="mt-0.5 h-4 w-4 shrink-0" />
               <p>
-                Email enviado. Abre el enlace desde tu correo para elegir la
-                contraseña nueva.
+                {t('profile.resetSent')}
               </p>
             </div>
           ) : (
@@ -426,12 +461,12 @@ function UserProfile() {
               {isSendingReset ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  Enviando…
+                  {t('profile.sending')}
                 </>
               ) : (
                 <>
                   <Send className="h-4 w-4" />
-                  Enviar email de reset
+                  {t('profile.sendReset')}
                 </>
               )}
             </button>

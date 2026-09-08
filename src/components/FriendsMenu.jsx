@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AlertCircle, ArrowLeft, Check, Loader2, User, X } from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { useI18n } from '../i18n/useI18n'
 import {
   acceptFriendRequest,
   loadFriendships,
@@ -11,6 +12,7 @@ import AddFriendModal from './AddFriendModal'
 import FriendsList from './FriendsList'
 
 function FriendsMenu() {
+  const { t } = useI18n()
   const navigate = useNavigate()
   const [userId, setUserId] = useState(null)
   const [friends, setFriends] = useState([])
@@ -119,7 +121,7 @@ function FriendsMenu() {
           <button
             type="button"
             onClick={() => navigate('/profile')}
-            aria-label="Volver al perfil"
+            aria-label={t('friends.backToProfile')}
             className="shrink-0 rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:scale-95"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -149,13 +151,13 @@ function FriendsMenu() {
             {incoming.length > 0 && (
               <section className="rounded-3xl border border-blue-500/25 bg-[#0d1220]/80 p-6 backdrop-blur-xl sm:p-8">
                 <h2 className="mb-1.5 text-lg font-semibold tracking-tight text-white">
-                  Solicitudes pendientes
+                  {t('friends.incoming')}
                 </h2>
                 <p className="mb-6 text-sm text-zinc-500">
-                  {incoming.length}{' '}
-                  {incoming.length === 1
-                    ? 'persona quiere ser tu amiga'
-                    : 'personas quieren ser tus amigas'}
+                  {t(
+                    incoming.length === 1 ? 'friends.incomingCount' : 'friends.incomingCountPlural',
+                    { count: incoming.length },
+                  )}
                 </p>
 
                 <ul className="space-y-3">
@@ -176,7 +178,7 @@ function FriendsMenu() {
                         type="button"
                         onClick={() => handleAccept(request.id)}
                         disabled={pendingId === request.id}
-                        aria-label="Aceptar solicitud"
+                        aria-label={t('friends.accept')}
                         title="Aceptar"
                         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white text-black transition-all duration-300 hover:bg-emerald-500 hover:text-white hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] focus:outline-none focus:ring-4 focus:ring-emerald-500/30 active:scale-95 disabled:opacity-50"
                       >
@@ -191,7 +193,7 @@ function FriendsMenu() {
                         type="button"
                         onClick={() => handleRemove(request.id)}
                         disabled={pendingId === request.id}
-                        aria-label="Rechazar solicitud"
+                        aria-label={t('friends.reject')}
                         title="Rechazar"
                         className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-transparent text-zinc-400 transition-all duration-300 hover:border-red-500 hover:bg-red-500/15 hover:text-white focus:outline-none focus:ring-4 focus:ring-red-500/30 active:scale-95 disabled:opacity-50"
                       >
@@ -213,10 +215,10 @@ function FriendsMenu() {
             {outgoing.length > 0 && (
               <section className="rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
                 <h2 className="mb-1.5 text-lg font-semibold tracking-tight text-white">
-                  Solicitudes enviadas
+                  {t('friends.outgoing')}
                 </h2>
                 <p className="mb-6 text-sm text-zinc-500">
-                  Esperando a que respondan.
+                  {t('friends.outgoingHint')}
                 </p>
 
                 <ul className="space-y-3">

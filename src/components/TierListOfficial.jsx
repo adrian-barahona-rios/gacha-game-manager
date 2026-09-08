@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AlertCircle, ArrowLeft, ListOrdered } from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
 import { getElementStyle } from '../data/characterStyles'
 
@@ -33,6 +34,7 @@ function TierListOfficial() {
   const [modes, setModes] = useState([])
   const [mode, setMode] = useState('')
   const [isLoading, setIsLoading] = useState(true)
+  const { t } = useI18n()
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -49,7 +51,7 @@ function TierListOfficial() {
         }
 
         if (loadError) {
-          setError(`No se pudo cargar la tier list: ${loadError.message}`)
+          setError(t('tierlist.error.load', { message: loadError.message }))
         } else {
           setRows(data)
           const found = [...new Set(data.map((r) => r.mode))].sort(
@@ -66,7 +68,7 @@ function TierListOfficial() {
     return () => {
       active = false
     }
-  }, [gameId])
+  }, [gameId, t])
 
   const visible = rows.filter((row) => row.mode === mode)
   const ratings = [...new Set(visible.map((row) => Number(row.rating)))].sort(
@@ -86,7 +88,7 @@ function TierListOfficial() {
           <button
             type="button"
             onClick={() => navigate(`/game/${gameId}`)}
-            aria-label="Volver al juego"
+            aria-label={t('characters.backToGame')}
             className="shrink-0 rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:scale-95"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -94,7 +96,7 @@ function TierListOfficial() {
 
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-lg font-semibold tracking-tight text-white sm:text-xl">
-              Tier list oficial
+              {t('tierlist.officialTitle')}
             </h1>
             <p className={`truncate text-xs sm:text-sm ${game?.accent ?? 'text-zinc-500'}`}>
               {game?.name ?? gameId}
@@ -106,7 +108,7 @@ function TierListOfficial() {
             onClick={() => navigate(`/game/${gameId}/tierlist/personal`)}
             className="shrink-0 rounded-lg border border-white/15 px-3 py-2.5 text-sm font-medium text-zinc-300 transition-all duration-300 hover:border-[#0066ff] hover:bg-[#0066ff]/10 hover:text-white focus:outline-none focus:ring-4 focus:ring-blue-500/30 active:scale-95"
           >
-            Mi tier list
+            {t('tierlist.personalTitle')}
           </button>
         </div>
       </header>
@@ -122,7 +124,7 @@ function TierListOfficial() {
         {modes.length > 0 && (
           <div className="mb-8 flex flex-wrap items-center gap-4">
             <label htmlFor="mode" className="text-sm text-zinc-400">
-              Modo
+              {t('tierlist.mode')}
             </label>
             <select
               id="mode"
@@ -158,7 +160,7 @@ function TierListOfficial() {
           <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-14 text-center">
             <ListOrdered className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
             <p className="text-zinc-400">
-              Todavía no hay valoraciones cargadas para este juego.
+              {t('tierlist.empty')}
             </p>
           </div>
         ) : (

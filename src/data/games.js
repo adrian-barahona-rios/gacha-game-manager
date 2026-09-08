@@ -3,6 +3,7 @@ import starRailLogo from '../assets/games/HonkaiStarRailLogo.jpg'
 import dxdArt from '../assets/games/hIghschooldxdOPILogo.jpg'
 import umamusumeArt from '../assets/games/Umamusume-Pretty-Derby-logo.jpg'
 import zzzLogo from '../assets/games/ZenlesszonezeroLogo.jpg'
+import { GAME_COPY_EN } from './gamesEn'
 
 // imageFit 'logo': el archivo es un logo sobre fondo blanco, asi que va
 // centrado sobre una placa clara. 'cover': es arte a color y llena la caja.
@@ -135,3 +136,16 @@ export const GAME_CATALOG = [
 ]
 
 export const getGameById = (id) => GAME_CATALOG.find((game) => game.id === id)
+
+// Textos del juego en el idioma activo. El catalogo esta escrito en castellano,
+// asi que solo el ingles necesita buscarse aparte.
+export const getGameCopy = (game, language) => {
+  const english = language === 'en' ? GAME_COPY_EN[game.id] : null
+  return {
+    release: english?.release ?? game.release,
+    genre: english?.genre ?? game.genre,
+    platforms: english?.platforms ?? game.platforms,
+    description: english?.description ?? game.description,
+    highlights: english?.highlights ?? game.highlights,
+  }
+}

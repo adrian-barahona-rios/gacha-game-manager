@@ -11,23 +11,24 @@ import {
   User,
 } from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { useI18n } from '../i18n/useI18n'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-const AUTH_MESSAGES = {
-  user_already_exists: 'Ya existe una cuenta con ese email.',
-  email_exists: 'Ya existe una cuenta con ese email.',
-  weak_password: 'La contraseña es demasiado débil.',
-  signup_disabled: 'El registro está deshabilitado en Supabase.',
-  email_provider_disabled:
-    'El registro por email no está habilitado en Supabase.',
-  over_email_send_rate_limit:
-    'Demasiados emails enviados. Prueba de nuevo en unos minutos.',
-  validation_failed: 'Revisa el email y la contraseña.',
-}
+// Codigos de error de Supabase con mensaje propio en el diccionario.
+const AUTH_ERROR_CODES = [
+  'user_already_exists',
+  'email_exists',
+  'weak_password',
+  'signup_disabled',
+  'email_provider_disabled',
+  'over_email_send_rate_limit',
+  'validation_failed',
+]
 
 function Register() {
   const navigate = useNavigate()
+  const { t } = useI18n()
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
@@ -40,15 +41,15 @@ function Register() {
     const nextErrors = {}
 
     if (username.trim().length < 3) {
-      nextErrors.username = 'El nombre de usuario debe tener al menos 3 caracteres.'
+      nextErrors.username = t('register.error.username')
     }
 
     if (!EMAIL_REGEX.test(email)) {
-      nextErrors.email = 'Introduce un email válido.'
+      nextErrors.email = t('login.error.email')
     }
 
     if (password.length < 6) {
-      nextErrors.password = 'La contraseña debe tener al menos 6 caracteres.'
+      nextErrors.password = t('login.error.password')
     }
 
     setErrors(nextErrors)
@@ -82,7 +83,7 @@ function Register() {
       setIsSubmitting(false)
       setErrors((current) => ({
         ...current,
-        username: 'Ese nombre de usuario ya está en uso.',
+        username: t('register.error.usernameTaken'),
       }))
       return
     }
@@ -98,10 +99,12 @@ function Register() {
       // El trigger de la base de datos rechaza el alta si el nombre se ocupo
       // entre la comprobacion y el registro.
       if (error.message?.toLowerCase().includes('database error')) {
-        setAuthError('Ese nombre de usuario acaba de ser ocupado. Prueba con otro.')
+        setAuthError(t('register.error.usernameJustTaken'))
         return
       }
-      setAuthError(AUTH_MESSAGES[error.code] ?? error.message)
+      setAuthError(
+        AUTH_ERROR_CODES.includes(error.code) ? t(`register.error.${error.code}`) : error.message,
+      )
       return
     }
 
@@ -141,19 +144,19 @@ function Register() {
                 <MailCheck className="h-6 w-6 text-white" />
               </div>
               <h1 className="text-[26px] font-semibold leading-tight tracking-tight text-white sm:text-3xl">
-                Confirma tu email
+                {t('register.confirmTitle')}
               </h1>
               <p className="mt-3 text-sm leading-relaxed text-zinc-500">
-                Hemos enviado un enlace de confirmación a{' '}
-                <span className="text-zinc-300">{email}</span>. Ábrelo y vuelve
-                aquí para iniciar sesión.
+                {t('register.confirmBodyStart')}{' '}
+                <span className="text-zinc-300">{email}</span>
+                {t('register.confirmBodyEnd')}
               </p>
               <button
                 type="button"
                 onClick={() => navigate('/')}
                 className="mt-8 w-full rounded-xl bg-white py-3.5 text-[15px] font-semibold text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-zinc-100 focus:outline-none focus:ring-4 focus:ring-white/20 active:translate-y-0"
               >
-                Ir a iniciar sesión
+                {t('register.goToLogin')}
               </button>
             </div>
           ) : (
@@ -163,10 +166,10 @@ function Register() {
               <Sparkles className="h-6 w-6 text-white" />
             </div>
             <h1 className="text-[26px] font-semibold leading-tight tracking-tight text-white sm:text-3xl">
-              Crea tu cuenta
+              {t('register.title')}
             </h1>
             <p className="mt-2.5 text-sm leading-relaxed text-zinc-500">
-              Empieza a gestionar tus juegos gacha en un minuto
+              {t('register.subtitle')}
             </p>
           </div>
 
@@ -183,7 +186,7 @@ function Register() {
                 htmlFor="username"
                 className="mb-2 block text-[13px] font-medium tracking-wide text-zinc-400"
               >
-                Nombre de usuario
+                {t('common.username')}
               </label>
               <div className="relative">
                 <input
@@ -191,7 +194,7 @@ function Register() {
                   type="text"
                   value={username}
                   onChange={(event) => setUsername(event.target.value)}
-                  placeholder="¿Cómo quieres que te llamemos?"
+                  placeholder={t('register.usernamePlaceholder')}
                   className={inputClasses(errors.username)}
                 />
                 <User className={iconClasses(errors.username)} />
@@ -231,7 +234,7 @@ function Register() {
                 htmlFor="password"
                 className="mb-2 block text-[13px] font-medium tracking-wide text-zinc-400"
               >
-                Contraseña
+                {t('common.password')}
               </label>
               <div className="relative">
                 <input
@@ -239,7 +242,7 @@ function Register() {
                   type="password"
                   value={password}
                   onChange={(event) => setPassword(event.target.value)}
-                  placeholder="Mínimo 6 caracteres"
+                  placeholder={t('register.passwordPlaceholder')}
                   className={inputClasses(errors.password)}
                 />
                 <Lock className={iconClasses(errors.password)} />
@@ -259,11 +262,11 @@ function Register() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-[18px] w-[18px] animate-spin" />
-                  Creando cuenta…
+                  {t('register.submitting')}
                 </>
               ) : (
                 <>
-                  Crear cuenta
+                  {t('register.submit')}
                   <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" />
                 </>
               )}
@@ -271,13 +274,13 @@ function Register() {
           </form>
 
           <p className="mt-8 text-center text-sm text-zinc-500">
-            ¿Ya tienes cuenta?{' '}
+            {t('register.haveAccount')}{' '}
             <button
               type="button"
               onClick={() => navigate('/')}
               className="rounded font-semibold text-white underline-offset-4 transition-colors duration-300 hover:text-zinc-300 hover:underline focus:outline-none focus:ring-2 focus:ring-white/30"
             >
-              Inicia sesión
+              {t('register.loginLink')}
             </button>
           </p>
           </>

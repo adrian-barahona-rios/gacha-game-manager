@@ -9,9 +9,11 @@ import {
   Lock,
 } from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { useI18n } from '../i18n/useI18n'
 
 function ResetPassword() {
   const navigate = useNavigate()
+  const { t } = useI18n()
   const [status, setStatus] = useState('checking')
   const [password, setPassword] = useState('')
   const [confirmation, setConfirmation] = useState('')
@@ -55,11 +57,11 @@ function ResetPassword() {
     const nextErrors = {}
 
     if (password.length < 6) {
-      nextErrors.password = 'La contraseña debe tener al menos 6 caracteres.'
+      nextErrors.password = t('login.error.password')
     }
 
     if (password !== confirmation) {
-      nextErrors.confirmation = 'Las contraseñas no coinciden.'
+      nextErrors.confirmation = t('reset.error.mismatch')
     }
 
     setErrors(nextErrors)
@@ -110,19 +112,19 @@ function ResetPassword() {
               )}
             </div>
             <h1 className="text-[26px] font-semibold leading-tight tracking-tight text-white sm:text-3xl">
-              {status === 'done' ? 'Contraseña cambiada' : 'Nueva contraseña'}
+              {status === 'done' ? t('reset.doneTitle') : t('reset.title')}
             </h1>
             <p className="mt-2.5 text-sm leading-relaxed text-zinc-500">
               {status === 'done'
-                ? 'Te llevamos al inicio de sesión para que entres con ella.'
-                : 'Elige una contraseña nueva para tu cuenta.'}
+                ? t('reset.doneSubtitle')
+                : t('reset.subtitle')}
             </p>
           </div>
 
           {status === 'checking' && (
             <div className="flex items-center justify-center gap-3 py-6 text-sm text-zinc-500">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Comprobando el enlace…
+              {t('reset.checking')}
             </div>
           )}
 
@@ -131,8 +133,7 @@ function ResetPassword() {
               <div className="mb-6 flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-[13px] text-red-200">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                 <p>
-                  Este enlace no es válido o ha caducado. Pide uno nuevo desde tu
-                  perfil.
+                  {t('reset.invalidLink')}
                 </p>
               </div>
               <button
@@ -140,7 +141,7 @@ function ResetPassword() {
                 onClick={() => navigate('/login')}
                 className="w-full rounded-xl bg-white py-3.5 text-[15px] font-semibold text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-zinc-100 focus:outline-none focus:ring-4 focus:ring-white/20 active:translate-y-0"
               >
-                Ir a iniciar sesión
+                {t('register.goToLogin')}
               </button>
             </>
           )}
@@ -159,7 +160,7 @@ function ResetPassword() {
                   htmlFor="password"
                   className="mb-2 block text-[13px] font-medium tracking-wide text-zinc-400"
                 >
-                  Nueva contraseña
+                  {t('reset.newPassword')}
                 </label>
                 <div className="relative">
                   <input
@@ -167,7 +168,7 @@ function ResetPassword() {
                     type="password"
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
-                    placeholder="Mínimo 6 caracteres"
+                    placeholder={t('register.passwordPlaceholder')}
                     className={inputClasses(errors.password)}
                   />
                   <Lock className={iconClasses(errors.password)} />
@@ -184,7 +185,7 @@ function ResetPassword() {
                   htmlFor="confirmation"
                   className="mb-2 block text-[13px] font-medium tracking-wide text-zinc-400"
                 >
-                  Repite la contraseña
+                  {t('reset.repeatPassword')}
                 </label>
                 <div className="relative">
                   <input
@@ -212,11 +213,11 @@ function ResetPassword() {
                 {isSaving ? (
                   <>
                     <Loader2 className="h-[18px] w-[18px] animate-spin" />
-                    Guardando…
+                    {t('reset.saving')}
                   </>
                 ) : (
                   <>
-                    Cambiar contraseña
+                    {t('reset.submit')}
                     <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" />
                   </>
                 )}
@@ -227,7 +228,7 @@ function ResetPassword() {
           {status === 'done' && (
             <div className="flex items-center justify-center gap-3 py-2 text-sm text-zinc-500">
               <Loader2 className="h-4 w-4 animate-spin" />
-              Redirigiendo…
+              {t('reset.redirecting')}
             </div>
           )}
         </div>

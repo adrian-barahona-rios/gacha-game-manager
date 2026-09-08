@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AlertCircle, ArrowLeft, Check, Loader2 } from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
 import { getElementStyle } from '../data/characterStyles'
 
@@ -20,6 +21,7 @@ function TierListPersonal() {
   const [characters, setCharacters] = useState([])
   const [assignments, setAssignments] = useState({})
   const [isLoading, setIsLoading] = useState(true)
+  const { t } = useI18n()
   const [error, setError] = useState('')
   const [savingId, setSavingId] = useState(null)
   const [justSaved, setJustSaved] = useState(false)
@@ -47,7 +49,7 @@ function TierListPersonal() {
 
   const applyData = useCallback(([charactersResult, tiersResult]) => {
     if (charactersResult.error) {
-      setError(`No se pudieron cargar los personajes: ${charactersResult.error.message}`)
+      setError(t('characters.error.load', { message: charactersResult.error.message }))
     } else {
       setCharacters(charactersResult.data)
     }
@@ -61,7 +63,7 @@ function TierListPersonal() {
     }
 
     setIsLoading(false)
-  }, [])
+  }, [t])
 
   useEffect(() => {
     if (!userId) {
@@ -124,7 +126,7 @@ function TierListPersonal() {
     if (saveError) {
       // Deshacer para que la pantalla no mienta sobre lo que hay guardado.
       setAssignments((current) => ({ ...current, [characterId]: previous }))
-      setError(`No se pudo guardar: ${saveError.message}`)
+      setError(t('tierlist.error.save', { message: saveError.message }))
       return
     }
 
@@ -157,7 +159,7 @@ function TierListPersonal() {
 
     if (deleteError) {
       setAssignments((current) => ({ ...current, [characterId]: previous }))
-      setError(`No se pudo quitar: ${deleteError.message}`)
+      setError(t('tierlist.error.remove', { message: deleteError.message }))
     }
   }
 
@@ -196,7 +198,7 @@ function TierListPersonal() {
       onClick={() =>
         inTier ? remove(character.id) : handleChipClick(character.id)
       }
-      title={inTier ? 'Pulsa para quitarlo' : 'Arrástralo o pulsa y elige un tier'}
+      title={inTier ? t('tierlist.tapToRemove') : t('tierlist.tapToPlace')}
       className={`cursor-grab rounded-lg px-3 py-2 text-sm font-medium ring-1 transition-all duration-300 hover:-translate-y-0.5 active:cursor-grabbing focus:outline-none focus:ring-4 focus:ring-white/20 ${getElementStyle(character.element).badge} ${
         picked === character.id ? 'ring-4 ring-blue-500/50' : ''
       }`}
@@ -221,7 +223,7 @@ function TierListPersonal() {
           <button
             type="button"
             onClick={() => navigate(`/game/${gameId}`)}
-            aria-label="Volver al juego"
+            aria-label={t('characters.backToGame')}
             className="shrink-0 rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:scale-95"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -229,7 +231,7 @@ function TierListPersonal() {
 
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-lg font-semibold tracking-tight text-white sm:text-xl">
-              Mi tier list
+              {t('tierlist.personalTitle')}
             </h1>
             <p className={`truncate text-xs sm:text-sm ${game?.accent ?? 'text-zinc-500'}`}>
               {game?.name ?? gameId}
@@ -262,8 +264,7 @@ function TierListPersonal() {
         )}
 
         <p className="mb-6 text-sm text-zinc-500">
-          Arrastra los personajes a un tier, o pulsa uno y luego el tier. Pulsa un
-          personaje ya colocado para devolverlo abajo. Se guarda solo.
+          {t('tierlist.instructions')}
         </p>
 
         {isLoading ? (
@@ -313,7 +314,7 @@ function TierListPersonal() {
                     <div className="flex min-h-[3rem] flex-1 flex-wrap gap-2">
                       {members.length === 0 ? (
                         <span className="self-center text-sm opacity-50">
-                          Suelta personajes aquí
+                          {t('tierlist.dropHere')}
                         </span>
                       ) : (
                         members.map((character) => chip(character, true))
@@ -326,7 +327,7 @@ function TierListPersonal() {
 
             <section className="rounded-2xl border border-white/10 bg-[#111114]/80 p-5 backdrop-blur-xl">
               <h2 className="mb-1.5 text-lg font-semibold tracking-tight text-white">
-                Sin clasificar
+                {t('tierlist.unranked')}
               </h2>
               <p className="mb-5 text-sm text-zinc-500">
                 {unassigned.length}{' '}

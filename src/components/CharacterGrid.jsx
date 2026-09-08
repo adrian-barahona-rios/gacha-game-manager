@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { AlertCircle, ArrowLeft, Users } from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
 import {
   formatRarity,
@@ -40,6 +41,7 @@ function CharacterGrid() {
   const game = getGameById(gameId)
   const [characters, setCharacters] = useState([])
   const [isLoading, setIsLoading] = useState(true)
+  const { t } = useI18n()
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -56,7 +58,7 @@ function CharacterGrid() {
           return
         }
         if (loadError) {
-          setError(`No se pudieron cargar los personajes: ${loadError.message}`)
+          setError(t('characters.error.load', { message: loadError.message }))
         } else {
           setCharacters(data)
           setError('')
@@ -67,7 +69,7 @@ function CharacterGrid() {
     return () => {
       active = false
     }
-  }, [gameId])
+  }, [gameId, t])
 
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
@@ -81,7 +83,7 @@ function CharacterGrid() {
           <button
             type="button"
             onClick={() => navigate(`/game/${gameId}`)}
-            aria-label="Volver al juego"
+            aria-label={t('characters.backToGame')}
             className="shrink-0 rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:scale-95"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -89,7 +91,7 @@ function CharacterGrid() {
 
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-lg font-semibold tracking-tight text-white sm:text-xl">
-              Personajes
+              {t('characters.title')}
             </h1>
             <p className={`truncate text-xs sm:text-sm ${game?.accent ?? 'text-zinc-500'}`}>
               {game?.name ?? gameId}
@@ -129,7 +131,7 @@ function CharacterGrid() {
           <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-14 text-center">
             <Users className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
             <p className="text-zinc-400">
-              Todavía no hay personajes cargados para este juego.
+              {t('characters.empty')}
             </p>
           </div>
         ) : (
@@ -187,7 +189,7 @@ function CharacterGrid() {
                   )}
 
                   <span className="mt-auto block w-full rounded-lg bg-white px-3 py-2.5 text-center text-sm font-semibold text-black transition-all duration-300 group-hover:bg-purple-600 group-hover:text-white group-hover:shadow-[0_0_25px_rgba(147,51,234,0.6)]">
-                    Ver detalles
+                    {t('characters.viewDetails')}
                   </span>
                 </button>
               )

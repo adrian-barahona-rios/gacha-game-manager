@@ -10,7 +10,8 @@ import {
   Users,
 } from 'lucide-react'
 import GameArtwork from './GameArtwork'
-import { getGameById } from '../data/games'
+import { getGameById, getGameCopy } from '../data/games'
+import { useI18n } from '../i18n/useI18n'
 
 const STARS = [
   'left-[6%] top-[12%] [animation-delay:0s]',
@@ -294,23 +295,31 @@ const GAMES_WITH_CHARACTERS = [
   'zenless-zone-zero',
 ]
 
+// DxD queda fuera: no hay tier list publicada de ese juego.
+const GAMES_WITH_TIERLIST = [
+  'genshin-impact',
+  'honkai-star-rail',
+  'zenless-zone-zero',
+]
+
 const MENU_ITEMS = [
-  { id: 'inicio', label: 'Inicio', icon: Home },
-  { id: 'personajes', label: 'Ver personajes', icon: Users },
-  { id: 'tierlist', label: 'Tier list', icon: ListOrdered },
-  { id: 'guias', label: 'Guías', icon: BookOpen },
+  { id: 'inicio', labelKey: 'game.menu.home', icon: Home },
+  { id: 'personajes', labelKey: 'game.menu.characters', icon: Users },
+  { id: 'tierlist', labelKey: 'game.menu.tierList', icon: ListOrdered },
+  { id: 'guias', labelKey: 'game.menu.guides', icon: BookOpen },
 ]
 
 // Umamusume no se organiza por secciones sino por version del juego.
 const UMAMUSUME_MENU = [
-  { id: 'inicio', label: 'Inicio', icon: Home, to: null },
-  { id: 'japan', label: 'Versión japonesa', icon: Globe, to: 'japan' },
-  { id: 'global', label: 'Versión global', icon: Globe, to: 'global' },
+  { id: 'inicio', labelKey: 'game.menu.home', icon: Home, to: null },
+  { id: 'japan', labelKey: 'game.menu.japanVersion', icon: Globe, to: 'japan' },
+  { id: 'global', labelKey: 'game.menu.globalVersion', icon: Globe, to: 'global' },
 ]
 
 function GamePage() {
   const { gameId } = useParams()
   const navigate = useNavigate()
+  const { t, activeLanguage } = useI18n()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const game = getGameById(gameId)
 
@@ -318,10 +327,10 @@ function GamePage() {
     return (
       <div className="flex min-h-screen scheme-dark flex-col items-center justify-center bg-black px-4 text-center">
         <h1 className="mb-3 text-2xl font-semibold text-white">
-          Juego no encontrado
+          {t('game.notFound')}
         </h1>
         <p className="mb-8 text-sm text-zinc-500">
-          No hay ningún juego con el identificador “{gameId}”.
+          {t('game.notFoundBody', { id: gameId })}
         </p>
         <button
           type="button"
@@ -329,16 +338,18 @@ function GamePage() {
           className="flex items-center gap-2 rounded-lg bg-white px-4 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-[#0066ff] hover:text-white hover:shadow-[0_0_25px_rgba(0,102,255,0.65)] active:scale-95"
         >
           <ArrowLeft className="h-4 w-4" />
-          Volver al dashboard
+          {t('game.backToDashboard')}
         </button>
       </div>
     )
   }
 
   const Background = BACKGROUNDS[game.theme]
+  const copy = getGameCopy(game, activeLanguage)
   // Umamusume tiene su propio sistema, con dos versiones del juego.
   const isUmamusume = game.id === 'umamusume-pretty-derby'
   const hasCharacters = isUmamusume || GAMES_WITH_CHARACTERS.includes(game.id)
+  const hasTierList = isUmamusume || GAMES_WITH_TIERLIST.includes(game.id)
 
   return (
     <div className="relative min-h-screen scheme-dark overflow-hidden bg-black">
@@ -351,7 +362,7 @@ function GamePage() {
           <button
             type="button"
             onClick={() => navigate('/dashboard')}
-            aria-label="Volver al dashboard"
+            aria-label={t('game.backToDashboard')}
             className="shrink-0 rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:scale-95"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -390,7 +401,7 @@ function GamePage() {
               <>
                 <button
                   type="button"
-                  aria-label="Cerrar menú"
+                  aria-label={t('game.closeMenu')}
                   onClick={() => setIsMenuOpen(false)}
                   className="fixed inset-0 z-10 cursor-default"
                 />
@@ -421,7 +432,7 @@ function GamePage() {
                             }`}
                           >
                             <Icon className="h-4 w-4 shrink-0" />
-                            {item.label}
+                            {t(item.labelKey)}
                           </button>
                         )
                       })
@@ -432,7 +443,8 @@ function GamePage() {
                         const isTierList = item.id === 'tierlist'
                         const isEnabled =
                           isCurrent ||
-                          ((isCharacters || isTierList) && hasCharacters)
+                          (isCharacters && hasCharacters) ||
+                          (isTierList && hasTierList)
 
                         return (
                           <button
@@ -457,10 +469,10 @@ function GamePage() {
                             }`}
                           >
                             <Icon className="h-4 w-4 shrink-0" />
-                            <span className="flex-1">{item.label}</span>
+                            <span className="flex-1">{t(item.labelKey)}</span>
                             {!isEnabled && (
                               <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-zinc-500">
-                                Pronto
+                                {t('common.soon')}
                               </span>
                             )}
                           </button>
@@ -486,15 +498,15 @@ function GamePage() {
           </h2>
 
           <p className="max-w-3xl text-[15px] leading-relaxed text-zinc-300 sm:text-base">
-            {game.description}
+            {copy.description}
           </p>
 
           <div className="mt-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
             {[
-              ['Desarrollador', game.developer],
-              ['Lanzamiento', game.release],
-              ['Género', game.genre],
-              ['Plataformas', game.platforms],
+              [t('game.developer'), game.developer],
+              [t('game.release'), copy.release],
+              [t('game.genre'), copy.genre],
+              [t('game.platforms'), copy.platforms],
             ].map(([label, value]) => (
               <div
                 key={label}
@@ -511,11 +523,11 @@ function GamePage() {
 
         <section className="mt-6 rounded-3xl border border-white/10 bg-black/50 p-6 backdrop-blur-xl sm:p-10">
           <h3 className="mb-6 text-lg font-semibold tracking-tight text-white sm:text-xl">
-            Claves del juego
+            {t('game.highlights')}
           </h3>
 
           <ul className="space-y-4">
-            {game.highlights.map((highlight) => (
+            {copy.highlights.map((highlight) => (
               <li key={highlight} className="flex gap-4">
                 <span
                   className={`mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-current ${game.accent}`}

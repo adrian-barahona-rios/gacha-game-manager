@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AlertCircle, ArrowLeft, ChevronRight, Globe, Loader2 } from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
 
 const GAME_ID = 'umamusume-pretty-derby'
 
 function UmamusumePage() {
+  const { t } = useI18n()
   const navigate = useNavigate()
   const game = getGameById(GAME_ID)
   const [versions, setVersions] = useState([])
@@ -63,7 +65,7 @@ function UmamusumePage() {
           <button
             type="button"
             onClick={() => navigate('/dashboard')}
-            aria-label="Volver al dashboard"
+            aria-label={t('game.backToDashboard')}
             className="shrink-0 rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:scale-95"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -73,7 +75,7 @@ function UmamusumePage() {
               {game?.name ?? 'Umamusume'}
             </h1>
             <p className="truncate text-xs text-amber-200 sm:text-sm">
-              Elige una versión del juego
+              {t('uma.chooseVersion')}
             </p>
           </div>
         </div>
@@ -129,7 +131,7 @@ function UmamusumePage() {
           <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-14 text-center">
             <Loader2 className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
             <p className="text-zinc-400">
-              No hay versiones cargadas. Ejecuta supabase/umamusume.sql.
+              {t('uma.noVersions')}
             </p>
           </div>
         )}

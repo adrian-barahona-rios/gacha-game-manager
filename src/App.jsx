@@ -1,4 +1,6 @@
 import { Route, Routes } from 'react-router-dom'
+import AdminGuard from './components/AdminGuard'
+import AdminPanel from './components/AdminPanel'
 import CharacterDetail from './components/CharacterDetail'
 import CharacterGrid from './components/CharacterGrid'
 import Dashboard from './components/Dashboard'
@@ -54,6 +56,15 @@ function App() {
       <Route path="/profile/friends" element={<FriendsMenu />} />
       <Route path="/profile/friends/:friendId" element={<FriendProfile />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      {/* Sin enlaces en la interfaz: solo se llega escribiendo la direccion. */}
+      <Route
+        path="/admin"
+        element={
+          <AdminGuard>
+            <AdminPanel />
+          </AdminGuard>
+        }
+      />
     </Routes>
   )
 }

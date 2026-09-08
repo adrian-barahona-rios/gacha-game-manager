@@ -2,21 +2,22 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AlertCircle, ArrowRight, Gamepad2, Loader2, Lock, Mail } from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { useI18n } from '../i18n/useI18n'
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
-const AUTH_MESSAGES = {
-  invalid_credentials: 'Email o contraseña incorrectos.',
-  email_not_confirmed:
-    'Todavía no has confirmado tu email. Revisa tu bandeja de entrada.',
-  user_banned: 'Esta cuenta está bloqueada.',
-  over_request_rate_limit:
-    'Demasiados intentos. Prueba de nuevo en unos minutos.',
-  validation_failed: 'Revisa el email y la contraseña.',
-}
+// Codigos de error de Supabase que tienen mensaje propio en el diccionario.
+const AUTH_ERROR_CODES = [
+  'invalid_credentials',
+  'email_not_confirmed',
+  'user_banned',
+  'over_request_rate_limit',
+  'validation_failed',
+]
 
 function Login() {
   const navigate = useNavigate()
+  const { t } = useI18n()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState({})
@@ -27,11 +28,11 @@ function Login() {
     const nextErrors = {}
 
     if (!EMAIL_REGEX.test(email)) {
-      nextErrors.email = 'Introduce un email válido.'
+      nextErrors.email = t('login.error.email')
     }
 
     if (password.length < 6) {
-      nextErrors.password = 'La contraseña debe tener al menos 6 caracteres.'
+      nextErrors.password = t('login.error.password')
     }
 
     setErrors(nextErrors)
@@ -51,7 +52,9 @@ function Login() {
     setIsSubmitting(false)
 
     if (error) {
-      setAuthError(AUTH_MESSAGES[error.code] ?? error.message)
+      setAuthError(
+        AUTH_ERROR_CODES.includes(error.code) ? t(`login.error.${error.code}`) : error.message,
+      )
       return
     }
 
@@ -83,10 +86,10 @@ function Login() {
               <Gamepad2 className="h-6 w-6 text-white" />
             </div>
             <h1 className="text-[26px] font-semibold leading-tight tracking-tight text-white sm:text-3xl">
-              Bienvenido de nuevo
+              {t('login.title')}
             </h1>
             <p className="mt-2.5 text-sm leading-relaxed text-zinc-500">
-              Inicia sesión para gestionar tus juegos gacha
+              {t('login.subtitle')}
             </p>
           </div>
 
@@ -103,7 +106,7 @@ function Login() {
                 htmlFor="email"
                 className="mb-2 block text-[13px] font-medium tracking-wide text-zinc-400"
               >
-                Email
+                {t('common.email')}
               </label>
               <div className="relative">
                 <input
@@ -111,7 +114,7 @@ function Login() {
                   type="email"
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
-                  placeholder="tucorreo@ejemplo.com"
+                  placeholder={t('login.emailPlaceholder')}
                   className={inputClasses(errors.email)}
                 />
                 <Mail className={iconClasses(errors.email)} />
@@ -126,7 +129,7 @@ function Login() {
                 htmlFor="password"
                 className="mb-2 block text-[13px] font-medium tracking-wide text-zinc-400"
               >
-                Contraseña
+                {t('common.password')}
               </label>
               <div className="relative">
                 <input
@@ -154,11 +157,11 @@ function Login() {
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-[18px] w-[18px] animate-spin" />
-                  Entrando…
+                  {t('login.submitting')}
                 </>
               ) : (
                 <>
-                  Iniciar sesión
+                  {t('login.submit')}
                   <ArrowRight className="h-[18px] w-[18px] transition-transform duration-300 group-hover:translate-x-1" />
                 </>
               )}
@@ -166,13 +169,13 @@ function Login() {
           </form>
 
           <p className="mt-8 text-center text-sm text-zinc-500">
-            ¿No tienes cuenta?{' '}
+            {t('login.noAccount')}{' '}
             <button
               type="button"
               onClick={() => navigate('/register')}
               className="rounded font-semibold text-white underline-offset-4 transition-colors duration-300 hover:text-zinc-300 hover:underline focus:outline-none focus:ring-2 focus:ring-white/30"
             >
-              Regístrate
+              {t('login.registerLink')}
             </button>
           </p>
         </div>

@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { AlertCircle, Check, Loader2, Search, UserPlus, X } from 'lucide-react'
 import { findProfile, sendFriendRequest } from '../data/friends'
+import { useI18n } from '../i18n/useI18n'
 
 function AddFriendModal({ userId, relations, onClose, onSent }) {
+  const { t } = useI18n()
   const [term, setTerm] = useState('')
   const [isSearching, setIsSearching] = useState(false)
   const [error, setError] = useState('')
@@ -14,7 +16,7 @@ function AddFriendModal({ userId, relations, onClose, onSent }) {
     setNotice('')
 
     if (!term.trim()) {
-      setError('Escribe el ID o el nombre de usuario de tu amigo.')
+      setError(t('addFriend.error.empty'))
       return
     }
 
@@ -29,13 +31,13 @@ function AddFriendModal({ userId, relations, onClose, onSent }) {
 
     if (!profile) {
       setIsSearching(false)
-      setError('No existe ningún usuario con ese ID o nombre.')
+      setError(t('addFriend.error.notFound'))
       return
     }
 
     if (profile.id === userId) {
       setIsSearching(false)
-      setError('Ese eres tú.')
+      setError(t('addFriend.error.self'))
       return
     }
 
@@ -46,9 +48,9 @@ function AddFriendModal({ userId, relations, onClose, onSent }) {
       if (existing.status === 'accepted') {
         setNotice(`${profile.username ?? 'Ese usuario'} ya es tu amigo.`)
       } else if (existing.direction === 'outgoing') {
-        setNotice('Solicitud enviada. Está esperando respuesta.')
+        setNotice(t('addFriend.error.alreadySent'))
       } else {
-        setNotice('Esa persona ya te envió una solicitud: acéptala más abajo.')
+        setNotice(t('addFriend.error.alreadyReceived'))
       }
       return
     }
@@ -72,10 +74,10 @@ function AddFriendModal({ userId, relations, onClose, onSent }) {
         <div className="mb-6 flex items-start justify-between gap-4">
           <div>
             <h2 className="text-xl font-semibold tracking-tight text-white">
-              Buscar amigos
+              {t('profile.findFriends')}
             </h2>
             <p className="mt-1.5 text-sm text-zinc-500">
-              Introduce el ID de cuenta o el nombre de usuario.
+              {t('addFriend.hint')}
             </p>
           </div>
           <button
@@ -112,7 +114,7 @@ function AddFriendModal({ userId, relations, onClose, onSent }) {
                 setError('')
                 setNotice('')
               }}
-              placeholder="ID de amigo o nombre de usuario"
+              placeholder={t('addFriend.placeholder')}
               className="peer w-full rounded-xl border border-white/10 bg-white/[0.03] py-3.5 pl-11 pr-4 text-[15px] text-white placeholder:text-zinc-600 transition-all duration-300 hover:border-white/20 focus:border-white/30 focus:bg-white/[0.06] focus:outline-none focus:ring-4 focus:ring-white/5"
             />
             <Search className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-zinc-500 transition-colors duration-300 peer-focus:text-white" />
@@ -131,7 +133,7 @@ function AddFriendModal({ userId, relations, onClose, onSent }) {
             ) : (
               <>
                 <UserPlus className="h-4 w-4" />
-                Enviar solicitud
+                {t('addFriend.submit')}
               </>
             )}
           </button>

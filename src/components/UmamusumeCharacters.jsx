@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AlertCircle, Search, Users } from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { useI18n } from '../i18n/useI18n'
 import UmamusumeLayout from './UmamusumeLayout'
 
 function UmamusumeCharacters() {
+  const { t } = useI18n()
   const { version } = useParams()
   const [characters, setCharacters] = useState([])
   const [term, setTerm] = useState('')
@@ -62,7 +64,7 @@ function UmamusumeCharacters() {
         <input
           value={term}
           onChange={(event) => setTerm(event.target.value)}
-          placeholder="Buscar por nombre o personaje base"
+          placeholder={t('uma.searchTrainees')}
           className="peer w-full rounded-xl border border-white/10 bg-white/[0.03] py-3 pl-11 pr-4 text-[15px] text-white placeholder:text-zinc-600 transition-all duration-300 hover:border-white/20 focus:border-amber-500/50 focus:bg-white/[0.06] focus:outline-none focus:ring-4 focus:ring-amber-500/10"
         />
         <Search className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-zinc-500 transition-colors duration-300 peer-focus:text-amber-200" />
@@ -82,8 +84,8 @@ function UmamusumeCharacters() {
           <Users className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
           <p className="text-zinc-400">
             {characters.length === 0
-              ? 'No hay entrenadoras cargadas para esta versión.'
-              : 'Ninguna coincide con la búsqueda.'}
+              ? t('uma.noTrainees')
+              : t('uma.noTraineeMatches')}
           </p>
         </div>
       ) : (

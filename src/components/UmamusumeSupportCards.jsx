@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AlertCircle, Layers } from 'lucide-react'
 import { useSupportCards } from '../data/useSupportCards'
+import { useI18n } from '../i18n/useI18n'
 import UmamusumeLayout from './UmamusumeLayout'
 
 const RARITY_STYLES = {
@@ -72,6 +73,7 @@ export function SupportCard({ card }) {
 }
 
 function UmamusumeSupportCards() {
+  const { t } = useI18n()
   const { version } = useParams()
   const { cards, isLoading, error } = useSupportCards(version)
   const [bonus, setBonus] = useState('todos')
@@ -93,7 +95,7 @@ function UmamusumeSupportCards() {
 
   return (
     <UmamusumeLayout
-      title="Cartas de Support"
+      title={t('uma.menu.supportCards')}
       subtitle={isLoading ? '' : `${cards.length} cartas`}
       current="support-cards"
     >
@@ -112,10 +114,10 @@ function UmamusumeSupportCards() {
             setLimit(PAGE_SIZE)
           }}
           className={selectClass}
-          aria-label="Filtrar por tipo"
+          aria-label={t('uma.filterType')}
         >
           <option value="todos" className="bg-[#111114]">
-            Todos los tipos
+            {t('uma.allTypes')}
           </option>
           {bonuses.map((option) => (
             <option key={option} value={option} className="bg-[#111114]">
@@ -131,10 +133,10 @@ function UmamusumeSupportCards() {
             setLimit(PAGE_SIZE)
           }}
           className={selectClass}
-          aria-label="Filtrar por rareza"
+          aria-label={t('uma.filterRarity')}
         >
           <option value="todas" className="bg-[#111114]">
-            Todas las rarezas
+            {t('uma.allRarities')}
           </option>
           {rarities.map((option) => (
             <option key={option} value={option} className="bg-[#111114]">
@@ -164,8 +166,8 @@ function UmamusumeSupportCards() {
           <Layers className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
           <p className="text-zinc-400">
             {cards.length === 0
-              ? 'No hay cartas cargadas para esta versión.'
-              : 'Ninguna carta coincide con los filtros.'}
+              ? t('uma.noCards')
+              : t('uma.noCardMatches')}
           </p>
         </div>
       ) : (

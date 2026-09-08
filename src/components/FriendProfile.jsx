@@ -9,11 +9,13 @@ import {
   UserMinus,
 } from 'lucide-react'
 import { supabase } from '../config/supabase'
+import { useI18n } from '../i18n/useI18n'
 import { loadFriendships, removeFriendship } from '../data/friends'
 import { getGameById } from '../data/games'
 import GameArtwork from './GameArtwork'
 
 function FriendProfile() {
+  const { t } = useI18n()
   const { friendId } = useParams()
   const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
@@ -126,13 +128,13 @@ function FriendProfile() {
           <button
             type="button"
             onClick={() => navigate('/profile/friends')}
-            aria-label="Volver a amigos"
+            aria-label={t('friends.backToFriends')}
             className="shrink-0 rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:scale-95"
           >
             <ArrowLeft className="h-4 w-4" />
           </button>
           <span className="text-lg font-semibold tracking-tight text-white">
-            Perfil de amigo
+            {t('friends.profileTitle')}
           </span>
         </div>
       </header>
@@ -152,7 +154,7 @@ function FriendProfile() {
           </div>
         ) : !profile ? (
           <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-14 text-center">
-            <p className="text-zinc-400">No encontramos ese perfil.</p>
+            <p className="text-zinc-400">{t('friends.profileNotFound')}</p>
           </div>
         ) : (
           <>
@@ -165,7 +167,7 @@ function FriendProfile() {
                   {profile.username ?? 'Usuario'}
                 </h1>
                 <p className="mt-1.5 text-sm text-zinc-500">
-                  {relation ? 'Sois amigos' : 'Todavía no sois amigos'}
+                  {relation ? t('friends.areFriends') : t('friends.notFriends')}
                 </p>
               </div>
             </section>
@@ -173,11 +175,11 @@ function FriendProfile() {
             <section className="mb-6 rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
               <h2 className="mb-1.5 flex items-center gap-2.5 text-lg font-semibold tracking-tight text-white">
                 <Gamepad2 className="h-5 w-5 text-zinc-400" />
-                Sus juegos
+                {t('friends.theirGames')}
               </h2>
               <p className="mb-6 text-sm text-zinc-500">
                 {isLoadingGames
-                  ? 'Cargando…'
+                  ? t('common.loading')
                   : `${games.length} ${games.length === 1 ? 'juego' : 'juegos'} en su biblioteca`}
               </p>
 
@@ -198,8 +200,8 @@ function FriendProfile() {
                   <Gamepad2 className="mx-auto mb-4 h-9 w-9 text-zinc-600" />
                   <p className="text-sm text-zinc-400">
                     {relation
-                      ? 'Todavía no ha añadido ningún juego.'
-                      : 'Solo puedes ver los juegos de tus amigos.'}
+                      ? t('friends.noGames')
+                      : t('friends.onlyFriendsGames')}
                   </p>
                 </div>
               ) : (
@@ -234,7 +236,7 @@ function FriendProfile() {
                   Amistad
                 </h2>
                 <p className="mb-6 text-sm text-zinc-500">
-                  Si la eliminas, tendréis que volver a enviaros una solicitud.
+                  {t('friends.removeWarning')}
                 </p>
 
                 <button
@@ -248,7 +250,7 @@ function FriendProfile() {
                   ) : (
                     <UserMinus className="h-4 w-4" />
                   )}
-                  Eliminar amigo
+                  {t('friends.remove')}
                 </button>
               </section>
             )}

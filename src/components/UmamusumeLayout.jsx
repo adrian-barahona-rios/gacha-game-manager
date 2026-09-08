@@ -8,22 +8,24 @@ import {
   ListOrdered,
   Users,
 } from 'lucide-react'
+import { useI18n } from '../i18n/useI18n'
 
-const VERSION_LABEL = { global: 'Global', japan: 'Japón' }
+const VERSION_KEYS = { global: 'uma.version.global', japan: 'uma.version.japan' }
 
 const MENU = [
-  { id: 'version', label: 'Cambiar versión', icon: Globe, to: '' },
-  { id: 'characters', label: 'Personajes', icon: Users, to: 'characters' },
-  { id: 'support-cards', label: 'Cartas de Support', icon: Layers, to: 'support-cards' },
+  { id: 'version', labelKey: 'uma.menu.changeVersion', icon: Globe, to: '' },
+  { id: 'characters', labelKey: 'uma.menu.characters', icon: Users, to: 'characters' },
+  { id: 'support-cards', labelKey: 'uma.menu.supportCards', icon: Layers, to: 'support-cards' },
   {
     id: 'tierlist-support',
-    label: 'Tier List de Support',
+    labelKey: 'uma.menu.supportTierList',
     icon: ListOrdered,
     to: 'tierlist-support',
   },
 ]
 
 function UmamusumeLayout({ title, subtitle, current, children }) {
+  const { t } = useI18n()
   const { version } = useParams()
   const navigate = useNavigate()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -45,7 +47,7 @@ function UmamusumeLayout({ title, subtitle, current, children }) {
           <button
             type="button"
             onClick={() => navigate('/game/umamusume')}
-            aria-label="Volver al selector de versión"
+            aria-label={t('uma.backToVersions')}
             className="shrink-0 rounded-lg border border-white/10 bg-white/5 p-2.5 text-white transition-all duration-300 hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 active:scale-95"
           >
             <ArrowLeft className="h-4 w-4" />
@@ -56,7 +58,7 @@ function UmamusumeLayout({ title, subtitle, current, children }) {
               {title}
             </h1>
             <p className="truncate text-xs text-amber-200 sm:text-sm">
-              {VERSION_LABEL[version] ?? version}
+              {VERSION_KEYS[version] ? t(VERSION_KEYS[version]) : version}
               {subtitle ? ` · ${subtitle}` : ''}
             </p>
           </div>
@@ -69,7 +71,7 @@ function UmamusumeLayout({ title, subtitle, current, children }) {
               aria-haspopup="menu"
               className="flex items-center gap-2 rounded-lg bg-white px-3 py-2.5 text-sm font-semibold text-black transition-all duration-300 hover:bg-amber-400 hover:shadow-[0_0_25px_rgba(251,191,36,0.5)] focus:outline-none focus:ring-4 focus:ring-amber-500/30 active:scale-95 sm:px-4"
             >
-              <span className="hidden sm:inline">Menú</span>
+              <span className="hidden sm:inline">{t('uma.menu.label')}</span>
               <ChevronDown
                 className={`h-4 w-4 transition-transform duration-300 ${isMenuOpen ? 'rotate-180' : ''}`}
               />
@@ -79,7 +81,7 @@ function UmamusumeLayout({ title, subtitle, current, children }) {
               <>
                 <button
                   type="button"
-                  aria-label="Cerrar menú"
+                  aria-label={t('game.closeMenu')}
                   onClick={() => setIsMenuOpen(false)}
                   className="fixed inset-0 z-10 cursor-default"
                 />
@@ -104,7 +106,7 @@ function UmamusumeLayout({ title, subtitle, current, children }) {
                         }`}
                       >
                         <Icon className="h-4 w-4 shrink-0" />
-                        {item.label}
+                        {t(item.labelKey)}
                       </button>
                     )
                   })}
