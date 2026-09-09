@@ -5,6 +5,7 @@ import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
 import { getElementStyle } from '../data/characterStyles'
+import ProfileButton from './ProfileButton'
 
 const TIERS = [
   { id: 'S', label: 'S', style: 'border-amber-500/40 bg-amber-500/10 text-amber-300' },
@@ -252,6 +253,7 @@ function TierListPersonal() {
           >
             Oficial
           </button>
+          <ProfileButton />
         </div>
       </header>
 

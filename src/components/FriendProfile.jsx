@@ -13,6 +13,7 @@ import { useI18n } from '../i18n/useI18n'
 import { loadFriendships, removeFriendship } from '../data/friends'
 import { getGameById } from '../data/games'
 import GameArtwork from './GameArtwork'
+import ProfileButton from './ProfileButton'
 
 function FriendProfile() {
   const { t } = useI18n()
@@ -136,6 +137,7 @@ function FriendProfile() {
           <span className="text-lg font-semibold tracking-tight text-white">
             {t('friends.profileTitle')}
           </span>
+          <ProfileButton />
         </div>
       </header>
 

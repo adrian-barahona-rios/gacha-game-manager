@@ -4,6 +4,7 @@ import { AlertCircle, ArrowLeft, Loader2, Save, Trash2 } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { BIOGRAPHY_GAMES } from '../data/adminConfig'
+import ProfileButton from './ProfileButton'
 
 const controlClasses =
   'w-full rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-[15px] text-white placeholder:text-zinc-600 transition-all duration-300 hover:border-white/20 focus:border-white/30 focus:bg-white/[0.06] focus:outline-none focus:ring-4 focus:ring-white/5'
@@ -187,6 +188,7 @@ function GuideForm() {
           <h1 className="min-w-0 flex-1 truncate text-lg font-semibold tracking-tight text-white sm:text-xl">
             {t(isEditing ? 'guides.form.editTitle' : 'guides.form.newTitle')}
           </h1>
+          <ProfileButton />
         </div>
       </header>
 

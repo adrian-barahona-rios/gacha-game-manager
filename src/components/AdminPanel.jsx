@@ -6,6 +6,7 @@ import AdminBiographyEditor from './AdminBiographyEditor'
 import AdminCharacterForm from './AdminCharacterForm'
 import AdminMetaGuides from './AdminMetaGuides'
 import AdminTierEditor from './AdminTierEditor'
+import ProfileButton from './ProfileButton'
 
 const SECTIONS = [
   { id: 'personajes', labelKey: 'admin.tab.characters', icon: UserPlus },
@@ -44,6 +45,7 @@ function AdminPanel() {
             </h1>
             <p className="truncate text-xs text-zinc-500 sm:text-sm">{t('admin.subtitle')}</p>
           </div>
+          <ProfileButton />
         </div>
       </header>
 

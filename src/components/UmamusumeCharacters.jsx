@@ -14,7 +14,7 @@ function UmamusumeCharacters() {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
   const [view, setView] = useState('todos')
-  const favorites = useFavorites('favorite_umamusume_characters', { version })
+  const favorites = useFavorites('favorite_umamusume_characters', { row: { version } })
 
   useEffect(() => {
     let active = true

@@ -10,18 +10,24 @@ import {
   getElementStyle,
   getRarityStyle,
 } from '../data/characterStyles'
+import ProfileButton from './ProfileButton'
 
 function CharacterPortrait({ character, className }) {
   const { tile } = getElementStyle(character.element)
 
+  // Los iconos oficiales son cuadrados: con object-cover en una caja ancha se
+  // recortarian por arriba y por abajo, asi que van contenidos sobre la misma
+  // placa de color que usa el respaldo.
   if (character.image_url) {
     return (
-      <img
-        src={character.image_url}
-        alt={character.name}
-        loading="lazy"
-        className={`h-full w-full object-cover object-top ${className ?? ''}`}
-      />
+      <span className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${tile}`}>
+        <img
+          src={character.image_url}
+          alt={character.name}
+          loading="lazy"
+          className={`h-full w-auto max-w-full object-contain ${className ?? ''}`}
+        />
+      </span>
     )
   }
 
@@ -45,7 +51,7 @@ function CharacterGrid() {
   const { t } = useI18n()
   const [error, setError] = useState('')
   const [view, setView] = useState('todos')
-  const favorites = useFavorites('favorite_characters', null)
+  const favorites = useFavorites('favorite_characters', { gameFilter: gameId })
 
   useEffect(() => {
     let active = true
@@ -116,6 +122,7 @@ function CharacterGrid() {
               {visible.length}
             </span>
           )}
+          <ProfileButton />
         </div>
       </header>
 

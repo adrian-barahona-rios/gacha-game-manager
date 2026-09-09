@@ -10,6 +10,7 @@ import {
 } from '../data/friends'
 import AddFriendModal from './AddFriendModal'
 import FriendsList from './FriendsList'
+import ProfileButton from './ProfileButton'
 
 function FriendsMenu() {
   const { t } = useI18n()
@@ -129,6 +130,7 @@ function FriendsMenu() {
           <span className="text-lg font-semibold tracking-tight text-white">
             Amigos
           </span>
+          <ProfileButton />
         </div>
       </header>
 

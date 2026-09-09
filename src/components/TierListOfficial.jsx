@@ -5,6 +5,7 @@ import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
 import { getElementStyle } from '../data/characterStyles'
+import ProfileButton from './ProfileButton'
 
 // Escala de Prydwen: 0 es el tier mas alto. Los colores siguen esa direccion,
 // verde arriba y rojo abajo, como pidio Vara.
@@ -110,6 +111,7 @@ function TierListOfficial() {
           >
             {t('tierlist.personalTitle')}
           </button>
+          <ProfileButton />
         </div>
       </header>
 

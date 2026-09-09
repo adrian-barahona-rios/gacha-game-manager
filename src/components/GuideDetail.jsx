@@ -4,6 +4,7 @@ import { AlertCircle, ArrowLeft, Loader2, Pencil } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
+import ProfileButton from './ProfileButton'
 
 function GuideDetail() {
   const { t, activeLanguage } = useI18n()
@@ -86,6 +87,7 @@ function GuideDetail() {
               <span className="hidden sm:inline">{t('guides.detail.edit')}</span>
             </button>
           )}
+          <ProfileButton />
         </div>
       </header>
 

@@ -20,6 +20,11 @@ const es = {
   'login.submitting': 'Entrando…',
   'login.noAccount': '¿No tienes cuenta?',
   'login.registerLink': 'Regístrate',
+  'login.forgot.link': '¿Olvidaste tu contraseña?',
+  'login.forgot.needEmail':
+    'Escribe arriba el email de tu cuenta y vuelve a pulsar el enlace.',
+  'login.forgot.sent':
+    'Te hemos enviado un enlace para cambiar la contraseña. Ábrelo desde tu correo. Si no lo ves, mira en spam.',
   'login.error.email': 'Introduce un email válido.',
   'login.error.password': 'La contraseña debe tener al menos 6 caracteres.',
   'login.error.invalid_credentials': 'Email o contraseña incorrectos.',
@@ -179,6 +184,11 @@ const es = {
     'Email enviado. Abre el enlace desde tu correo para elegir la contraseña nueva.',
   'profile.sending': 'Enviando…',
   'profile.sendReset': 'Enviar email de reset',
+  'profile.admin': 'Administración',
+  'profile.adminBadge': 'Admin',
+  'profile.adminHint':
+    'Tu cuenta tiene permisos de administrador: puedes editar el catálogo, las tier lists oficiales, las biografías y las guías meta.',
+  'profile.adminOpen': 'Abrir el panel de administración',
   'profile.error.sameUsername': 'Ese ya es tu nombre de usuario.',
   'profile.error.copy': 'Tu navegador no permitió copiar. Selecciona el ID a mano.',
 
@@ -242,6 +252,15 @@ const es = {
   'uma.noCardMatches': 'Ninguna carta coincide con los filtros.',
   'uma.cardCategory': 'Categoría cartas',
   'uma.noCardsOfType': 'No hay cartas de este tipo en esta versión.',
+  'umaGuides.headline': 'Guías de esta versión',
+  'umaGuides.description':
+    'Vídeos para pasarte los escenarios más recientes de esta versión, sacarles mejor calificación final a tus umas y ver cómo juegan otros.',
+  'umaGuides.latest': 'El más nuevo',
+  'umaGuides.kind.scenario': 'Escenario',
+  'umaGuides.kind.grades': 'Entrenamiento',
+  'umaGuides.kind.gameplay': 'Gameplays',
+  'umaGuides.backToTopics': 'Ver todos los temas',
+  'umaGuides.notFound': 'No encontramos ese tema.',
   'uma.traineeCount': '{count} entrenadoras',
   'uma.error.trainees': 'No se pudieron cargar las entrenadoras: {message}',
   'uma.tierSource': 'Tiers de uma.moe. Las cartas del grupo “—” aún no tienen tier asignado.',
@@ -333,6 +352,19 @@ const es = {
   'guides.video.error.network': 'No se pudo contactar con YouTube.',
   'guides.video.error.notFound':
     'La función /api/youtube-search no responde. En local hace falta arrancar con "vercel dev".',
+
+  // Guías del juego
+  'gameGuides.title': 'Guías del juego',
+  'gameGuides.headline': 'Contenido de endgame',
+  'gameGuides.description':
+    'Aquí encontrarás guías que te ayudarán a pasarte el contenido del juego: cada modo con lo que necesitas saber y vídeos para superarlo.',
+  'gameGuides.empty': 'Todavía no hay modos cargados para este juego.',
+  'gameGuides.new': 'Nuevo',
+  'gameGuides.since': 'Desde la {version}',
+  'gameGuides.aboutMode': 'En qué consiste',
+  'gameGuides.alsoKnown': 'También conocido como {name}.',
+  'gameGuides.modeNotFound': 'No encontramos ese modo.',
+  'gameGuides.backToModes': 'Ver todos los modos',
 }
 
 const en = {
@@ -354,6 +386,10 @@ const en = {
   'login.submitting': 'Signing in…',
   'login.noAccount': "Don't have an account?",
   'login.registerLink': 'Sign up',
+  'login.forgot.link': 'Forgot your password?',
+  'login.forgot.needEmail': 'Type your account email above and click the link again.',
+  'login.forgot.sent':
+    "We've sent you a link to change your password. Open it from your inbox. If you don't see it, check your spam folder.",
   'login.error.email': 'Enter a valid email address.',
   'login.error.password': 'The password must be at least 6 characters long.',
   'login.error.invalid_credentials': 'Wrong email or password.',
@@ -509,6 +545,11 @@ const en = {
   'profile.resetSent': 'Email sent. Open the link from your inbox to choose the new password.',
   'profile.sending': 'Sending…',
   'profile.sendReset': 'Send reset email',
+  'profile.admin': 'Administration',
+  'profile.adminBadge': 'Admin',
+  'profile.adminHint':
+    'Your account has administrator permissions: you can edit the catalog, the official tier lists, the biographies and the meta guides.',
+  'profile.adminOpen': 'Open the admin panel',
   'profile.error.sameUsername': 'That is already your username.',
   'profile.error.copy': "Your browser wouldn't let us copy. Select the ID by hand.",
 
@@ -573,6 +614,15 @@ const en = {
   'uma.cardCategory': 'Card category',
   'uma.noCardsOfType': 'There are no cards of this type in this version.',
   'uma.tierSource': 'Tiers from uma.moe. Cards in the “—” group have no tier assigned yet.',
+  'umaGuides.headline': 'Guides for this version',
+  'umaGuides.description':
+    "Videos to clear this version's newest scenarios, get better final grades on your umas, and watch how other people play.",
+  'umaGuides.latest': 'Newest',
+  'umaGuides.kind.scenario': 'Scenario',
+  'umaGuides.kind.grades': 'Training',
+  'umaGuides.kind.gameplay': 'Gameplays',
+  'umaGuides.backToTopics': 'View all topics',
+  'umaGuides.notFound': "We couldn't find that topic.",
   'uma.traineeCount': '{count} trainees',
   'uma.error.trainees': 'The trainees could not be loaded: {message}',
   'uma.noTiers': 'This version has no tiers loaded yet, so cards are grouped by rarity.',
@@ -662,6 +712,19 @@ const en = {
   'guides.video.error.network': 'YouTube could not be reached.',
   'guides.video.error.notFound':
     'The /api/youtube-search function is not responding. Locally you need to start with "vercel dev".',
+
+  // Game guides
+  'gameGuides.title': 'Game guides',
+  'gameGuides.headline': 'Endgame content',
+  'gameGuides.description':
+    "Here you'll find guides to help you clear the game's content: every mode with what you need to know, plus videos on how to beat it.",
+  'gameGuides.empty': 'No modes have been loaded for this game yet.',
+  'gameGuides.new': 'New',
+  'gameGuides.since': 'Since {version}',
+  'gameGuides.aboutMode': 'What it is',
+  'gameGuides.alsoKnown': 'Also known as {name}.',
+  'gameGuides.modeNotFound': "We couldn't find that mode.",
+  'gameGuides.backToModes': 'View all modes',
 }
 
 export const STRINGS = { es, en }

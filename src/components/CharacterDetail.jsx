@@ -16,6 +16,7 @@ import {
   getElementStyle,
   getRarityStyle,
 } from '../data/characterStyles'
+import ProfileButton from './ProfileButton'
 
 const TABS = [
   { id: 'detalles', labelKey: 'character.tab.details' },
@@ -171,6 +172,7 @@ function CharacterDetail() {
           <span className={`truncate text-sm ${game?.accent ?? 'text-zinc-500'}`}>
             {game?.name ?? gameId}
           </span>
+          <ProfileButton />
         </div>
       </header>
 
@@ -209,11 +211,15 @@ function CharacterDetail() {
           <div className="grid gap-8 sm:grid-cols-[minmax(0,20rem)_1fr]">
             <div className="h-96 overflow-hidden rounded-3xl border border-white/10 ring-1 ring-white/5 sm:h-[28rem]">
               {character.image_url ? (
-                <img
-                  src={character.image_url}
-                  alt={character.name}
-                  className="h-full w-full object-cover object-top"
-                />
+                <span
+                  className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${elementStyle.tile}`}
+                >
+                  <img
+                    src={character.image_url}
+                    alt={character.name}
+                    className="h-full w-auto max-w-full object-contain"
+                  />
+                </span>
               ) : (
                 <span
                   className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${elementStyle.tile}`}

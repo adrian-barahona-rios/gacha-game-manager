@@ -7,6 +7,7 @@ import { getGameById } from '../data/games'
 import MetaGuide from './MetaGuide'
 import MyGuides from './MyGuides'
 import YouTubeGuidesSection from './YouTubeGuidesSection'
+import ProfileButton from './ProfileButton'
 
 function CharacterGuides() {
   const { t, activeLanguage } = useI18n()
@@ -69,6 +70,7 @@ function CharacterGuides() {
               {[character?.name, game?.name].filter(Boolean).join(' · ') || characterId}
             </p>
           </div>
+          <ProfileButton />
         </div>
       </header>
 

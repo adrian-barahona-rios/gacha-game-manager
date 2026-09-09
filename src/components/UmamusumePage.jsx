@@ -4,6 +4,7 @@ import { AlertCircle, ArrowLeft, ChevronRight, Globe, Loader2 } from 'lucide-rea
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
+import ProfileButton from './ProfileButton'
 
 const GAME_ID = 'umamusume-pretty-derby'
 
@@ -78,6 +79,7 @@ function UmamusumePage() {
               {t('uma.chooseVersion')}
             </p>
           </div>
+          <ProfileButton />
         </div>
       </header>
 

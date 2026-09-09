@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { AlertCircle, ArrowRight, Gamepad2, Loader2, Lock, Mail } from 'lucide-react'
+import { AlertCircle, ArrowRight, Check, Gamepad2, Loader2, Lock, Mail } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 
@@ -23,6 +23,8 @@ function Login() {
   const [errors, setErrors] = useState({})
   const [authError, setAuthError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isSendingReset, setIsSendingReset] = useState(false)
+  const [resetSent, setResetSent] = useState(false)
 
   const validate = () => {
     const nextErrors = {}
@@ -61,6 +63,35 @@ function Login() {
     navigate('/dashboard', { replace: true })
   }
 
+  const handleForgotPassword = async () => {
+    setAuthError('')
+    setResetSent(false)
+
+    // Se aprovecha el email del formulario: casi siempre esta ya escrito.
+    if (!EMAIL_REGEX.test(email)) {
+      setErrors((current) => ({ ...current, email: t('login.forgot.needEmail') }))
+      return
+    }
+
+    setErrors((current) => ({ ...current, email: undefined }))
+    setIsSendingReset(true)
+
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/reset-password`,
+    })
+
+    setIsSendingReset(false)
+
+    if (error) {
+      setAuthError(
+        AUTH_ERROR_CODES.includes(error.code) ? t(`login.error.${error.code}`) : error.message,
+      )
+      return
+    }
+
+    setResetSent(true)
+  }
+
   const inputClasses = (hasError) =>
     `peer w-full rounded-xl border bg-white/[0.03] py-3.5 pl-11 pr-4 text-[15px] text-white placeholder:text-zinc-600 transition-all duration-300 focus:bg-white/[0.06] focus:outline-none focus:ring-4 ${
       hasError
@@ -94,6 +125,13 @@ function Login() {
           </div>
 
           <form onSubmit={handleSubmit} noValidate className="space-y-5">
+            {resetSent && (
+              <div className="flex items-start gap-3 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-3 text-[13px] text-emerald-200">
+                <Check className="mt-0.5 h-4 w-4 shrink-0" />
+                <p>{t('login.forgot.sent')}</p>
+              </div>
+            )}
+
             {authError && (
               <div className="flex items-start gap-3 rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-[13px] text-red-200">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
@@ -147,6 +185,16 @@ function Login() {
                   {errors.password}
                 </p>
               )}
+
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                disabled={isSendingReset}
+                className="mt-2.5 inline-flex items-center gap-2 rounded text-[13px] text-zinc-500 underline-offset-4 transition-colors duration-300 hover:text-white hover:underline focus:outline-none focus:ring-2 focus:ring-white/30 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {isSendingReset && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                {t('login.forgot.link')}
+              </button>
             </div>
 
             <button

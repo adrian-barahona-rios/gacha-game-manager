@@ -11,6 +11,7 @@ import {
   Mail,
   NotebookPen,
   Send,
+  ShieldCheck,
   User,
   UserPlus,
   Users,
@@ -24,6 +25,7 @@ import AddFriendModal from './AddFriendModal'
 function UserProfile() {
   const navigate = useNavigate()
   const [user, setUser] = useState(null)
+  const [isAdmin, setIsAdmin] = useState(false)
   const [username, setUsername] = useState('')
   const [savedUsername, setSavedUsername] = useState('')
   const [isSaving, setIsSaving] = useState(false)
@@ -56,7 +58,7 @@ function UserProfile() {
 
       supabase
         .from('profiles')
-        .select('username')
+        .select('username, role')
         .eq('id', current.id)
         .maybeSingle()
         .then(({ data: profile }) => {
@@ -67,6 +69,7 @@ function UserProfile() {
             profile?.username ?? current.user_metadata?.username ?? ''
           setUsername(name)
           setSavedUsername(name)
+          setIsAdmin(profile?.role === 'admin')
         })
     })
 
@@ -257,6 +260,28 @@ function UserProfile() {
             </p>
           </div>
         </section>
+
+        {isAdmin && (
+          <section className="mb-6 rounded-3xl border border-emerald-500/25 bg-emerald-500/[0.06] p-6 backdrop-blur-xl sm:p-8">
+            <h2 className="mb-1.5 flex flex-wrap items-center gap-2.5 text-lg font-semibold tracking-tight text-white">
+              <ShieldCheck className="h-5 w-5 text-emerald-400" />
+              {t('profile.admin')}
+              <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-emerald-300 ring-1 ring-emerald-400/30">
+                {t('profile.adminBadge')}
+              </span>
+            </h2>
+            <p className="mb-5 text-sm text-zinc-400">{t('profile.adminHint')}</p>
+
+            <button
+              type="button"
+              onClick={() => navigate('/admin')}
+              className="flex items-center justify-center gap-2 rounded-xl bg-white px-5 py-3 text-sm font-semibold text-black transition-all duration-300 hover:-translate-y-0.5 hover:bg-emerald-500 hover:text-white hover:shadow-[0_0_25px_rgba(16,185,129,0.5)] focus:outline-none focus:ring-4 focus:ring-emerald-500/30 active:translate-y-0 active:scale-95"
+            >
+              <ShieldCheck className="h-4 w-4" />
+              {t('profile.adminOpen')}
+            </button>
+          </section>
+        )}
 
         <section className="mb-6 rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
           <h2 className="mb-1.5 text-lg font-semibold tracking-tight text-white">

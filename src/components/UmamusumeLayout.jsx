@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowLeft,
+  BookOpen,
   ChevronDown,
   Globe,
   Layers,
@@ -9,6 +10,7 @@ import {
   Users,
 } from 'lucide-react'
 import { useI18n } from '../i18n/useI18n'
+import ProfileButton from './ProfileButton'
 
 const VERSION_KEYS = { global: 'uma.version.global', japan: 'uma.version.japan' }
 
@@ -22,6 +24,7 @@ const MENU = [
     icon: ListOrdered,
     to: 'tierlist-support',
   },
+  { id: 'guides', labelKey: 'game.menu.guides', icon: BookOpen, to: 'guides' },
 ]
 
 function UmamusumeLayout({ title, subtitle, current, children }) {
@@ -114,6 +117,7 @@ function UmamusumeLayout({ title, subtitle, current, children }) {
               </>
             )}
           </div>
+          <ProfileButton />
         </div>
       </header>
 

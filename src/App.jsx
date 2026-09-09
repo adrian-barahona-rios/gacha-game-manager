@@ -10,12 +10,16 @@ import MyGuides from './components/MyGuides'
 import Dashboard from './components/Dashboard'
 import FriendProfile from './components/FriendProfile'
 import FriendsMenu from './components/FriendsMenu'
+import GameGuides from './components/GameGuides'
+import GameModeGuide from './components/GameModeGuide'
 import GamePage from './components/GamePage'
 import Login from './components/Login'
 import Register from './components/Register'
 import TierListOfficial from './components/TierListOfficial'
 import TierListPersonal from './components/TierListPersonal'
 import UmamusumeCharacters from './components/UmamusumeCharacters'
+import UmamusumeGuideTopic from './components/UmamusumeGuideTopic'
+import UmamusumeGuides from './components/UmamusumeGuides'
 import UmamusumePage from './components/UmamusumePage'
 import UmamusumeSupportCards from './components/UmamusumeSupportCards'
 import UmamusumeSupportTierList from './components/UmamusumeSupportTierList'
@@ -42,7 +46,14 @@ function App() {
         path="/game/umamusume/:version/tierlist-support"
         element={<UmamusumeSupportTierList />}
       />
+      <Route path="/game/umamusume/:version/guides" element={<UmamusumeGuides />} />
+      <Route
+        path="/game/umamusume/:version/guides/:topicId"
+        element={<UmamusumeGuideTopic />}
+      />
       <Route path="/game/:gameId" element={<GamePage />} />
+      <Route path="/game/:gameId/guides" element={<GameGuides />} />
+      <Route path="/game/:gameId/guides/:modeId" element={<GameModeGuide />} />
       <Route path="/game/:gameId/characters" element={<CharacterGrid />} />
       <Route
         path="/game/:gameId/characters/:characterId"

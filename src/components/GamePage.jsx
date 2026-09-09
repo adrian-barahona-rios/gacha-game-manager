@@ -10,7 +10,9 @@ import {
   Users,
 } from 'lucide-react'
 import GameArtwork from './GameArtwork'
+import ProfileButton from './ProfileButton'
 import { getGameById, getGameCopy } from '../data/games'
+import { getGameModes } from '../data/gameModes'
 import { useI18n } from '../i18n/useI18n'
 
 const STARS = [
@@ -350,6 +352,8 @@ function GamePage() {
   const isUmamusume = game.id === 'umamusume-pretty-derby'
   const hasCharacters = isUmamusume || GAMES_WITH_CHARACTERS.includes(game.id)
   const hasTierList = isUmamusume || GAMES_WITH_TIERLIST.includes(game.id)
+  // Las guias del juego dependen de que ese juego tenga modos definidos.
+  const hasGuides = getGameModes(game.id).length > 0
 
   return (
     <div className="relative min-h-screen scheme-dark overflow-hidden bg-black">
@@ -441,10 +445,12 @@ function GamePage() {
                         const isCurrent = item.id === 'inicio'
                         const isCharacters = item.id === 'personajes'
                         const isTierList = item.id === 'tierlist'
+                        const isGuides = item.id === 'guias'
                         const isEnabled =
                           isCurrent ||
                           (isCharacters && hasCharacters) ||
-                          (isTierList && hasTierList)
+                          (isTierList && hasTierList) ||
+                          (isGuides && hasGuides)
 
                         return (
                           <button
@@ -458,6 +464,8 @@ function GamePage() {
                                 navigate(`/game/${gameId}/characters`)
                               } else if (isTierList) {
                                 navigate(`/game/${gameId}/tierlist/official`)
+                              } else if (isGuides) {
+                                navigate(`/game/${gameId}/guides`)
                               }
                             }}
                             className={`flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm transition-colors duration-200 ${
@@ -482,6 +490,7 @@ function GamePage() {
               </>
             )}
           </div>
+          <ProfileButton />
         </div>
       </header>
 

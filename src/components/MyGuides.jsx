@@ -4,6 +4,7 @@ import { AlertCircle, ArrowLeft, BookOpen, Loader2, NotebookPen, Plus } from 'lu
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
+import ProfileButton from './ProfileButton'
 
 function formatDate(value, language) {
   try {
@@ -187,6 +188,7 @@ function MyGuides({ gameId, characterId, embedded }) {
             <Plus className="h-4 w-4" />
             <span className="hidden sm:inline">{t('guides.mine.create')}</span>
           </button>
+          <ProfileButton />
         </div>
       </header>
 
