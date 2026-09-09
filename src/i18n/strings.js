@@ -113,6 +113,8 @@ const es = {
   'characters.title': 'Personajes',
   'characters.backToGame': 'Volver al juego',
   'characters.empty': 'Todavía no hay personajes cargados para este juego.',
+  'characters.search': 'Buscar personaje por nombre',
+  'characters.noMatches': 'Ningún personaje coincide con la búsqueda.',
   'characters.viewDetails': 'Ver detalles',
   'characters.error.load': 'No se pudieron cargar los personajes: {message}',
 
@@ -475,6 +477,8 @@ const en = {
   'characters.title': 'Characters',
   'characters.backToGame': 'Back to the game',
   'characters.empty': 'No characters have been loaded for this game yet.',
+  'characters.search': 'Search a character by name',
+  'characters.noMatches': 'No character matches your search.',
   'characters.viewDetails': 'View details',
   'characters.error.load': 'The characters could not be loaded: {message}',
 

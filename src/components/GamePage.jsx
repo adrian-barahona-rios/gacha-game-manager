@@ -70,14 +70,78 @@ const CONES = [
   'left-[85%] bottom-[14%] h-9 w-7',
 ]
 
+
+// --- Expreso Astral de Honkai --------------------------------------------
+// Vagones del tren. El primero es la locomotora, con el faro.
+const TRAIN_CARS = [0, 1, 2, 3, 4, 5, 6, 7]
+
+// Rocas del cinturon. Van dentro del contenedor girado, asi que su
+// desplazamiento horizontal las lleva en diagonal a lo largo de la via.
+const ASTEROIDS = [
+  'top-[8%] h-3 w-4 [animation-duration:19s] [animation-delay:-2s] opacity-80',
+  'top-[16%] h-2 w-2 [animation-duration:26s] [animation-delay:-9s] opacity-60',
+  'top-[26%] h-5 w-6 [animation-duration:22s] [animation-delay:-14s] opacity-90',
+  'top-[34%] h-2 w-3 [animation-duration:30s] [animation-delay:-5s] opacity-50',
+  'top-[44%] h-4 w-5 [animation-duration:17s] [animation-delay:-11s] opacity-85',
+  'top-[52%] h-2 w-2 [animation-duration:28s] [animation-delay:-20s] opacity-55',
+  'top-[62%] h-6 w-7 [animation-duration:24s] [animation-delay:-3s] opacity-90',
+  'top-[70%] h-3 w-4 [animation-duration:21s] [animation-delay:-16s] opacity-70',
+  'top-[78%] h-2 w-3 [animation-duration:33s] [animation-delay:-7s] opacity-45',
+  'top-[86%] h-4 w-4 [animation-duration:18s] [animation-delay:-23s] opacity-80',
+  'top-[94%] h-3 w-5 [animation-duration:27s] [animation-delay:-12s] opacity-65',
+]
+
+
+// --- Puerta celestial de Genshin -----------------------------------------
+// Columnas del santuario. Las del primer array quedan al fondo y son mas
+// palidas; las del segundo estan en primer plano. y es donde arranca el
+// capitel: todas bajan hasta perderse en las nubes.
+const GI_COLUMNS_FAR = [
+  { x: 62, y: 96, w: 5, o: 0.5 },
+  { x: 96, y: 74, w: 6, o: 0.56 },
+  { x: 126, y: 104, w: 5, o: 0.46 },
+  { x: 150, y: 86, w: 5, o: 0.52 },
+  { x: 250, y: 92, w: 5, o: 0.52 },
+  { x: 276, y: 70, w: 6, o: 0.58 },
+  { x: 306, y: 100, w: 5, o: 0.46 },
+  { x: 338, y: 82, w: 6, o: 0.54 },
+]
+
+const GI_COLUMNS_NEAR = [
+  { x: 26, y: 46, w: 11, o: 0.92 },
+  { x: 74, y: 34, w: 10, o: 0.88 },
+  { x: 114, y: 56, w: 8, o: 0.8 },
+  { x: 290, y: 40, w: 10, o: 0.88 },
+  { x: 334, y: 24, w: 12, o: 0.95 },
+  { x: 380, y: 50, w: 11, o: 0.92 },
+]
+
+// Rayos que salen de detras de la puerta.
+const GI_RAYS = [-26, -12, 10, 24]
+
+const GI_CLOUDS = [
+  'top-[52%] h-24 w-[30rem] opacity-70 [animation-duration:74s] [animation-delay:-8s]',
+  'top-[62%] h-20 w-[24rem] opacity-60 [animation-duration:96s] [animation-delay:-40s]',
+  'top-[44%] h-16 w-[20rem] opacity-45 [animation-duration:120s] [animation-delay:-22s]',
+  'top-[70%] h-28 w-[34rem] opacity-75 [animation-duration:64s] [animation-delay:-52s]',
+  'top-[34%] h-12 w-[16rem] opacity-35 [animation-duration:140s] [animation-delay:-70s]',
+]
+
+// Bordes de la pasarela en perspectiva, para trazar sus lineas grabadas.
+const GI_PATH_TOP = 166
+const GI_PATH_BOTTOM = 225
+const giPathEdges = (y) => {
+  const t = (y - GI_PATH_TOP) / (GI_PATH_BOTTOM - GI_PATH_TOP)
+  return { left: 158 - 40 * t, right: 242 + 40 * t }
+}
+
 function StarRailBackground() {
   return (
     <>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(99,102,241,0.22),transparent_60%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_80%_90%,rgba(139,92,246,0.16),transparent_55%)]" />
-
-      <div className="absolute left-1/2 top-[14%] h-56 w-56 -translate-x-1/2 animate-drift rounded-full bg-[radial-gradient(circle_at_35%_30%,rgba(255,255,255,0.85),rgba(199,210,254,0.30)_48%,rgba(99,102,241,0.05)_72%)] opacity-30 sm:h-72 sm:w-72" />
-      <div className="absolute left-1/2 top-[14%] h-56 w-56 -translate-x-1/2 animate-drift rounded-full opacity-20 ring-1 ring-indigo-200/30 blur-[2px] sm:h-72 sm:w-72" />
+      {/* Espacio profundo, con la nebulosa violeta detras del planeta. */}
+      <div className="absolute inset-0 bg-[linear-gradient(155deg,#080b1c_0%,#12183a_42%,#1d1749_72%,#0a0c1e_100%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_62%_34%,rgba(129,140,248,0.30),transparent_58%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_14%_82%,rgba(56,189,248,0.14),transparent_52%)]" />
 
       {STARS.map((star) => (
         <span
@@ -85,6 +149,54 @@ function StarRailBackground() {
           className={`absolute h-[3px] w-[3px] animate-twinkle rounded-full bg-white ${star}`}
         />
       ))}
+
+      {/* Planeta palido: la luz entra por arriba a la izquierda. */}
+      <div className="absolute left-[52%] top-[6%] aspect-square w-[min(78vw,34rem)] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_34%_26%,#eef0ea_0%,#c3cabf_34%,#7c877f_62%,#2c3339_88%,#171c22_100%)] opacity-90" />
+      <div className="absolute left-[52%] top-[6%] aspect-square w-[min(78vw,34rem)] -translate-x-1/2 rounded-full shadow-[0_0_140px_50px_rgba(148,163,184,0.16)]" />
+      {/* Grieta tenue de la superficie. */}
+      <div className="absolute left-[52%] top-[6%] aspect-square w-[min(78vw,34rem)] -translate-x-1/2 overflow-hidden rounded-full">
+        <div className="absolute left-[38%] top-[30%] h-[42%] w-px rotate-[24deg] bg-gradient-to-b from-transparent via-slate-700/70 to-transparent" />
+        <div className="absolute left-[48%] top-[44%] h-[28%] w-px -rotate-[14deg] bg-gradient-to-b from-transparent via-slate-700/60 to-transparent" />
+      </div>
+
+      {/* Via, tren y cinturon comparten el mismo giro: todo va en diagonal. */}
+      <div className="absolute left-[-22%] top-[30%] h-[46%] w-[144%] -rotate-[21deg]">
+        {/* Estela encendida bajo el convoy. */}
+        <div className="absolute inset-x-0 top-[58%] h-[3px] bg-gradient-to-r from-transparent via-amber-100 to-transparent shadow-[0_0_40px_rgba(253,230,138,0.95)]" />
+        <div className="absolute inset-x-[6%] top-[58%] h-[26px] -translate-y-[12px] bg-gradient-to-r from-transparent via-amber-300/30 to-transparent blur-lg" />
+
+        {ASTEROIDS.map((rock) => (
+          <span
+            key={rock}
+            className={`absolute left-0 animate-driftx rounded-[46%_54%_58%_42%/48%_40%_60%_52%] bg-gradient-to-br from-slate-300/70 via-slate-500/60 to-slate-900/80 ${rock}`}
+          />
+        ))}
+
+        {/* Convoy: vagones iluminados y el faro en cabeza. */}
+        <div className="absolute left-1/2 top-[58%] flex -translate-x-1/2 -translate-y-1/2 items-center gap-2">
+          {TRAIN_CARS.map((car) => (
+            <span
+              key={car}
+              className="h-12 w-40 rounded-[6px] bg-gradient-to-b from-slate-300 via-slate-700 to-slate-950 shadow-[0_0_34px_rgba(15,23,42,0.95)] ring-1 ring-slate-200/50"
+            >
+              <span className="mt-3.5 block h-3.5 w-full bg-[repeating-linear-gradient(90deg,rgba(125,211,252,0.95)_0_10px,transparent_10px_26px)]" />
+            </span>
+          ))}
+          {/* Locomotora: morro mas estrecho, sin faro (va aparte, al borde). */}
+          <span className="h-9 w-20 rounded-r-full bg-gradient-to-b from-slate-200 via-slate-600 to-slate-950 ring-1 ring-slate-200/50" />
+          <span className="ml-1 h-[5px] w-24 bg-gradient-to-r from-amber-100 to-transparent" />
+        </div>
+      </div>
+
+      {/* Salto a la velocidad de la luz: el destello nace en el extremo
+          derecho, justo delante del convoy, y estira la luz hacia dentro. */}
+      <div className="pointer-events-none absolute right-0 top-[30%] -translate-y-1/2">
+        <div className="absolute right-0 top-1/2 h-[420px] w-[420px] -translate-y-1/2 translate-x-1/3 rounded-full bg-[radial-gradient(circle,rgba(255,255,255,0.95)_0%,rgba(254,240,138,0.55)_18%,rgba(125,211,252,0.28)_42%,transparent_72%)] blur-[2px]" />
+        <div className="absolute right-0 top-1/2 h-[3px] w-[70vw] -translate-y-1/2 bg-gradient-to-l from-white via-amber-100/70 to-transparent" />
+        <div className="absolute right-0 top-1/2 h-24 w-[46vw] -translate-y-1/2 bg-gradient-to-l from-amber-100/70 via-sky-200/25 to-transparent blur-2xl" />
+        <div className="absolute right-4 top-1/2 h-[190px] w-[3px] -translate-y-1/2 bg-gradient-to-b from-transparent via-white to-transparent blur-[1px]" />
+        <div className="absolute right-0 top-1/2 h-24 w-24 -translate-y-1/2 translate-x-1/3 rounded-full bg-white shadow-[0_0_120px_60px_rgba(254,240,138,0.85),0_0_240px_120px_rgba(56,189,248,0.35)]" />
+      </div>
 
       {SHOOTING_STARS.map((shoot) => (
         <span
@@ -96,32 +208,179 @@ function StarRailBackground() {
   )
 }
 
+function GenshinColumn({ column }) {
+  const shaftTop = column.y + 6
+  return (
+    <g opacity={column.o}>
+      <rect
+        x={column.x - column.w * 0.95}
+        y={column.y}
+        width={column.w * 1.9}
+        height="2.6"
+        rx="0.8"
+        fill="url(#giStoneLit)"
+      />
+      <rect
+        x={column.x - column.w * 0.72}
+        y={column.y + 2.6}
+        width={column.w * 1.44}
+        height="3.4"
+        fill="url(#giStone)"
+      />
+      <rect
+        x={column.x - column.w / 2}
+        y={shaftTop}
+        width={column.w}
+        height={225 - shaftTop}
+        fill="url(#giStone)"
+      />
+      <rect
+        x={column.x - column.w * 0.16}
+        y={shaftTop}
+        width={column.w * 0.18}
+        height={225 - shaftTop}
+        fill="#fff7ea"
+        opacity="0.35"
+      />
+    </g>
+  )
+}
+
 function GenshinBackground() {
   return (
     <>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(14,165,233,0.18),transparent_60%)]" />
+      {/* Cielo de atardecer: lavanda arriba, rosa y oro junto al horizonte. */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#6f6bb0_0%,#9a7fbd_22%,#d09ab4_44%,#eeb49f_62%,#f6d2a8_78%,#e0a682_100%)]" />
 
-      <div className="absolute inset-x-0 top-0 h-[45%] animate-aurora bg-[linear-gradient(100deg,transparent,rgba(45,212,191,0.35),rgba(56,189,248,0.25),transparent)] blur-[70px]" />
-      <div className="absolute inset-x-0 top-[8%] h-[38%] animate-aurora bg-[linear-gradient(80deg,transparent,rgba(129,140,248,0.30),rgba(34,211,238,0.20),transparent)] blur-[80px] [animation-delay:5s]" />
+      {/* Sol detras de la puerta. */}
+      <div className="absolute left-1/2 top-[46%] h-[34rem] w-[34rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(255,244,214,0.85)_0%,rgba(255,214,170,0.42)_32%,transparent_68%)] blur-[2px]" />
+
+      {/* Mar de nubes cruzando por detras del santuario. */}
+      {GI_CLOUDS.map((cloud) => (
+        <span
+          key={cloud}
+          className={`absolute left-0 animate-cloud rounded-full bg-[radial-gradient(ellipse_at_50%_50%,rgba(255,255,255,0.98)_0%,rgba(255,214,226,0.78)_42%,rgba(214,166,196,0.28)_66%,transparent_78%)] blur-lg ${cloud}`}
+        />
+      ))}
 
       <svg
-        className="absolute inset-x-0 bottom-0 h-[38%] w-full"
-        viewBox="0 0 1200 300"
-        preserveAspectRatio="none"
+        className="absolute inset-0 h-full w-full"
+        viewBox="0 0 400 225"
+        preserveAspectRatio="xMidYMax slice"
         aria-hidden="true"
       >
-        <polygon points="0,300 180,120 340,300" fill="rgba(15,42,54,0.85)" />
-        <polygon points="240,300 470,70 700,300" fill="rgba(11,32,42,0.9)" />
-        <polygon points="600,300 820,140 1010,300" fill="rgba(15,42,54,0.8)" />
-        <polygon points="900,300 1090,90 1200,300" fill="rgba(9,26,35,0.92)" />
+        <defs>
+          <linearGradient id="giStone" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#fff6e8" />
+            <stop offset="30%" stopColor="#e3d0cd" />
+            <stop offset="70%" stopColor="#9b8aa6" />
+            <stop offset="100%" stopColor="#655a7a" />
+          </linearGradient>
+          <linearGradient id="giStoneLit" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#fffaf0" />
+            <stop offset="100%" stopColor="#cbbcc9" />
+          </linearGradient>
+          <linearGradient id="giPath" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#fdf2df" />
+            <stop offset="60%" stopColor="#f0e2d2" />
+            <stop offset="100%" stopColor="#d8c4bb" />
+          </linearGradient>
+          <linearGradient id="giDoor" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#8f93c4" />
+            <stop offset="55%" stopColor="#5b5f92" />
+            <stop offset="100%" stopColor="#3d4070" />
+          </linearGradient>
+          <linearGradient id="giRay" x1="0" y1="1" x2="0" y2="0">
+            <stop offset="0%" stopColor="#fff4d6" stopOpacity="0.55" />
+            <stop offset="100%" stopColor="#fff4d6" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+
+        {/* Rayos, por detras de todo lo construido. */}
+        <g>
+          {GI_RAYS.map((offset) => (
+            <polygon
+              key={offset}
+              points={`200,130 ${200 + offset * 3.2 - 9},0 ${200 + offset * 3.2 + 9},0`}
+              fill="url(#giRay)"
+            />
+          ))}
+        </g>
+
+        {GI_COLUMNS_FAR.map((column) => (
+          <GenshinColumn key={`far-${column.x}`} column={column} />
+        ))}
+
+        {/* Balaustrada a ambos lados de la puerta. */}
+        <g opacity="0.65">
+          <rect x="0" y="150" width="158" height="2" fill="url(#giStoneLit)" />
+          <rect x="242" y="150" width="158" height="2" fill="url(#giStoneLit)" />
+          {Array.from({ length: 20 }, (_, i) => i * 8).map((x) => (
+            <rect key={`bl-${x}`} x={x} y="152" width="2" height="9" fill="url(#giStone)" />
+          ))}
+          {Array.from({ length: 20 }, (_, i) => 244 + i * 8).map((x) => (
+            <rect key={`br-${x}`} x={x} y="152" width="2" height="9" fill="url(#giStone)" />
+          ))}
+        </g>
+
+        {/* La puerta. */}
+        <g>
+          <path
+            d="M163 158 L163 62 A37 37 0 0 1 237 62 L237 158 Z"
+            fill="url(#giDoor)"
+            stroke="#fbf1ea"
+            strokeWidth="2.2"
+            strokeOpacity="0.95"
+          />
+          <path d="M171 156 L171 63 A29 29 0 0 1 229 63 L229 156 Z" fill="#3f4478" opacity="0.94" />
+          <path
+            d="M200 74 C188 96 188 122 200 144 C212 122 212 96 200 74 Z"
+            fill="none"
+            stroke="#dfe3ff"
+            strokeWidth="1.3"
+            strokeOpacity="0.8"
+          />
+          <circle cx="200" cy="109" r="6" fill="none" stroke="#dfe3ff" strokeWidth="1" strokeOpacity="0.7" />
+          <line
+            x1="200"
+            y1="63"
+            x2="200"
+            y2="156"
+            stroke="#b9bee8"
+            strokeWidth="0.8"
+            strokeOpacity="0.65"
+          />
+          {/* Escalones sobre los que se apoya. */}
+          <rect x="159" y="158" width="82" height="3.6" fill="url(#giStone)" />
+          <rect x="153" y="161.6" width="94" height="4.4" fill="url(#giStoneLit)" />
+        </g>
+
+        {/* Pasarela de piedra hacia la puerta. */}
+        <polygon points="158,166 242,166 282,225 118,225" fill="url(#giPath)" />
+        <g stroke="#b9a597" strokeOpacity="0.5" strokeWidth="0.5">
+          {[176, 188, 200, 213].map((y) => {
+            const edge = giPathEdges(y)
+            return <line key={`pl-${y}`} x1={edge.left} y1={y} x2={edge.right} y2={y} />
+          })}
+          <line x1="170" y1="166" x2="141" y2="225" />
+          <line x1="230" y1="166" x2="259" y2="225" />
+        </g>
+
+        {GI_COLUMNS_NEAR.map((column) => (
+          <GenshinColumn key={`near-${column.x}`} column={column} />
+        ))}
       </svg>
 
+      {/* Motas de luz subiendo. */}
       {FLOATERS.map((floater) => (
         <span
           key={floater}
-          className={`absolute h-1.5 w-1.5 animate-rise rounded-full bg-cyan-200/80 shadow-[0_0_10px_rgba(103,232,249,0.8)] ${floater}`}
+          className={`absolute h-1.5 w-1.5 animate-rise rounded-full bg-amber-50 shadow-[0_0_12px_rgba(255,237,213,0.95)] ${floater}`}
         />
       ))}
+
+      {/* Velo superior para que la cabecera se siga leyendo sobre el cielo. */}
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/45 via-black/20 to-transparent" />
     </>
   )
 }
@@ -258,96 +517,219 @@ function ZzzBackground() {
   )
 }
 
-const SPEED_LINES = [
-  'top-[46%] w-40 [animation-delay:0s] [animation-duration:3.4s]',
-  'top-[54%] w-56 [animation-delay:0.8s] [animation-duration:4.2s]',
-  'top-[62%] w-32 [animation-delay:1.6s] [animation-duration:3s]',
-  'top-[70%] w-64 [animation-delay:2.3s] [animation-duration:4.8s]',
-  'top-[78%] w-44 [animation-delay:3.1s] [animation-duration:3.8s]',
-  'top-[86%] w-52 [animation-delay:1.1s] [animation-duration:4.5s]',
+// --- Hipodromo de Umamusume ----------------------------------------------
+// Escena fija: gradas a la izquierda, cielo y arboleda al fondo, valla blanca
+// y cesped en perspectiva. Sin animacion, tal y como se pidio.
+
+// Rayas del cesped: todas salen del punto de fuga, asi que la hierba parece
+// abrirse hacia el espectador.
+const UMA_VANISH = { x: 268, y: 76 }
+const UMA_TURF_LINES = [
+  { x: -220, w: 3.4, o: 0.5 },
+  { x: -140, w: 2.6, o: 0.34 },
+  { x: -70, w: 3.8, o: 0.46 },
+  { x: -10, w: 2.4, o: 0.3 },
+  { x: 48, w: 4.2, o: 0.52 },
+  { x: 110, w: 2.8, o: 0.32 },
+  { x: 168, w: 3.4, o: 0.44 },
+  { x: 232, w: 2.6, o: 0.3 },
+  { x: 300, w: 4, o: 0.48 },
+  { x: 372, w: 2.8, o: 0.34 },
+  { x: 450, w: 3.6, o: 0.42 },
+  { x: 540, w: 2.6, o: 0.28 },
 ]
 
-const RUNNERS = [
-  'bottom-[16%] h-16 [animation-delay:0s] [animation-duration:10s]',
-  'bottom-[9%] h-20 [animation-delay:2.5s] [animation-duration:8.5s]',
-  'bottom-[24%] h-12 [animation-delay:5.5s] [animation-duration:12s]',
+// Briznas de hierba levantadas por las carreras.
+const UMA_BLADES = [
+  'left-[6%] top-[54%] h-6 w-1.5 -rotate-[28deg]',
+  'left-[13%] top-[70%] h-8 w-2 rotate-[16deg]',
+  'left-[22%] top-[46%] h-5 w-1.5 rotate-[42deg]',
+  'left-[35%] top-[78%] h-7 w-2 -rotate-[18deg]',
+  'left-[47%] top-[58%] h-5 w-1.5 rotate-[34deg]',
+  'left-[58%] top-[84%] h-8 w-2 -rotate-[36deg]',
+  'left-[69%] top-[50%] h-6 w-1.5 rotate-[22deg]',
+  'left-[79%] top-[72%] h-7 w-2 -rotate-[26deg]',
+  'left-[89%] top-[44%] h-5 w-1.5 rotate-[38deg]',
+  'left-[94%] top-[64%] h-6 w-2 -rotate-[14deg]',
 ]
 
-function GallopingHorse() {
-  return (
-    <svg viewBox="0 0 110 60" className="h-full w-auto" aria-hidden="true">
-      <g fill="currentColor">
-        <ellipse cx="52" cy="28" rx="22" ry="9.5" />
-        <path d="M68,22 L86,10 L92,17 L74,29 Z" />
-        <path d="M84,7 L100,12 L98,21 L82,17 Z" />
-        <path d="M32,22 C20,13 12,13 4,17 C14,20 24,26 31,31 Z" />
-        <rect
-          x="64"
-          y="32"
-          width="5"
-          height="23"
-          rx="2.5"
-          transform="rotate(32 66.5 33)"
-        />
-        <rect
-          x="57"
-          y="32"
-          width="5"
-          height="20"
-          rx="2.5"
-          transform="rotate(14 59.5 33)"
-        />
-        <rect
-          x="40"
-          y="32"
-          width="5"
-          height="23"
-          rx="2.5"
-          transform="rotate(-36 42.5 33)"
-        />
-        <rect
-          x="46"
-          y="32"
-          width="5"
-          height="20"
-          rx="2.5"
-          transform="rotate(-14 48.5 33)"
-        />
-      </g>
-    </svg>
-  )
-}
+// Destellos del sol sobre el cesped.
+const UMA_SPARKS = [
+  'left-[9%] top-[62%] h-2 w-2',
+  'left-[19%] top-[48%] h-1.5 w-1.5',
+  'left-[29%] top-[74%] h-2.5 w-2.5',
+  'left-[41%] top-[52%] h-1.5 w-1.5',
+  'left-[52%] top-[68%] h-2 w-2',
+  'left-[63%] top-[45%] h-2.5 w-2.5',
+  'left-[73%] top-[80%] h-1.5 w-1.5',
+  'left-[84%] top-[56%] h-2 w-2',
+  'left-[92%] top-[70%] h-2.5 w-2.5',
+]
 
 function UmamusumeBackground() {
   return (
     <>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_10%,rgba(217,164,65,0.18),transparent_60%)]" />
-      <div className="absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(to_top,rgba(88,50,22,0.75),rgba(62,36,16,0.35),transparent)]" />
+      <svg
+        viewBox="0 0 400 225"
+        preserveAspectRatio="xMidYMid slice"
+        className="absolute inset-0 h-full w-full"
+        aria-hidden="true"
+      >
+        <defs>
+          <linearGradient id="umaSky" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#8ec5e8" />
+            <stop offset="55%" stopColor="#c2e0f0" />
+            <stop offset="100%" stopColor="#e8f4ee" />
+          </linearGradient>
+          <linearGradient id="umaTurf" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#3f9b32" />
+            <stop offset="20%" stopColor="#63c93b" />
+            <stop offset="55%" stopColor="#8fe348" />
+            <stop offset="100%" stopColor="#b6f05e" />
+          </linearGradient>
+          <linearGradient id="umaDirt" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#c9a06a" />
+            <stop offset="100%" stopColor="#e0c294" />
+          </linearGradient>
+          <linearGradient id="umaStand" x1="0" y1="0" x2="1" y2="0.4">
+            <stop offset="0%" stopColor="#3b3f6b" />
+            <stop offset="70%" stopColor="#5a5f8c" />
+            <stop offset="100%" stopColor="#7e83ab" />
+          </linearGradient>
+          <linearGradient id="umaRoof" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stopColor="#1f2340" />
+            <stop offset="100%" stopColor="#454a75" />
+          </linearGradient>
+          <radialGradient id="umaSun" cx="0.5" cy="0.5" r="0.5">
+            <stop offset="0%" stopColor="#fffdf2" stopOpacity="0.95" />
+            <stop offset="100%" stopColor="#fffdf2" stopOpacity="0" />
+          </radialGradient>
+        </defs>
 
-      <div className="absolute inset-x-0 bottom-[6%] h-px bg-gradient-to-r from-transparent via-amber-100/25 to-transparent" />
-      <div className="absolute inset-x-0 bottom-[20%] h-px bg-gradient-to-r from-transparent via-amber-100/20 to-transparent" />
-      <div className="absolute inset-x-0 bottom-[34%] h-px bg-gradient-to-r from-transparent via-amber-100/12 to-transparent" />
+        {/* Cielo y sol. */}
+        <rect x="0" y="0" width="400" height="92" fill="url(#umaSky)" />
+        <circle cx="300" cy="24" r="46" fill="url(#umaSun)" />
+        <ellipse cx="268" cy="26" rx="34" ry="9" fill="#ffffff" opacity="0.85" />
+        <ellipse cx="292" cy="21" rx="22" ry="7" fill="#ffffff" opacity="0.8" />
+        <ellipse cx="352" cy="34" rx="28" ry="8" fill="#ffffff" opacity="0.7" />
+        <ellipse cx="214" cy="16" rx="20" ry="6" fill="#ffffff" opacity="0.6" />
 
-      {SPEED_LINES.map((line) => (
+        {/* Arboleda del fondo. */}
+        {[188, 206, 224, 244, 262, 282, 302, 322, 344, 366, 388].map((x, i) => (
+          <ellipse
+            key={`tree-${x}`}
+            cx={x}
+            cy={70 - (i % 3) * 2}
+            rx={13 + (i % 4) * 2}
+            ry={8 + (i % 3) * 1.5}
+            fill="#2c6b33"
+            opacity="0.85"
+          />
+        ))}
+        <rect x="176" y="70" width="224" height="6" fill="#2f7237" />
+
+        {/* Pista de arena exterior y su valla blanca. */}
+        <rect x="150" y="76" width="250" height="13" fill="url(#umaDirt)" />
+        <rect x="150" y="75" width="250" height="1.6" fill="#f7fbff" />
+        <rect x="150" y="86" width="250" height="2.2" fill="#f7fbff" />
+        {Array.from({ length: 22 }, (_, i) => 154 + i * 11.5).map((x) => (
+          <rect key={`post-${x}`} x={x} y="75" width="1.6" height="13" fill="#eef4fa" />
+        ))}
+
+        {/* Gradas: techo en voladizo y publico. */}
+        <polygon points="0,0 168,0 150,30 0,44" fill="url(#umaRoof)" />
+        <polygon points="0,44 150,30 150,78 0,96" fill="url(#umaStand)" />
+        <polygon points="0,44 150,30 150,34 0,49" fill="#9aa0c8" opacity="0.7" />
+        {/* Filas de publico: puntitos en diagonal siguiendo la grada. */}
+        {Array.from({ length: 7 }, (_, row) => row).map((row) =>
+          Array.from({ length: 34 }, (_, col) => col).map((col) => {
+            const x = 3 + col * 4.4
+            const y = 38 + row * 6.2 + (150 - x) * 0.055
+            return (
+              <circle
+                key={`fan-${row}-${col}`}
+                cx={x}
+                cy={y}
+                r={1.5 - row * 0.08}
+                fill={col % 3 === 0 ? '#e7e9f7' : col % 3 === 1 ? '#b6bcdf' : '#8f96c4'}
+                opacity={0.5 + ((row + col) % 4) * 0.1}
+              />
+            )
+          }),
+        )}
+        <rect x="0" y="90" width="152" height="4" fill="#2b2f52" opacity="0.8" />
+
+        {/* Valla interior blanca que separa las gradas del cesped. */}
+        <polygon points="0,96 150,78 150,82 0,101" fill="#f7fbff" opacity="0.95" />
+        {Array.from({ length: 14 }, (_, i) => i * 11).map((x) => (
+          <rect
+            key={`rail-${x}`}
+            x={x}
+            y={96 - x * 0.12}
+            width="1.6"
+            height="8"
+            fill="#eef4fa"
+            opacity="0.9"
+          />
+        ))}
+
+        {/* Cesped en perspectiva. */}
+        <polygon points="0,101 150,82 400,88 400,225 0,225" fill="url(#umaTurf)" />
+        <g stroke="#e6ffb0" strokeLinecap="round">
+          {UMA_TURF_LINES.map((line) => (
+            <line
+              key={`turf-${line.x}`}
+              x1={UMA_VANISH.x}
+              y1={UMA_VANISH.y}
+              x2={line.x}
+              y2={225}
+              strokeWidth={line.w}
+              strokeOpacity={line.o}
+            />
+          ))}
+        </g>
+        {/* Franjas de siega, mas claras y muy tenues. */}
+        {[112, 138, 168, 202, 225].map((y, i) => (
+          <rect
+            key={`mow-${y}`}
+            x="0"
+            y={y}
+            width="400"
+            height={6 + i * 2}
+            fill="#ffffff"
+            opacity="0.06"
+          />
+        ))}
+
+        {/* Poste de distancia rojiblanco a la derecha. */}
+        <rect x="348" y="30" width="3.4" height="58" fill="#f4f7fb" />
+        {[34, 44, 54, 64, 74].map((y) => (
+          <rect key={`pole-${y}`} x="348" y={y} width="3.4" height="5" fill="#d94a4a" />
+        ))}
+        <rect x="342" y="22" width="15" height="10" rx="2" fill="#f4f7fb" />
+        <text x="349.5" y="30" textAnchor="middle" fontSize="8" fontWeight="700" fill="#2d3350">
+          2
+        </text>
+      </svg>
+
+      {/* Briznas de hierba levantadas. */}
+      {UMA_BLADES.map((blade) => (
         <span
-          key={line}
-          className={`absolute left-0 h-[2px] animate-dash rounded-full bg-gradient-to-r from-transparent via-amber-200/70 to-transparent ${line}`}
+          key={blade}
+          className={`absolute rounded-full bg-lime-200/80 shadow-[0_0_10px_rgba(190,242,100,0.7)] ${blade}`}
         />
       ))}
 
-      {RUNNERS.map((runner) => (
+      {/* Destellos. */}
+      {UMA_SPARKS.map((spark) => (
         <span
-          key={runner}
-          className={`absolute left-0 animate-gallop text-amber-950/70 ${runner}`}
-        >
-          <span className="flex h-full animate-bob">
-            <GallopingHorse />
-          </span>
-        </span>
+          key={spark}
+          className={`absolute rounded-full bg-white shadow-[0_0_14px_6px_rgba(255,255,255,0.75)] ${spark}`}
+        />
       ))}
 
-      <div className="absolute bottom-[8%] left-[18%] h-40 w-40 animate-smoke rounded-full bg-amber-700/20 blur-[70px]" />
-      <div className="absolute bottom-[12%] right-[22%] h-48 w-48 animate-smoke rounded-full bg-yellow-600/15 blur-[80px] [animation-delay:8s]" />
+      {/* Vineteado suave para que el texto de las tarjetas siga leyendose. */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_45%,transparent_38%,rgba(12,20,10,0.3)_100%)]" />
     </>
   )
 }
@@ -566,7 +948,7 @@ function GamePage() {
       </header>
 
       <main className="relative z-10 mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
-        <section className="rounded-3xl border border-white/10 bg-black/50 p-6 backdrop-blur-xl sm:p-10">
+        <section className="rounded-3xl border border-white/10 bg-black/55 p-6 backdrop-blur-sm sm:p-10">
           <span
             className={`mb-5 inline-block rounded-full px-3 py-1 text-xs font-medium tracking-wide ring-1 ${game.accent} ${game.accentRing}`}
           >
@@ -590,9 +972,9 @@ function GamePage() {
             ].map(([label, value]) => (
               <div
                 key={label}
-                className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
+                className="rounded-xl border border-white/10 bg-black/40 p-4"
               >
-                <p className="mb-1.5 text-[11px] uppercase tracking-wide text-zinc-500">
+                <p className="mb-1.5 text-[11px] uppercase tracking-wide text-zinc-300">
                   {label}
                 </p>
                 <p className="text-sm font-medium text-white">{value}</p>
@@ -601,7 +983,7 @@ function GamePage() {
           </div>
         </section>
 
-        <section className="mt-6 rounded-3xl border border-white/10 bg-black/50 p-6 backdrop-blur-xl sm:p-10">
+        <section className="mt-6 rounded-3xl border border-white/10 bg-black/55 p-6 backdrop-blur-sm sm:p-10">
           <h3 className="mb-6 text-lg font-semibold tracking-tight text-white sm:text-xl">
             {t('game.highlights')}
           </h3>

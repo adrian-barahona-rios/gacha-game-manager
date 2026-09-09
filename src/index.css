@@ -15,6 +15,8 @@
   --animate-gallop: gallop 11s linear infinite;
   --animate-bob: bob 0.5s ease-in-out infinite;
   --animate-meridian: meridian 26s linear infinite;
+  --animate-driftx: driftx 24s linear infinite;
+  --animate-cloud: cloud 60s linear infinite;
 
   @keyframes twinkle {
     0%,
@@ -206,6 +208,43 @@
     }
     100% {
       transform: scaleX(1);
+    }
+  }
+
+  /* Roca cruzando el encuadre. Va dentro de un contenedor girado, asi que
+     este desplazamiento horizontal la lleva en diagonal, a lo largo de la via. */
+  @keyframes driftx {
+    0% {
+      transform: translate3d(-14vw, 0, 0) rotate(0deg);
+      opacity: 0;
+    }
+    8% {
+      opacity: 1;
+    }
+    88% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(116vw, 0, 0) rotate(220deg);
+      opacity: 0;
+    }
+  }
+
+  /* Nubes del mar de nubes: entran y salen del encuadre sin cambiar de forma. */
+  @keyframes cloud {
+    0% {
+      transform: translate3d(-40vw, 0, 0);
+      opacity: 0;
+    }
+    12% {
+      opacity: 1;
+    }
+    86% {
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(140vw, 0, 0);
+      opacity: 0;
     }
   }
 

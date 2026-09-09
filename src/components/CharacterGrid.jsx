@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowLeft, Heart, Loader2, Users } from 'lucide-react'
+import { AlertCircle, ArrowLeft, Heart, Loader2, Search, Users } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { useFavorites } from '../data/useFavorites'
@@ -51,6 +51,7 @@ function CharacterGrid() {
   const { t } = useI18n()
   const [error, setError] = useState('')
   const [view, setView] = useState('todos')
+  const [term, setTerm] = useState('')
   const favorites = useFavorites('favorite_characters', { gameFilter: gameId })
 
   useEffect(() => {
@@ -81,9 +82,27 @@ function CharacterGrid() {
   }, [gameId, t])
 
   const showingFavorites = view === 'favoritos'
-  const visible = showingFavorites
-    ? characters.filter((character) => favorites.favoriteIds.has(character.id))
-    : characters
+  // Sin acentos y en minusculas: buscar "yanfei" encuentra a "Yanfei" y
+  // "alhacen" encuentra a "Alhacén (Alhaitham)".
+  const needle = term
+    .trim()
+    .normalize('NFD')
+    .replace(/\p{Diacritic}/gu, '')
+    .toLowerCase()
+
+  const visible = characters.filter((character) => {
+    if (showingFavorites && !favorites.favoriteIds.has(character.id)) {
+      return false
+    }
+    if (!needle) {
+      return true
+    }
+    return character.name
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase()
+      .includes(needle)
+  })
 
   const TABS = [
     { id: 'todos', label: t('favorites.all'), count: characters.length },
@@ -141,7 +160,8 @@ function CharacterGrid() {
           </div>
         )}
 
-        <div className="mb-8 inline-flex gap-1.5 rounded-2xl border border-white/10 bg-white/[0.02] p-1.5">
+        <div className="mb-8 flex flex-wrap items-center gap-4">
+        <div className="inline-flex gap-1.5 rounded-2xl border border-white/10 bg-white/[0.02] p-1.5">
           {TABS.map((tab) => (
             <button
               key={tab.id}
@@ -168,6 +188,17 @@ function CharacterGrid() {
           ))}
         </div>
 
+          <div className="relative min-w-[15rem] flex-1">
+            <input
+              value={term}
+              onChange={(event) => setTerm(event.target.value)}
+              placeholder={t('characters.search')}
+              className="peer w-full rounded-xl border border-white/10 bg-white/[0.03] py-3 pl-11 pr-4 text-[15px] text-white placeholder:text-zinc-600 transition-all duration-300 hover:border-white/20 focus:border-white/30 focus:bg-white/[0.06] focus:outline-none focus:ring-4 focus:ring-white/5"
+            />
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-zinc-500 transition-colors duration-300 peer-focus:text-white" />
+          </div>
+        </div>
+
         {isLoading ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {[0, 1, 2, 3, 4, 5].map((slot) => (
@@ -189,11 +220,13 @@ function CharacterGrid() {
               <Users className="mx-auto mb-4 h-10 w-10 text-zinc-600" />
             )}
             <p className="text-zinc-400">
-              {!showingFavorites
-                ? t('characters.empty')
-                : favorites.userId
-                  ? t('favorites.empty')
-                  : t('favorites.signedOut')}
+              {needle
+                ? t('characters.noMatches')
+                : !showingFavorites
+                  ? t('characters.empty')
+                  : favorites.userId
+                    ? t('favorites.empty')
+                    : t('favorites.signedOut')}
             </p>
           </div>
         ) : (
