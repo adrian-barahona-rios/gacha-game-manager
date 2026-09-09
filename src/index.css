@@ -14,6 +14,7 @@
   --animate-dash: dash 4s linear infinite;
   --animate-gallop: gallop 11s linear infinite;
   --animate-bob: bob 0.5s ease-in-out infinite;
+  --animate-meridian: meridian 26s linear infinite;
 
   @keyframes twinkle {
     0%,
@@ -171,6 +172,40 @@
     }
     50% {
       transform: translate3d(0, -0.4rem, 0);
+    }
+  }
+
+  /* Un meridiano de la cupula visto de frente se estrecha hasta desaparecer y
+     vuelve a abrirse por el otro lado. Los valores siguen un coseno para que
+     el giro no se note escalonado; con varios meridianos desfasados la esfera
+     parece rotar sobre si misma. */
+  @keyframes meridian {
+    0% {
+      transform: scaleX(1);
+    }
+    12.5% {
+      transform: scaleX(0.707);
+    }
+    25% {
+      transform: scaleX(0);
+    }
+    37.5% {
+      transform: scaleX(-0.707);
+    }
+    50% {
+      transform: scaleX(-1);
+    }
+    62.5% {
+      transform: scaleX(-0.707);
+    }
+    75% {
+      transform: scaleX(0);
+    }
+    87.5% {
+      transform: scaleX(0.707);
+    }
+    100% {
+      transform: scaleX(1);
     }
   }
 

@@ -46,6 +46,30 @@ const FLOATERS = [
   'left-[92%] bottom-[14%] [animation-delay:7.2s] [animation-duration:12s]',
 ]
 
+
+// --- Cupula de Zenless ---------------------------------------------------
+// Radio de la cupula dentro del viewBox de 200x200.
+const DOME_R = 92
+
+// Paralelos: a cada altura, el radio horizontal sale del propio circulo. El
+// factor de ry los aplana para que se lean como anillos vistos casi de canto.
+const DOME_LATITUDES = [-78, -62, -44, -24, -2, 20, 42, 62, 78].map((dy) => ({
+  dy,
+  rx: Math.sqrt(DOME_R * DOME_R - dy * dy),
+}))
+
+// Meridianos: mismo tamano, desfasados en el tiempo. Al ir estrechandose y
+// abriendose por turnos, la cupula parece girar sobre si misma.
+const DOME_MERIDIANS = [0, 1, 2, 3, 4, 5, 6].map((index) => index * -1.857)
+
+const CONES = [
+  'left-[16%] bottom-[13%] h-9 w-7',
+  'left-[27%] bottom-[9%] h-7 w-6',
+  'left-[63%] bottom-[11%] h-8 w-6',
+  'left-[74%] bottom-[7%] h-6 w-5',
+  'left-[85%] bottom-[14%] h-9 w-7',
+]
+
 function StarRailBackground() {
   return (
     <>
@@ -131,56 +155,103 @@ function DxdBackground() {
 function ZzzBackground() {
   return (
     <>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_0%,rgba(16,185,129,0.16),transparent_58%)]" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_80%,rgba(34,211,238,0.12),transparent_55%)]" />
+      {/* Cielo polvoriento: claro junto al horizonte y apagado hacia arriba. */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#171719_0%,#2c2823_32%,#4d453a_50%,#6b6152_60%,#3a352e_64%)]" />
+      <div className="absolute inset-x-0 top-[44%] h-[22%] bg-[radial-gradient(ellipse_at_50%_100%,rgba(214,197,166,0.38),transparent_70%)] blur-2xl" />
 
-      <div className="absolute inset-[-48px] animate-scan bg-[linear-gradient(to_right,rgba(16,185,129,0.12)_1px,transparent_1px),linear-gradient(to_bottom,rgba(16,185,129,0.12)_1px,transparent_1px)] bg-[size:48px_48px]" />
+      {/* La cupula se recorta en el horizonte, como si saliera detras. */}
+      <div className="absolute inset-x-0 top-0 h-[62%] overflow-hidden">
+        <div className="absolute bottom-[-20%] left-1/2 aspect-square w-[min(128vw,62rem)] -translate-x-1/2">
+          <svg viewBox="0 0 200 200" className="h-full w-full" aria-hidden="true">
+            <defs>
+              <radialGradient id="zzzDomeFill" cx="36%" cy="26%" r="82%">
+                <stop offset="0%" stopColor="#40464d" />
+                <stop offset="55%" stopColor="#23272c" />
+                <stop offset="100%" stopColor="#14171a" />
+              </radialGradient>
+              <clipPath id="zzzDomeClip">
+                <circle cx="100" cy="100" r={DOME_R} />
+              </clipPath>
+            </defs>
 
-      <svg
-        className="absolute left-[8%] top-[18%] h-24 w-24 animate-hex text-emerald-400/45"
-        viewBox="0 0 100 100"
-        aria-hidden="true"
-      >
-        <polygon
-          points="50,3 93,26 93,74 50,97 7,74 7,26"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
+            <circle cx="100" cy="100" r={DOME_R} fill="url(#zzzDomeFill)" />
+
+            <g
+              clipPath="url(#zzzDomeClip)"
+              fill="none"
+              stroke="rgb(186 230 253)"
+              strokeOpacity="0.28"
+              strokeWidth="0.4"
+            >
+              {DOME_LATITUDES.map((lat) => (
+                <ellipse
+                  key={lat.dy}
+                  cx="100"
+                  cy={100 + lat.dy}
+                  rx={lat.rx}
+                  ry={lat.rx * 0.17}
+                />
+              ))}
+
+              {DOME_MERIDIANS.map((delay) => (
+                <ellipse
+                  key={delay}
+                  cx="100"
+                  cy="100"
+                  rx={DOME_R}
+                  ry={DOME_R}
+                  className="animate-meridian [transform-box:fill-box] [transform-origin:center]"
+                  style={{ animationDelay: `${delay}s` }}
+                />
+              ))}
+            </g>
+
+            {/* Reborde iluminado, lo que mas define la silueta de la cupula. */}
+            <circle
+              cx="100"
+              cy="100"
+              r={DOME_R}
+              fill="none"
+              stroke="rgb(224 242 254)"
+              strokeOpacity="0.5"
+              strokeWidth="0.7"
+            />
+          </svg>
+        </div>
+      </div>
+
+      {/* Halo del borde, por fuera del recorte para que se derrame en el cielo. */}
+      <div className="absolute left-1/2 top-[6%] h-[52%] w-[min(128vw,62rem)] -translate-x-1/2 rounded-full bg-[radial-gradient(circle_at_50%_60%,transparent_62%,rgba(186,230,253,0.20)_70%,transparent_76%)] blur-md" />
+
+      {/* Bloques lejanos a la derecha, apenas insinuados. */}
+      <div className="absolute bottom-[38%] right-[6%] h-[9%] w-16 bg-[#20211f]/80" />
+      <div className="absolute bottom-[38%] right-[14%] h-[6%] w-10 bg-[#1a1b1a]/80" />
+
+      {/* Valla de obra a la altura del horizonte. */}
+      <div className="absolute inset-x-0 top-[55%] h-[7%] border-y border-white/15 bg-[repeating-linear-gradient(90deg,rgba(226,232,240,0.14)_0_1px,transparent_1px_10px)]" />
+
+      {/* Asfalto. */}
+      <div className="absolute inset-x-0 top-[62%] bottom-0 bg-[linear-gradient(to_bottom,#1d1c1a,#0a0a0b)]" />
+
+      {/* Franja de peligro y farola, del atrezo industrial de la referencia. */}
+      <div className="absolute bottom-[19%] left-0 h-5 w-[24%] bg-[repeating-linear-gradient(45deg,rgba(250,204,21,0.55)_0_9px,rgba(0,0,0,0.7)_9px_18px)] opacity-45" />
+      <div className="absolute bottom-[19%] right-0 h-5 w-[18%] bg-[repeating-linear-gradient(45deg,rgba(250,204,21,0.55)_0_9px,rgba(0,0,0,0.7)_9px_18px)] opacity-35" />
+
+      <div className="absolute bottom-[18%] right-[22%] h-[26%] w-[3px] bg-gradient-to-t from-transparent via-[#2b2c2a] to-[#3a3b38]" />
+      <div className="absolute bottom-[42%] right-[21.4%] h-3 w-3 animate-flicker rounded-full bg-red-500/80 shadow-[0_0_14px_rgba(239,68,68,0.9)]" />
+
+      {CONES.map((cone) => (
+        <span
+          key={cone}
+          className={`absolute bg-gradient-to-b from-orange-400/70 to-orange-800/60 [clip-path:polygon(50%_0,100%_100%,0_100%)] ${cone}`}
         />
-      </svg>
-      <svg
-        className="absolute right-[12%] top-[52%] h-32 w-32 animate-hex text-cyan-400/40 [animation-delay:4s]"
-        viewBox="0 0 100 100"
-        aria-hidden="true"
-      >
-        <polygon
-          points="50,3 93,26 93,74 50,97 7,74 7,26"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-        />
-      </svg>
-      <svg
-        className="absolute left-[62%] top-[10%] h-16 w-16 animate-hex text-teal-300/35 [animation-delay:8s]"
-        viewBox="0 0 100 100"
-        aria-hidden="true"
-      >
-        <polygon
-          points="50,3 93,26 93,74 50,97 7,74 7,26"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="3"
-        />
-      </svg>
+      ))}
 
-      <div className="absolute inset-y-0 left-[18%] w-px animate-flicker bg-gradient-to-b from-transparent via-emerald-400/70 to-transparent shadow-[0_0_18px_rgba(52,211,153,0.85)]" />
-      <div className="absolute inset-y-0 right-[24%] w-px animate-flicker bg-gradient-to-b from-transparent via-cyan-400/70 to-transparent shadow-[0_0_18px_rgba(34,211,238,0.85)] [animation-delay:2.5s]" />
-      <div className="absolute inset-x-0 top-[28%] h-px animate-flicker bg-gradient-to-r from-transparent via-emerald-300/60 to-transparent [animation-delay:4s]" />
-
+      {/* Ceniza en suspension. */}
       {FLOATERS.map((floater) => (
         <span
           key={floater}
-          className={`absolute h-1 w-1 animate-rise bg-emerald-300 shadow-[0_0_10px_rgba(110,231,183,0.9)] ${floater}`}
+          className={`absolute h-1 w-1 animate-rise rounded-full bg-amber-100/70 shadow-[0_0_8px_rgba(254,243,199,0.7)] ${floater}`}
         />
       ))}
     </>
