@@ -18,6 +18,7 @@ const ELEMENT_STYLES = {
   Eléctrico: { badge: 'bg-blue-500/15 text-blue-300 ring-blue-400/30', tile: 'from-blue-500/40 to-blue-900/10' },
   Éter: { badge: 'bg-fuchsia-500/15 text-fuchsia-300 ring-fuchsia-400/30', tile: 'from-fuchsia-500/40 to-fuchsia-900/10' },
   Etéreo: { badge: 'bg-fuchsia-500/15 text-fuchsia-300 ring-fuchsia-400/30', tile: 'from-fuchsia-500/40 to-fuchsia-900/10' },
+  Lumen: { badge: 'bg-yellow-200/15 text-yellow-100 ring-yellow-200/30', tile: 'from-yellow-200/40 to-amber-800/10' },
   'Multi-elemento': { badge: 'bg-pink-500/15 text-pink-300 ring-pink-400/30', tile: 'from-pink-500/40 to-indigo-900/10' },
 }
 
@@ -35,6 +36,13 @@ const RARITY_STYLES = {
 
 export const getElementStyle = (element) =>
   ELEMENT_STYLES[element] ?? FALLBACK_STYLE
+
+// El badge trae su propio fondo translucido. Donde la caja tiene que ser opaca
+// (las tier lists) solo interesan el color de la letra y el del borde, asi que
+// se le quita el fondo. Las clases siguen escritas enteras arriba, que es lo
+// que Tailwind necesita para generarlas.
+export const getElementChip = (element) =>
+  getElementStyle(element).badge.replace(/bg-\S+\s*/, '')
 
 export const getRarityStyle = (rarity) =>
   RARITY_STYLES[rarity] ?? FALLBACK_STYLE.badge

@@ -4,14 +4,14 @@ import { AlertCircle, ArrowLeft, Check, Loader2 } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
-import { getElementStyle } from '../data/characterStyles'
+import { getElementChip, getElementStyle } from '../data/characterStyles'
 import ProfileButton from './ProfileButton'
 
 const TIERS = [
-  { id: 'S', label: 'S', style: 'border-amber-500/40 bg-amber-500/10 text-amber-300' },
-  { id: 'A', label: 'A', style: 'border-lime-500/40 bg-lime-500/10 text-lime-300' },
-  { id: 'B', label: 'B', style: 'border-sky-500/40 bg-sky-500/10 text-sky-300' },
-  { id: 'C', label: 'C', style: 'border-zinc-500/40 bg-zinc-500/10 text-zinc-300' },
+  { id: 'S', label: 'S', style: 'border-amber-500/50 bg-amber-950 text-amber-300' },
+  { id: 'A', label: 'A', style: 'border-lime-500/50 bg-lime-950 text-lime-300' },
+  { id: 'B', label: 'B', style: 'border-sky-500/50 bg-sky-950 text-sky-300' },
+  { id: 'C', label: 'C', style: 'border-zinc-500/50 bg-zinc-900 text-zinc-300' },
 ]
 
 function TierListPersonal() {
@@ -76,7 +76,7 @@ function TierListPersonal() {
     Promise.all([
       supabase
         .from('characters')
-        .select('id, name, element, rarity')
+        .select('id, name, element, rarity, image_url')
         .eq('game_id', gameId)
         .order('name', { ascending: true }),
       supabase
@@ -200,22 +200,39 @@ function TierListPersonal() {
         inTier ? remove(character.id) : handleChipClick(character.id)
       }
       title={inTier ? t('tierlist.tapToRemove') : t('tierlist.tapToPlace')}
-      className={`cursor-grab rounded-lg px-3 py-2 text-sm font-medium ring-1 transition-all duration-300 hover:-translate-y-0.5 active:cursor-grabbing focus:outline-none focus:ring-4 focus:ring-white/20 ${getElementStyle(character.element).badge} ${
+      className={`w-[5.5rem] cursor-grab overflow-hidden rounded-xl border border-white/10 bg-[#141418] ring-1 transition-all duration-300 hover:-translate-y-1 hover:border-white/30 active:cursor-grabbing focus:outline-none focus:ring-4 focus:ring-white/20 sm:w-24 ${getElementChip(character.element)} ${
         picked === character.id ? 'ring-4 ring-blue-500/50' : ''
       }`}
     >
-      {savingId === character.id ? (
-        <Loader2 className="inline h-3.5 w-3.5 animate-spin" />
-      ) : (
-        character.name
-      )}
+      <span
+        className={`flex h-[4.5rem] w-full items-center justify-center bg-gradient-to-br sm:h-20 ${getElementStyle(character.element).tile}`}
+      >
+        {savingId === character.id ? (
+          <Loader2 className="h-5 w-5 animate-spin text-white/80" />
+        ) : character.image_url ? (
+          <img
+            src={character.image_url}
+            alt={character.name}
+            loading="lazy"
+            draggable={false}
+            className="h-full w-auto max-w-full object-contain"
+          />
+        ) : (
+          <span className="text-2xl font-bold tracking-tight text-white/85">
+            {character.name.charAt(0)}
+          </span>
+        )}
+      </span>
+
+      <span className="block px-1.5 py-1.5 text-center text-[11px] font-semibold leading-tight">
+        {character.name}
+      </span>
     </button>
   )
 
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
       <div className="pointer-events-none fixed inset-0" aria-hidden="true">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_70%)]" />
         <div className="absolute -bottom-48 right-[8%] h-[28rem] w-[28rem] animate-pulse rounded-full bg-purple-600/12 blur-[130px] [animation-duration:11s]" />
       </div>
 

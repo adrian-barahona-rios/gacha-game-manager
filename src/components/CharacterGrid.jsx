@@ -59,7 +59,9 @@ function CharacterGrid() {
 
     supabase
       .from('characters')
-      .select('id, name, image_url, rarity, element, role, path, description')
+      .select(
+        'id, name, image_url, rarity, element, role, path, description, is_upcoming',
+      )
       .eq('game_id', gameId)
       .order('rarity', { ascending: false })
       .order('name', { ascending: true })
@@ -112,7 +114,6 @@ function CharacterGrid() {
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
       <div className="pointer-events-none fixed inset-0" aria-hidden="true">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_70%)]" />
         <div className="absolute -top-40 left-[12%] h-[30rem] w-[30rem] animate-pulse rounded-full bg-blue-600/12 blur-[130px] [animation-duration:9s]" />
       </div>
 
@@ -289,6 +290,11 @@ function CharacterGrid() {
                     </h2>
 
                     <div className="mb-3 flex flex-wrap gap-2">
+                      {character.is_upcoming && (
+                        <span className="rounded-full bg-fuchsia-500/15 px-2.5 py-1 text-xs font-medium text-fuchsia-300 ring-1 ring-fuchsia-400/30">
+                          {t('characters.upcoming')}
+                        </span>
+                      )}
                       {character.rarity && (
                         <span
                           className={`rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${getRarityStyle(character.rarity)}`}

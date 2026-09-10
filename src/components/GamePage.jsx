@@ -7,12 +7,14 @@ import {
   Globe,
   Home,
   ListOrdered,
+  Swords,
   Users,
 } from 'lucide-react'
 import GameArtwork from './GameArtwork'
 import ProfileButton from './ProfileButton'
 import { getGameById, getGameCopy } from '../data/games'
 import { getGameModes } from '../data/gameModes'
+import { WEAPON_SECTIONS, hasWeapons } from '../data/weapons'
 import { useI18n } from '../i18n/useI18n'
 
 const STARS = [
@@ -760,6 +762,9 @@ const GAMES_WITH_TIERLIST = [
 const MENU_ITEMS = [
   { id: 'inicio', labelKey: 'game.menu.home', icon: Home },
   { id: 'personajes', labelKey: 'game.menu.characters', icon: Users },
+  // La etiqueta cambia por juego: "Conos de luz" en Honkai y "Armas" en el
+  // resto, asi que se resuelve al pintar el menu y no aqui.
+  { id: 'armas', labelKey: 'game.menu.weapons', icon: Swords },
   { id: 'tierlist', labelKey: 'game.menu.tierList', icon: ListOrdered },
   { id: 'guias', labelKey: 'game.menu.guides', icon: BookOpen },
 ]
@@ -805,6 +810,7 @@ function GamePage() {
   const isUmamusume = game.id === 'umamusume-pretty-derby'
   const hasCharacters = isUmamusume || GAMES_WITH_CHARACTERS.includes(game.id)
   const hasTierList = isUmamusume || GAMES_WITH_TIERLIST.includes(game.id)
+  const hasWeaponSection = hasWeapons(game.id)
   // Las guias del juego dependen de que ese juego tenga modos definidos.
   const hasGuides = getGameModes(game.id).length > 0
 
@@ -899,11 +905,13 @@ function GamePage() {
                         const isCharacters = item.id === 'personajes'
                         const isTierList = item.id === 'tierlist'
                         const isGuides = item.id === 'guias'
+                        const isWeapons = item.id === 'armas'
                         const isEnabled =
                           isCurrent ||
                           (isCharacters && hasCharacters) ||
                           (isTierList && hasTierList) ||
-                          (isGuides && hasGuides)
+                          (isGuides && hasGuides) ||
+                          (isWeapons && hasWeaponSection)
 
                         return (
                           <button
@@ -915,6 +923,8 @@ function GamePage() {
                               setIsMenuOpen(false)
                               if (isCharacters) {
                                 navigate(`/game/${gameId}/characters`)
+                              } else if (isWeapons) {
+                                navigate(`/game/${gameId}/weapons`)
                               } else if (isTierList) {
                                 navigate(`/game/${gameId}/tierlist/official`)
                               } else if (isGuides) {
@@ -930,7 +940,14 @@ function GamePage() {
                             }`}
                           >
                             <Icon className="h-4 w-4 shrink-0" />
-                            <span className="flex-1">{t(item.labelKey)}</span>
+                            <span className="flex-1">
+                              {t(
+                                isWeapons
+                                  ? (WEAPON_SECTIONS[game.id]?.menuKey ??
+                                      'game.menu.weapons')
+                                  : item.labelKey,
+                              )}
+                            </span>
                             {!isEnabled && (
                               <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] uppercase tracking-wide text-zinc-500">
                                 {t('common.soon')}

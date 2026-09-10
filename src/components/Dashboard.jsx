@@ -16,6 +16,7 @@ import { useI18n } from '../i18n/useI18n'
 import { GAME_CATALOG, getGameCopy } from '../data/games'
 import GameArtwork from './GameArtwork'
 import ProfileButton from './ProfileButton'
+import CommentsSection from './CommentsSection'
 
 const PARTICLES = [
   'left-[8%] top-[18%] [animation-duration:5s] [animation-delay:0s]',
@@ -35,7 +36,6 @@ const CARD_DELAYS = ['delay-0', 'delay-100', 'delay-200', 'delay-300']
 function AnimatedBackground() {
   return (
     <div className="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_70%)]" />
 
       <div className="absolute left-1/2 top-1/2 h-[70rem] w-[70rem] -translate-x-1/2 -translate-y-1/2 animate-spin rounded-full bg-[conic-gradient(from_0deg,transparent_0deg,rgba(0,102,255,0.10)_90deg,transparent_180deg,rgba(147,51,234,0.10)_270deg,transparent_360deg)] [animation-duration:70s]" />
 
@@ -342,6 +342,8 @@ function Dashboard() {
             {t('dashboard.addGame')}
           </button>
         )}
+
+        <CommentsSection />
       </main>
 
       {isAdding && (

@@ -171,7 +171,6 @@ function GuideForm() {
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
       <div className="pointer-events-none fixed inset-0" aria-hidden="true">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_70%)]" />
       </div>
 
       <header className="sticky top-0 z-20 border-b border-white/10 bg-black/70 backdrop-blur-xl">

@@ -16,6 +16,8 @@ import GamePage from './components/GamePage'
 import Login from './components/Login'
 import Register from './components/Register'
 import TierListOfficial from './components/TierListOfficial'
+import WeaponList from './components/WeaponList'
+import WeaponDetail from './components/WeaponDetail'
 import TierListPersonal from './components/TierListPersonal'
 import UmamusumeCharacters from './components/UmamusumeCharacters'
 import UmamusumeGuideTopic from './components/UmamusumeGuideTopic'
@@ -63,6 +65,8 @@ function App() {
         path="/game/:gameId/characters/:characterId/guides"
         element={<CharacterGuides />}
       />
+      <Route path="/game/:gameId/weapons" element={<WeaponList />} />
+      <Route path="/game/:gameId/weapons/:weaponId" element={<WeaponDetail />} />
       <Route
         path="/game/:gameId/tierlist/official"
         element={<TierListOfficial />}

@@ -4,20 +4,23 @@ import { AlertCircle, ArrowLeft, ListOrdered } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
-import { getElementStyle } from '../data/characterStyles'
+import { getElementChip, getElementStyle } from '../data/characterStyles'
 import ProfileButton from './ProfileButton'
 
 // Escala de Prydwen: 0 es el tier mas alto. Los colores siguen esa direccion,
 // verde arriba y rojo abajo, como pidio Vara.
+//
+// Los fondos son opacos a proposito: con un color translucido se veia el fondo
+// de la pagina por detras y las cajas perdian fuerza.
 const RATING_STYLES = {
-  0: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-300',
-  0.5: 'border-teal-500/40 bg-teal-500/10 text-teal-300',
-  1: 'border-lime-500/40 bg-lime-500/10 text-lime-300',
-  1.5: 'border-yellow-500/40 bg-yellow-500/10 text-yellow-300',
-  2: 'border-amber-500/40 bg-amber-500/10 text-amber-300',
-  3: 'border-orange-500/40 bg-orange-500/10 text-orange-300',
-  4: 'border-rose-500/40 bg-rose-500/10 text-rose-300',
-  5: 'border-red-600/40 bg-red-600/10 text-red-300',
+  0: 'border-emerald-500/50 bg-emerald-950 text-emerald-300',
+  0.5: 'border-teal-500/50 bg-teal-950 text-teal-300',
+  1: 'border-lime-500/50 bg-lime-950 text-lime-300',
+  1.5: 'border-yellow-500/50 bg-yellow-950 text-yellow-300',
+  2: 'border-amber-500/50 bg-amber-950 text-amber-300',
+  3: 'border-orange-500/50 bg-orange-950 text-orange-300',
+  4: 'border-rose-500/50 bg-rose-950 text-rose-300',
+  5: 'border-red-600/50 bg-red-950 text-red-300',
 }
 
 const MODE_ORDER = [
@@ -26,6 +29,71 @@ const MODE_ORDER = [
   'Pure Fiction',
   'Apocalyptic Shadow',
 ]
+
+// Al entrar se abre Pura Ficcion, que es el modo que mas se consulta. Si el
+// juego no lo tiene (Genshin y Zenless solo traen "General"), cae al primero.
+const DEFAULT_MODE = 'Pure Fiction'
+
+// Un color propio por modo, para distinguirlos de un vistazo.
+const MODE_STYLES = {
+  'Memory of Chaos': {
+    on: 'border-violet-400 bg-violet-600 text-white shadow-[0_0_25px_rgba(139,92,246,0.45)]',
+    off: 'border-violet-500/40 bg-violet-950 text-violet-300 hover:border-violet-400 hover:bg-violet-900',
+  },
+  'Pure Fiction': {
+    on: 'border-sky-400 bg-sky-600 text-white shadow-[0_0_25px_rgba(56,189,248,0.45)]',
+    off: 'border-sky-500/40 bg-sky-950 text-sky-300 hover:border-sky-400 hover:bg-sky-900',
+  },
+  'Apocalyptic Shadow': {
+    on: 'border-rose-400 bg-rose-600 text-white shadow-[0_0_25px_rgba(244,63,94,0.45)]',
+    off: 'border-rose-500/40 bg-rose-950 text-rose-300 hover:border-rose-400 hover:bg-rose-900',
+  },
+  General: {
+    on: 'border-blue-400 bg-blue-600 text-white shadow-[0_0_25px_rgba(59,130,246,0.45)]',
+    off: 'border-blue-500/40 bg-blue-950 text-blue-300 hover:border-blue-400 hover:bg-blue-900',
+  },
+}
+
+const FALLBACK_MODE_STYLE = {
+  on: 'border-white/60 bg-white/20 text-white',
+  off: 'border-white/15 bg-zinc-900 text-zinc-300 hover:border-white/40 hover:bg-zinc-800',
+}
+
+// La ficha del personaje: retrato arriba y nombre debajo. El nombre lleva el
+// color de su elemento, distinto del de la caja del tier que lo contiene.
+function CharacterChip({ character, onOpen }) {
+  const { tile } = getElementStyle(character.element)
+
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      title={character.role ?? undefined}
+      className={`w-[5.5rem] overflow-hidden rounded-xl border border-white/10 bg-[#141418] ring-1 transition-all duration-300 hover:-translate-y-1 hover:border-white/30 focus:outline-none focus:ring-4 focus:ring-white/20 sm:w-24 ${getElementChip(character.element)}`}
+    >
+      <span
+        className={`flex h-[4.5rem] w-full items-center justify-center bg-gradient-to-br sm:h-20 ${tile}`}
+      >
+        {character.image_url ? (
+          <img
+            src={character.image_url}
+            alt={character.name}
+            loading="lazy"
+            className="h-full w-auto max-w-full object-contain"
+          />
+        ) : (
+          <span className="text-2xl font-bold tracking-tight text-white/85">
+            {character.name.charAt(0)}
+          </span>
+        )}
+      </span>
+
+      <span className="block px-1.5 py-1.5 text-center text-[11px] font-semibold leading-tight">
+        {character.name}
+      </span>
+    </button>
+  )
+}
 
 function TierListOfficial() {
   const { gameId } = useParams()
@@ -43,7 +111,9 @@ function TierListOfficial() {
 
     supabase
       .from('tier_lists_oficial')
-      .select('mode, rating, source, characters (id, name, element, rarity, role)')
+      .select(
+        'mode, rating, source, characters (id, name, element, rarity, role, image_url)',
+      )
       .eq('game_id', gameId)
       .order('rating', { ascending: true })
       .then(({ data, error: loadError }) => {
@@ -59,7 +129,12 @@ function TierListOfficial() {
             (a, b) => MODE_ORDER.indexOf(a) - MODE_ORDER.indexOf(b),
           )
           setModes(found)
-          setMode((current) => current || found[0] || '')
+          setMode(
+            (current) =>
+              current ||
+              (found.includes(DEFAULT_MODE) ? DEFAULT_MODE : found[0]) ||
+              '',
+          )
           setError('')
         }
 
@@ -79,11 +154,6 @@ function TierListOfficial() {
 
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
-      <div className="pointer-events-none fixed inset-0" aria-hidden="true">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.035)_1px,transparent_1px)] bg-[size:64px_64px] [mask-image:radial-gradient(ellipse_at_center,black_10%,transparent_70%)]" />
-        <div className="absolute -top-40 left-[12%] h-[30rem] w-[30rem] animate-pulse rounded-full bg-blue-600/12 blur-[130px] [animation-duration:9s]" />
-      </div>
-
       <header className="sticky top-0 z-20 border-b border-white/10 bg-black/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4 sm:px-6">
           <button
@@ -123,30 +193,34 @@ function TierListOfficial() {
           </div>
         )}
 
-        {modes.length > 0 && (
-          <div className="mb-8 flex flex-wrap items-center gap-4">
-            <label htmlFor="mode" className="text-sm text-zinc-400">
-              {t('tierlist.mode')}
-            </label>
-            <select
-              id="mode"
-              value={mode}
-              onChange={(event) => setMode(event.target.value)}
-              className="rounded-xl border border-white/10 bg-white/[0.03] px-4 py-2.5 text-sm text-white transition-all duration-300 hover:border-white/20 focus:border-white/30 focus:outline-none focus:ring-4 focus:ring-white/5"
-            >
-              {modes.map((option) => (
-                <option key={option} value={option} className="bg-[#111114]">
-                  {option}
-                </option>
-              ))}
-            </select>
+        {/* Un juego con un solo modo no necesita elegir nada. */}
+        {modes.length > 1 && (
+          <div className="mb-6 flex flex-wrap gap-3">
+            {modes.map((option) => {
+              const style = MODE_STYLES[option] ?? FALLBACK_MODE_STYLE
+              const active = option === mode
 
-            {source && (
-              <span className="text-xs text-zinc-600">
-                Valoraciones de {source} · 0 es el tier más alto
-              </span>
-            )}
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  onClick={() => setMode(option)}
+                  aria-pressed={active}
+                  className={`rounded-xl border px-5 py-3 text-sm font-semibold tracking-tight transition-all duration-300 focus:outline-none focus:ring-4 focus:ring-white/20 active:scale-95 ${
+                    active ? style.on : style.off
+                  }`}
+                >
+                  {option}
+                </button>
+              )
+            })}
           </div>
+        )}
+
+        {source && (
+          <p className="mb-8 text-xs text-zinc-600">
+            Valoraciones de {source} · 0 es el tier más alto
+          </p>
         )}
 
         {isLoading ? (
@@ -173,7 +247,7 @@ function TierListOfficial() {
               return (
                 <section
                   key={rating}
-                  className={`flex flex-col gap-4 rounded-2xl border p-4 sm:flex-row sm:items-start sm:p-5 ${RATING_STYLES[rating] ?? 'border-white/10 bg-white/[0.03] text-zinc-300'}`}
+                  className={`flex flex-col gap-4 rounded-2xl border p-4 sm:flex-row sm:items-start sm:p-5 ${RATING_STYLES[rating] ?? 'border-white/10 bg-zinc-900 text-zinc-300'}`}
                 >
                   <div className="flex shrink-0 items-center gap-3 sm:w-24 sm:flex-col sm:items-start">
                     <span className="text-3xl font-bold tracking-tight">
@@ -185,21 +259,17 @@ function TierListOfficial() {
                     </span>
                   </div>
 
-                  <div className="flex flex-1 flex-wrap gap-2">
+                  <div className="flex flex-1 flex-wrap items-start gap-2.5">
                     {group.map((row) => (
-                      <button
+                      <CharacterChip
                         key={row.characters.id}
-                        type="button"
-                        onClick={() =>
+                        character={row.characters}
+                        onOpen={() =>
                           navigate(
                             `/game/${gameId}/characters/${row.characters.id}`,
                           )
                         }
-                        title={row.characters.role ?? undefined}
-                        className={`rounded-lg px-3 py-2 text-sm font-medium ring-1 transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/20 ${getElementStyle(row.characters.element).badge}`}
-                      >
-                        {row.characters.name}
-                      </button>
+                      />
                     ))}
                   </div>
                 </section>
