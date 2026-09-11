@@ -13,7 +13,7 @@ import {
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
-import { WEAPON_SECTIONS, getCategoryStyle } from '../data/weapons'
+import { WEAPON_SECTIONS, getCategoryStyle, rarityLabel, rarityRank } from '../data/weapons'
 import AscensionMaterials from './AscensionMaterials'
 import ProfileButton from './ProfileButton'
 
@@ -130,7 +130,7 @@ function WeaponDetail() {
         ) : weapon ? (
           <>
             <section
-              className={`mb-6 flex flex-col gap-6 rounded-3xl border p-5 sm:flex-row sm:p-7 ${RARITY_STYLES[Number(weapon.rarity)] ?? RARITY_STYLES[1]}`}
+              className={`mb-6 flex flex-col gap-6 rounded-3xl border p-5 sm:flex-row sm:p-7 ${RARITY_STYLES[rarityRank(weapon.rarity)] ?? RARITY_STYLES[1]}`}
             >
               <span className="flex h-48 w-full shrink-0 items-center justify-center rounded-2xl bg-black/40 p-3 sm:w-48">
                 {weapon.image_url ? (
@@ -151,7 +151,7 @@ function WeaponDetail() {
 
                 <div className="mb-4 flex flex-wrap items-center gap-2 text-xs">
                   <span className="font-semibold text-amber-300">
-                    {'★'.repeat(Number(weapon.rarity) || 1)}
+                    {rarityLabel(weapon.rarity)}
                   </span>
                   {weapon.category && (
                     <span

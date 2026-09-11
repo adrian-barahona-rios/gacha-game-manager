@@ -4,7 +4,7 @@ import { AlertCircle, ArrowLeft, Loader2, Search, Swords } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
-import { WEAPON_SECTIONS, getCategoryStyle } from '../data/weapons'
+import { WEAPON_SECTIONS, getCategoryStyle, rarityLabel, rarityRank } from '../data/weapons'
 import ProfileButton from './ProfileButton'
 
 const RARITY_STYLES = {
@@ -54,7 +54,13 @@ function WeaponList() {
           setWeapons([])
         } else {
           setError('')
-          setWeapons(data ?? [])
+          // Se ordena aqui y no en la consulta: la rareza de Zenless es una letra
+          // y ordenada como texto quedaria S, B, A.
+          setWeapons(
+            [...(data ?? [])].sort(
+              (a, b) => rarityRank(b.rarity) - rarityRank(a.rarity) || a.name.localeCompare(b.name),
+            ),
+          )
         }
         setIsLoading(false)
       })
@@ -177,7 +183,7 @@ function WeaponList() {
                 key={weapon.id}
                 type="button"
                 onClick={() => navigate(`/game/${gameId}/weapons/${weapon.id}`)}
-                className={`group overflow-hidden rounded-2xl border text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(255,255,255,0.08)] focus:outline-none focus:ring-4 focus:ring-white/20 ${RARITY_STYLES[Number(weapon.rarity)] ?? RARITY_STYLES[1]}`}
+                className={`group overflow-hidden rounded-2xl border text-left transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(255,255,255,0.08)] focus:outline-none focus:ring-4 focus:ring-white/20 ${RARITY_STYLES[rarityRank(weapon.rarity)] ?? RARITY_STYLES[1]}`}
               >
                 <span className="flex h-32 w-full items-center justify-center bg-black/40 p-2">
                   {weapon.image_url ? (
@@ -197,7 +203,7 @@ function WeaponList() {
                     {weapon.name}
                   </span>
                   <span className="flex flex-wrap items-center gap-1.5 text-[11px]">
-                    <span className="font-semibold">{'★'.repeat(Number(weapon.rarity) || 1)}</span>
+                    <span className="font-semibold">{rarityLabel(weapon.rarity)}</span>
                     {weapon.category && (
                       <span
                         className={`rounded-full px-2 py-0.5 font-medium ring-1 ${getCategoryStyle(weapon.category)}`}

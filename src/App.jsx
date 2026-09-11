@@ -18,6 +18,7 @@ import Register from './components/Register'
 import TierListOfficial from './components/TierListOfficial'
 import WeaponList from './components/WeaponList'
 import WeaponDetail from './components/WeaponDetail'
+import DriveDiscList from './components/DriveDiscList'
 import TierListPersonal from './components/TierListPersonal'
 import UmamusumeCharacters from './components/UmamusumeCharacters'
 import UmamusumeGuideTopic from './components/UmamusumeGuideTopic'
@@ -67,6 +68,7 @@ function App() {
       />
       <Route path="/game/:gameId/weapons" element={<WeaponList />} />
       <Route path="/game/:gameId/weapons/:weaponId" element={<WeaponDetail />} />
+      <Route path="/game/:gameId/discs" element={<DriveDiscList />} />
       <Route
         path="/game/:gameId/tierlist/official"
         element={<TierListOfficial />}

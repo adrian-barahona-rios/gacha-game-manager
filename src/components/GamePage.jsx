@@ -4,6 +4,7 @@ import {
   ArrowLeft,
   BookOpen,
   ChevronDown,
+  Disc3,
   Globe,
   Home,
   ListOrdered,
@@ -14,7 +15,7 @@ import GameArtwork from './GameArtwork'
 import ProfileButton from './ProfileButton'
 import { getGameById, getGameCopy } from '../data/games'
 import { getGameModes } from '../data/gameModes'
-import { WEAPON_SECTIONS, hasWeapons } from '../data/weapons'
+import { WEAPON_SECTIONS, hasDriveDiscs, hasWeapons } from '../data/weapons'
 import { useI18n } from '../i18n/useI18n'
 
 const STARS = [
@@ -765,6 +766,8 @@ const MENU_ITEMS = [
   // La etiqueta cambia por juego: "Conos de luz" en Honkai y "Armas" en el
   // resto, asi que se resuelve al pintar el menu y no aqui.
   { id: 'armas', labelKey: 'game.menu.weapons', icon: Swords },
+  // Solo en Zenless: en los demas juegos no existe y no se ensena.
+  { id: 'discos', labelKey: 'game.menu.discs', icon: Disc3 },
   { id: 'tierlist', labelKey: 'game.menu.tierList', icon: ListOrdered },
   { id: 'guias', labelKey: 'game.menu.guides', icon: BookOpen },
 ]
@@ -899,19 +902,23 @@ function GamePage() {
                           </button>
                         )
                       })
-                    : MENU_ITEMS.map((item) => {
+                    : MENU_ITEMS.filter(
+                        (item) => item.id !== 'discos' || hasDriveDiscs(game.id),
+                      ).map((item) => {
                         const Icon = item.icon
                         const isCurrent = item.id === 'inicio'
                         const isCharacters = item.id === 'personajes'
                         const isTierList = item.id === 'tierlist'
                         const isGuides = item.id === 'guias'
                         const isWeapons = item.id === 'armas'
+                        const isDiscs = item.id === 'discos'
                         const isEnabled =
                           isCurrent ||
                           (isCharacters && hasCharacters) ||
                           (isTierList && hasTierList) ||
                           (isGuides && hasGuides) ||
-                          (isWeapons && hasWeaponSection)
+                          (isWeapons && hasWeaponSection) ||
+                          isDiscs
 
                         return (
                           <button
@@ -925,6 +932,8 @@ function GamePage() {
                                 navigate(`/game/${gameId}/characters`)
                               } else if (isWeapons) {
                                 navigate(`/game/${gameId}/weapons`)
+                              } else if (isDiscs) {
+                                navigate(`/game/${gameId}/discs`)
                               } else if (isTierList) {
                                 navigate(`/game/${gameId}/tierlist/official`)
                               } else if (isGuides) {

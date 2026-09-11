@@ -20,11 +20,24 @@ export const WEAPON_SECTIONS = {
   'zenless-zone-zero': {
     titleKey: 'weapons.zzz.title',
     categoryKey: 'weapons.zzz.category',
-    menuKey: 'game.menu.weapons',
+    menuKey: 'game.menu.wEngines',
+    // Los cinco niveles del efecto se suben con copias del amplificador.
+    rankKey: 'weapons.rankLevel',
   },
 }
 
 export const hasWeapons = (gameId) => Boolean(WEAPON_SECTIONS[gameId])
+
+// Pistas de disco: solo las tiene Zenless.
+export const hasDriveDiscs = (gameId) => gameId === 'zenless-zone-zero'
+
+// Genshin y Honkai guardan la rareza en estrellas (5, 4, 3...) y Zenless en
+// letras (S, A, B). Para ordenar y dar color se pasan las letras a numero, y al
+// mostrarla se ensena la letra tal cual en vez de estrellas.
+const RANGO_LETRA = { S: 5, A: 4, B: 3 }
+export const rarityRank = (rarity) => RANGO_LETRA[rarity] ?? (Number(rarity) || 1)
+export const rarityLabel = (rarity) =>
+  RANGO_LETRA[rarity] ? rarity : '★'.repeat(Number(rarity) || 1)
 
 // Un color por categoria. Las clases se escriben enteras porque Tailwind lee
 // el codigo como texto y una clase montada a trozos no llegaria a generarse.
@@ -46,7 +59,15 @@ const CATEGORY_STYLES = {
   Lanza: 'text-rose-300 ring-rose-400/30',
   Arco: 'text-emerald-300 ring-emerald-400/30',
   Catalizador: 'text-violet-300 ring-violet-400/30',
-  // Zenless: especialidades
+  // Zenless: especialidades. La tabla de personajes usa una palabra y la de
+  // amplificadores otra, asi que estan las dos.
+  Atacante: 'text-red-300 ring-red-400/30',
+  Aturdidor: 'text-amber-300 ring-amber-400/30',
+  'Anómalo': 'text-fuchsia-300 ring-fuchsia-400/30',
+  Auxiliar: 'text-emerald-300 ring-emerald-400/30',
+  Defensivo: 'text-sky-300 ring-sky-400/30',
+  Disruptivo: 'text-orange-300 ring-orange-400/30',
+  Armero: 'text-lime-300 ring-lime-400/30',
   Ataque: 'text-red-300 ring-red-400/30',
   Aturdimiento: 'text-amber-300 ring-amber-400/30',
   Anomalía: 'text-fuchsia-300 ring-fuchsia-400/30',
