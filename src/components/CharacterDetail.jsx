@@ -16,12 +16,14 @@ import {
   getElementStyle,
   getRarityStyle,
 } from '../data/characterStyles'
+import AscensionMaterials from './AscensionMaterials'
 import ProfileButton from './ProfileButton'
 
 const TABS = [
   { id: 'detalles', labelKey: 'character.tab.details' },
   { id: 'biografia', labelKey: 'character.tab.biography' },
   { id: 'stats', labelKey: 'character.tab.stats' },
+  { id: 'ascension', labelKey: 'character.tab.ascension' },
 ]
 
 // Las biografias vienen de las wikis con saltos de linea: los volvemos parrafos.
@@ -135,6 +137,8 @@ function CharacterDetail() {
   }
 
   const elementStyle = getElementStyle(character?.element)
+  const hasAscension =
+    Array.isArray(character?.ascension) && character.ascension.length > 0
   const [pathKey, signatureKey] = PATH_LABELS[gameId] ?? [
     'character.path.default',
     'character.signature.default',
@@ -253,9 +257,11 @@ function CharacterDetail() {
               </div>
 
               <div className="mb-6 flex gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1">
-                {TABS.filter(
-                  (tab) => tab.id !== 'stats' || character.level_cap,
-                ).map((tab) => (
+                {TABS.filter((tab) => {
+                  if (tab.id === 'stats') return Boolean(character.level_cap)
+                  if (tab.id === 'ascension') return hasAscension
+                  return true
+                }).map((tab) => (
                   <button
                     key={tab.id}
                     type="button"
@@ -369,6 +375,12 @@ function CharacterDetail() {
                     </div>
                   ))}
                 </dl>
+              )}
+
+              {activeTab === 'ascension' && hasAscension && (
+                <div className="mb-8">
+                  <AscensionMaterials ascension={character.ascension} gameId={gameId} />
+                </div>
               )}
 
               <div className="flex flex-wrap gap-3">

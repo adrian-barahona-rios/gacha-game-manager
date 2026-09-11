@@ -3572,22 +3572,6 @@ Pese a ser una soldado excepcional y de manual, tiene manías llamativas: le apa
   biography_es_translated = true
 where id = 'zzz-soldado-11';
 update public.characters set
-  biography_en = 'A model soldier who follows orders and stays loyal to the mission... At least that''s what Soldier 11 demands of herself. Weapons don''t need emotions, and need only follow orders... At least that''s what Soldier 11 tells herself. No matter how strong the enemy, just get fired up and face it head on... At least that''s what Soldier 11 does. She''s shed her weakness along with her name, leaving only resolve... At least that''s what Soldier 11 thinks.
-
-A soldier with no name and an affinity for fire. Soldier 11 is a model soldier of the New Eridu Defense Force, serving as the primary responder and first striker for Obol Squad.
-
-Though an exceptional by-the-books soldier, Soldier 11 has notable quirks, namely her love for spicy food (specifically super-spicy noodles from Sixth Street''s Waterfall Soup)
-and a habit of calling Phaethon by a different codename on every occasion.',
-  biography_source_en = 'https://zenless-zone-zero.fandom.com/wiki/Soldier%2011%2FLore',
-  biography_es = 'Una soldado modélica que cumple órdenes y se mantiene fiel a la misión... o al menos eso es lo que Soldado 11 se exige a sí misma. Las armas no necesitan emociones, solo obedecer... o al menos eso es lo que Soldado 11 se repite. Por fuerte que sea el enemigo, basta con encenderse y plantarle cara... o al menos eso es lo que Soldado 11 hace. Se ha desprendido de su debilidad junto con su nombre y solo le queda la determinación... o al menos eso es lo que Soldado 11 cree.
-
-Una soldado sin nombre y con afinidad por el fuego. Soldado 11 es una militar ejemplar de la Fuerza de Defensa de Nueva Eridu y actúa como primera respondiente y punta de lanza del Escuadrón Óbolo.
-
-Pese a ser una soldado excepcional y de manual, tiene manías llamativas: le apasiona la comida picante (en concreto los fideos superpicantes del Waterfall Soup de la Sexta Calle) y llama a Phaethon por un nombre en clave distinto cada vez.',
-  biography_source_es = 'https://zenless-zone-zero.fandom.com/wiki/Soldier%2011%2FLore',
-  biography_es_translated = true
-where id = 'zzz-soldier-11';
-update public.characters set
   biography_en = 'Soukaku is the gluttonous, childlike Oni of Hollow Special Operations Section 6. She''s a powerful combatant who uses a custom made weapon known as an "Oni Blade Banner" in battle. Outside of battle, Soukaku has a notable interest in food, caring little about what she eats and hating when food is wasted. 
 
 Even though Soukaku is stated to be older than her legal guardian, Tsukishiro Yanagi, Soukaku is still considered young for her species, requiring homeschooling and dependency on others.',

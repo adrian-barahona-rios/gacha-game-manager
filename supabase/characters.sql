@@ -133,7 +133,7 @@ insert into public.characters (id, game_id, name, rarity, element, level_cap, de
   ('zzz-ben',        'zenless-zone-zero', 'Ben Bigger',    'A', 'Fuego',     60, 'Belobog Heavy Industries'),
   ('zzz-grace',      'zenless-zone-zero', 'Grace Howard',  'S', 'Eléctrico', 60, 'Belobog Heavy Industries'),
   ('zzz-anton',      'zenless-zone-zero', 'Anton Ivanov',  'A', 'Eléctrico', 60, 'Belobog Heavy Industries'),
-  ('zzz-soldier-11', 'zenless-zone-zero', 'Soldier 11',    'S', 'Fuego',     60, 'Obol Squad'),
+  ('zzz-soldado-11', 'zenless-zone-zero', 'Soldado 11',    'S', 'Fuego',     60, 'Obol Squad'),
   ('zzz-zhu-yuan',   'zenless-zone-zero', 'Zhu Yuan',      'S', 'Éter',      60, 'Criminal Investigation Special Response Team'),
   ('zzz-qingyi',     'zenless-zone-zero', 'Qingyi',        'S', 'Eléctrico', 60, 'Criminal Investigation Special Response Team'),
   ('zzz-jane-doe',   'zenless-zone-zero', 'Jane Doe',      'S', 'Físico',    60, 'Criminal Investigation Special Response Team'),

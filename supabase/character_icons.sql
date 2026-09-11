@@ -10,7 +10,7 @@
 --                        todavia no tiene en su catalogo.
 --
 -- El comentario de characters.sql decia que las wikis devolvian 403 al
--- enlazar imagenes: ya no es asi, las 227 URLs de este archivo cargan.
+-- enlazar imagenes: ya no es asi, las 226 URLs de este archivo cargan.
 
 -- ---------------------------------------------------------------------------
 -- Genshin Impact (119 personajes)
@@ -221,7 +221,7 @@ update public.characters set image_url = 'https://enka.network/ui/hsr/SpriteOutp
 update public.characters set image_url = 'https://enka.network/ui/hsr/SpriteOutput/AvatarRoundIcon/1221.png' where id = 'hsr-yunli';
 
 -- ---------------------------------------------------------------------------
--- Zenless Zone Zero (27 personajes)
+-- Zenless Zone Zero (26 personajes)
 -- ---------------------------------------------------------------------------
 update public.characters set image_url = 'https://enka.network/ui/zzz/IconRoleCircle01.png' where id = 'zzz-anby';
 update public.characters set image_url = 'https://enka.network/ui/zzz/IconRoleCircle15.png' where id = 'zzz-anton';
@@ -246,13 +246,12 @@ update public.characters set image_url = 'https://enka.network/ui/zzz/IconRoleCi
 update public.characters set image_url = 'https://enka.network/ui/zzz/IconRoleCircle22.png' where id = 'zzz-rina';
 update public.characters set image_url = 'https://enka.network/ui/zzz/IconRoleCircle30.png' where id = 'zzz-seth';
 update public.characters set image_url = 'https://enka.network/ui/zzz/IconRoleCircle05.png' where id = 'zzz-soldado-11';
-update public.characters set image_url = 'https://enka.network/ui/zzz/IconRoleCircle05.png' where id = 'zzz-soldier-11';
 update public.characters set image_url = 'https://enka.network/ui/zzz/IconRoleCircle17.png' where id = 'zzz-soukaku';
 update public.characters set image_url = 'https://enka.network/ui/zzz/IconRoleCircle31.png' where id = 'zzz-yanagi';
 update public.characters set image_url = 'https://enka.network/ui/zzz/IconRoleCircle23.png' where id = 'zzz-zhu-yuan';
 
--- Resumen: 227 iconos (217 de enka.network, 10 de fandom).
+-- Resumen: 226 iconos (216 de enka.network, 10 de fandom).
 --
--- Comprobacion: debe devolver 227.
+-- Comprobacion: debe devolver 226.
 select count(*) from public.characters
 where image_url is not null and image_url <> '';

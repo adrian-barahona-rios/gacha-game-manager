@@ -9,6 +9,8 @@ export const WEAPON_SECTIONS = {
     titleKey: 'weapons.gi.title',
     categoryKey: 'weapons.gi.category',
     menuKey: 'game.menu.weapons',
+    // En Genshin los cinco niveles de la pasiva son refinamientos (R1-R5).
+    rankKey: 'weapons.rankRefine',
   },
   'honkai-star-rail': {
     titleKey: 'weapons.hsr.title',
@@ -38,6 +40,7 @@ const CATEGORY_STYLES = {
   Memoria: 'text-indigo-300 ring-indigo-400/30',
   Exultación: 'text-fuchsia-300 ring-fuchsia-400/30',
   // Genshin: tipos de arma
+  'Espada ligera': 'text-sky-300 ring-sky-400/30',
   Espada: 'text-sky-300 ring-sky-400/30',
   Mandoble: 'text-amber-300 ring-amber-400/30',
   Lanza: 'text-rose-300 ring-rose-400/30',

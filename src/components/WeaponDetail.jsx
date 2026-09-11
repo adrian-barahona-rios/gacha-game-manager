@@ -14,6 +14,7 @@ import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
 import { WEAPON_SECTIONS, getCategoryStyle } from '../data/weapons'
+import AscensionMaterials from './AscensionMaterials'
 import ProfileButton from './ProfileButton'
 
 const RARITY_STYLES = {
@@ -78,29 +79,14 @@ function WeaponDetail() {
   const niveles = Array.isArray(weapon?.passive_levels) ? weapon.passive_levels : []
   const ascension = Array.isArray(weapon?.ascension) ? weapon.ascension : []
 
-  // Suma de todos los tramos, que es lo que de verdad se quiere saber antes de
-  // ponerse a farmear: cuanto cuesta llevarlo del 1 al 80.
-  const total = ascension.reduce(
-    (acumulado, tramo) => {
-      acumulado.creditos += tramo.creditos ?? 0
-      for (const material of tramo.materiales ?? []) {
-        const previo = acumulado.mapa.get(material.nombre)
-        if (previo) {
-          previo.cantidad += material.cantidad
-        } else {
-          acumulado.mapa.set(material.nombre, { ...material })
-        }
-      }
-      return acumulado
-    },
-    { creditos: 0, mapa: new Map() },
-  )
-  total.materiales = [...total.mapa.values()].sort((a, b) => b.cantidad - a.cantidad)
+  // La stat secundaria (solo en Genshin) ya viene con su nombre traducido, asi
+  // que se pasa tal cual en vez de como clave de traduccion.
   const stats = [
-    ['weapons.stat.hp', weapon?.base_hp],
-    ['weapons.stat.atk', weapon?.base_atk],
-    ['weapons.stat.def', weapon?.base_def],
-  ].filter(([, valor]) => valor !== null && valor !== undefined)
+    [t('weapons.stat.hp'), weapon?.base_hp],
+    [t('weapons.stat.atk'), weapon?.base_atk],
+    [t('weapons.stat.def'), weapon?.base_def],
+    [weapon?.sub_stat_name, weapon?.sub_stat_value],
+  ].filter(([nombre, valor]) => nombre && valor !== null && valor !== undefined)
 
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
@@ -180,11 +166,11 @@ function WeaponDetail() {
                 </div>
 
                 {stats.length > 0 && (
-                  <div className="grid grid-cols-3 gap-3">
-                    {stats.map(([clave, valor]) => (
-                      <div key={clave} className="rounded-xl bg-black/40 p-3 text-center">
+                  <div className={`grid gap-3 ${stats.length === 2 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                    {stats.map(([nombre, valor]) => (
+                      <div key={nombre} className="rounded-xl bg-black/40 p-3 text-center">
                         <p className="mb-1 text-[11px] uppercase tracking-wide text-zinc-400">
-                          {t(clave)}
+                          {nombre}
                         </p>
                         <p className="text-lg font-semibold text-white">{valor}</p>
                       </div>
@@ -212,7 +198,7 @@ function WeaponDetail() {
                           : 'border border-white/15 text-zinc-300 hover:border-white/30 hover:text-white'
                       }`}
                     >
-                      {t('weapons.rank', { level: index + 1 })}
+                      {t(seccion?.rankKey ?? 'weapons.rank', { level: index + 1 })}
                     </button>
                   ))}
                 </div>
@@ -240,80 +226,7 @@ function WeaponDetail() {
 
             {ascension.length > 0 && (
               <Bloque icon={ArrowUpNarrowWide} title={t('weapons.ascension')}>
-                <p className="mb-4 text-sm text-zinc-500">{t('weapons.ascensionHint')}</p>
-
-                <div className="space-y-3">
-                  {ascension.map((tramo) => (
-                    <div
-                      key={`${tramo.desde}-${tramo.hasta}`}
-                      className="flex flex-col gap-3 rounded-xl border border-white/10 bg-black/30 p-3.5 sm:flex-row sm:items-center"
-                    >
-                      <span className="flex shrink-0 items-center gap-1.5 text-sm font-semibold text-white sm:w-28">
-                        {tramo.desde}
-                        <span className="text-zinc-600">→</span>
-                        {tramo.hasta}
-                      </span>
-
-                      <div className="flex flex-1 flex-wrap items-center gap-2.5">
-                        {tramo.materiales?.map((material) => (
-                          <span
-                            key={material.nombre}
-                            title={material.nombre}
-                            className="flex items-center gap-1.5 rounded-lg bg-white/5 py-1 pl-1 pr-2.5 text-sm text-zinc-300"
-                          >
-                            <img
-                              src={material.icono}
-                              alt=""
-                              loading="lazy"
-                              className="h-7 w-7 object-contain"
-                            />
-                            <span className="max-w-[10rem] truncate">{material.nombre}</span>
-                            <span className="font-semibold text-white">×{material.cantidad}</span>
-                          </span>
-                        ))}
-
-                        {tramo.creditos > 0 && (
-                          <span className="rounded-lg bg-amber-500/10 px-2.5 py-1.5 text-sm text-amber-200">
-                            {t('weapons.credits', {
-                              amount: tramo.creditos.toLocaleString('es-ES'),
-                            })}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-
-                {total.creditos > 0 && (
-                  <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
-                    <p className="mb-2.5 text-sm font-semibold text-white">
-                      {t('weapons.ascensionTotal')}
-                    </p>
-                    <div className="flex flex-wrap items-center gap-2.5">
-                      {total.materiales.map((material) => (
-                        <span
-                          key={material.nombre}
-                          title={material.nombre}
-                          className="flex items-center gap-1.5 rounded-lg bg-white/5 py-1 pl-1 pr-2.5 text-sm text-zinc-300"
-                        >
-                          <img
-                            src={material.icono}
-                            alt=""
-                            loading="lazy"
-                            className="h-7 w-7 object-contain"
-                          />
-                          <span className="max-w-[10rem] truncate">{material.nombre}</span>
-                          <span className="font-semibold text-white">×{material.cantidad}</span>
-                        </span>
-                      ))}
-                      <span className="rounded-lg bg-amber-500/10 px-2.5 py-1.5 text-sm text-amber-200">
-                        {t('weapons.credits', {
-                          amount: total.creditos.toLocaleString('es-ES'),
-                        })}
-                      </span>
-                    </div>
-                  </div>
-                )}
+                <AscensionMaterials ascension={ascension} gameId={gameId} />
               </Bloque>
             )}
 
