@@ -3,6 +3,7 @@
 // Honkai tiene debilidades de verdad, asi que se filtra por "Debil a". En
 // Genshin casi todos los enemigos resisten un 10% a todo: lo util es saber a
 // que elemento NO resisten mucho, y ademas tiene una pestana de fauna.
+// Zenless tiene debilidades y resistencias sin porcentaje, como Honkai.
 export const ENEMY_SECTIONS = {
   'honkai-star-rail': {
     tabs: ['jefe', 'esbirro'],
@@ -14,6 +15,11 @@ export const ENEMY_SECTIONS = {
     tabs: ['jefe', 'esbirro', 'fauna'],
     elements: ['Físico', 'Pyro', 'Hydro', 'Anemo', 'Electro', 'Dendro', 'Cryo', 'Geo'],
     filter: 'notResistant',
+  },
+  'zenless-zone-zero': {
+    tabs: ['jefe', 'esbirro'],
+    elements: ['Físico', 'Ígneo', 'Glacial', 'Eléctrico', 'Etéreo', 'Aéreo'],
+    filter: 'weakTo',
   },
 }
 

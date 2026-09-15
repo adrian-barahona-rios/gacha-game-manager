@@ -3,6 +3,7 @@ import { AlertCircle, ExternalLink, Loader2, Swords } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import StructuredBuild from './StructuredBuild'
+import ZzzBuild from './ZzzBuild'
 
 // Los tres campos de la build, en el orden en que se leen.
 const BLOCKS = [
@@ -80,7 +81,10 @@ function MetaGuide({ characterId, gameId }) {
                 {guide.mode}
               </h3>
 
-              {guide.build ? (
+              {guide.build?.builds ? (
+                // Zenless: varias builds, equipos con bangbu y prioridad de habilidades.
+                <ZzzBuild build={guide.build} gameId={gameId} />
+              ) : guide.build ? (
                 <StructuredBuild build={guide.build} gameId={gameId} />
               ) : (
               <dl className="space-y-5">

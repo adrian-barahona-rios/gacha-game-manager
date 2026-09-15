@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { AlertCircle, ArrowLeft, ChevronDown, Disc3, Loader2, Search } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
@@ -18,6 +18,7 @@ const sinAcentos = (texto) =>
 function DriveDiscList() {
   const { gameId } = useParams()
   const navigate = useNavigate()
+  const { hash } = useLocation()
   const { t } = useI18n()
   const game = getGameById(gameId)
 
@@ -54,6 +55,13 @@ function DriveDiscList() {
       active = false
     }
   }, [gameId, t])
+
+  // Desde una build se llega con #id del conjunto: se baja hasta su tarjeta.
+  const destino = hash.slice(1)
+  const hayDestino = !isLoading && discs.some((disc) => disc.id === destino)
+  useEffect(() => {
+    if (hayDestino) document.getElementById(destino)?.scrollIntoView({ block: 'start' })
+  }, [destino, hayDestino])
 
   // Se busca tambien dentro de los efectos: asi se puede escribir "crítico" o
   // "etéreo" y ver que conjuntos lo mejoran.
@@ -139,7 +147,10 @@ function DriveDiscList() {
               return (
                 <article
                   key={disc.id}
-                  className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5"
+                  id={disc.id}
+                  className={`flex scroll-mt-24 flex-col rounded-2xl border bg-white/[0.03] p-5 ${
+                    disc.id === destino ? 'border-amber-400/40' : 'border-white/10'
+                  }`}
                 >
                   <div className="mb-4 flex items-center gap-4">
                     <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-xl bg-black/40 p-1.5">

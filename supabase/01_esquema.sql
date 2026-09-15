@@ -1,7 +1,7 @@
 -- Ejecutar en Supabase -> SQL Editor -> New query -> Run. Es el primero.
 --
 -- Toda la estructura de la base de datos: tablas, columnas, indices, permisos
--- (RLS), funciones y triggers. No lleva datos: esos van en los archivos 02 a 19.
+-- (RLS), funciones y triggers. No lleva datos: esos van en los archivos 02 a 24.
 --
 -- Se puede volver a ejecutar sin romper nada: las tablas y columnas usan
 -- "if not exists" y cada permiso se borra antes de crearlo otra vez.
@@ -237,6 +237,16 @@ alter table public.characters
   add column if not exists is_upcoming boolean not null default false;
 
 alter table public.characters add column if not exists ascension jsonb;
+
+-- Perfil, habilidades y mejoras por duplicado (Cine mental en Zenless). De
+-- momento solo los tienen los agentes de Zenless.
+--   profile:    [{"campo", "valor"}]
+--   skills:     {"categorias": [{"categoria", "icono", "tecnicas": [{"nombre", "descripcion"}],
+--                "atributos": [{"clave", "valores"}]}], "materiales": [tramos como ascension]}
+--   mindscapes: [{"nivel", "nombre", "icono", "efecto", "cita"}]
+alter table public.characters add column if not exists profile jsonb;
+alter table public.characters add column if not exists skills jsonb;
+alter table public.characters add column if not exists mindscapes jsonb;
 
 -- ===========================================================================
 -- Umamusume
@@ -1171,7 +1181,7 @@ create policy "Los admins borran discos"
   using (public.is_admin());
 
 -- ===========================================================================
--- Enemigos (Honkai: Star Rail y Genshin Impact)
+-- Enemigos (Honkai: Star Rail, Genshin Impact y Zenless Zone Zero)
 -- ===========================================================================
 
 create table if not exists public.enemies (
@@ -1203,6 +1213,9 @@ create table if not exists public.enemies (
 alter table public.enemies drop constraint if exists enemies_category_check;
 alter table public.enemies add constraint enemies_category_check check (category in ('jefe', 'esbirro', 'fauna'));
 alter table public.enemies add column if not exists drops jsonb;
+-- Zenless: clasificacion (Maquinaria, Ser etereo...) y version de salida.
+alter table public.enemies add column if not exists classification text;
+alter table public.enemies add column if not exists version text;
 
 create index if not exists enemies_game_idx on public.enemies (game_id, category, name);
 
@@ -1357,4 +1370,61 @@ drop policy if exists "Los admins borran rotaciones" on public.endgame_rotations
 
 create policy "Los admins borran rotaciones"
   on public.endgame_rotations for delete
+  using (public.is_admin());
+
+-- ===========================================================================
+-- Bangbus (Zenless Zone Zero)
+-- ===========================================================================
+
+create table if not exists public.bangboos (
+  id text primary key,
+  game_id text not null,
+  name text not null,
+  name_en text,
+  -- Grado: 'S' o 'A'.
+  rarity text,
+  faction text,
+  faction_icon text,
+  version text,
+  -- Icono pequeno y la ilustracion grande.
+  icon_url text,
+  image_url text,
+  -- Stats de cada limite de nivel: [{"nivel": "60/60", "stats": [{"nombre", "valor"}]}].
+  levels jsonb not null default '[]'::jsonb,
+  -- Materiales por subida de limite, con la misma forma que characters.ascension.
+  ascension jsonb,
+  -- Habilidades: [{"nombre", "tipo", "descripcion", "icono", "atributos": [{"clave", "valores"}]}].
+  skills jsonb not null default '[]'::jsonb,
+  -- Informacion adicional de la wiki: [{"titulo", "texto"}].
+  extra_info jsonb,
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists bangboos_game_idx on public.bangboos (game_id, rarity, name);
+
+alter table public.bangboos enable row level security;
+
+drop policy if exists "Los bangbus se pueden consultar" on public.bangboos;
+
+create policy "Los bangbus se pueden consultar"
+  on public.bangboos for select
+  using (true);
+
+drop policy if exists "Los admins crean bangbus" on public.bangboos;
+
+create policy "Los admins crean bangbus"
+  on public.bangboos for insert
+  with check (public.is_admin());
+
+drop policy if exists "Los admins editan bangbus" on public.bangboos;
+
+create policy "Los admins editan bangbus"
+  on public.bangboos for update
+  using (public.is_admin())
+  with check (public.is_admin());
+
+drop policy if exists "Los admins borran bangbus" on public.bangboos;
+
+create policy "Los admins borran bangbus"
+  on public.bangboos for delete
   using (public.is_admin());

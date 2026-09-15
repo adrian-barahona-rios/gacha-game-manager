@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'
 import {
   ArrowLeft,
   BookOpen,
+  Bot,
   ChevronDown,
   Compass,
   Disc3,
@@ -22,6 +23,7 @@ import { WEAPON_SECTIONS, hasDriveDiscs, hasWeapons } from '../data/weapons'
 import { hasEnemies } from '../data/enemies'
 import { RELIC_SECTIONS, hasRelics } from '../data/relics'
 import { hasExploration } from '../data/exploration'
+import { hasBangboos } from '../data/bangboos'
 import { useI18n } from '../i18n/useI18n'
 
 const STARS = [
@@ -774,6 +776,8 @@ const MENU_ITEMS = [
   { id: 'armas', labelKey: 'game.menu.weapons', icon: Swords },
   // Solo en Zenless: en los demas juegos no existe y no se ensena.
   { id: 'discos', labelKey: 'game.menu.discs', icon: Disc3 },
+  // Bangbus: tambien solo en Zenless.
+  { id: 'bangbus', labelKey: 'game.menu.bangboos', icon: Bot },
   // Reliquias (Honkai) o artefactos (Genshin), y enemigos: solo en los juegos
   // que tienen los datos cargados.
   { id: 'reliquias', labelKey: 'game.menu.relics', icon: Gem },
@@ -917,6 +921,7 @@ function GamePage() {
                     : MENU_ITEMS.filter(
                         (item) =>
                           (item.id !== 'discos' || hasDriveDiscs(game.id)) &&
+                          (item.id !== 'bangbus' || hasBangboos(game.id)) &&
                           (item.id !== 'enemigos' || hasEnemies(game.id)) &&
                           (item.id !== 'reliquias' || hasRelics(game.id)) &&
                           (item.id !== 'exploracion' || hasExploration(game.id)),
@@ -928,6 +933,7 @@ function GamePage() {
                         const isGuides = item.id === 'guias'
                         const isWeapons = item.id === 'armas'
                         const isDiscs = item.id === 'discos'
+                        const isBangboos = item.id === 'bangbus'
                         const isEnemies = item.id === 'enemigos'
                         const isRelics = item.id === 'reliquias'
                         const isExploration = item.id === 'exploracion'
@@ -938,6 +944,7 @@ function GamePage() {
                           (isGuides && hasGuides) ||
                           (isWeapons && hasWeaponSection) ||
                           isDiscs ||
+                          isBangboos ||
                           isEnemies ||
                           isRelics ||
                           isExploration
@@ -956,6 +963,8 @@ function GamePage() {
                                 navigate(`/game/${gameId}/weapons`)
                               } else if (isDiscs) {
                                 navigate(`/game/${gameId}/discs`)
+                              } else if (isBangboos) {
+                                navigate(`/game/${gameId}/bangboos`)
                               } else if (isRelics) {
                                 navigate(`/game/${gameId}/relics`)
                               } else if (isEnemies) {

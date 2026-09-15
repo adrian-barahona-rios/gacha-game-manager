@@ -19,4 +19,5 @@ export const RELIC_SECTIONS = {
 export const hasRelics = (gameId) => Boolean(RELIC_SECTIONS[gameId])
 
 // Rotaciones del endgame cargadas en la base de datos.
-export const hasEndgameRotations = (gameId) => ['honkai-star-rail', 'genshin-impact'].includes(gameId)
+export const hasEndgameRotations = (gameId) =>
+  ['honkai-star-rail', 'genshin-impact', 'zenless-zone-zero'].includes(gameId)

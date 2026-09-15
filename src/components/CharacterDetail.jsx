@@ -17,6 +17,7 @@ import {
   getRarityStyle,
 } from '../data/characterStyles'
 import AscensionMaterials from './AscensionMaterials'
+import LevelTable from './LevelTable'
 import ProfileButton from './ProfileButton'
 
 const TABS = [
@@ -24,7 +25,15 @@ const TABS = [
   { id: 'biografia', labelKey: 'character.tab.biography' },
   { id: 'stats', labelKey: 'character.tab.stats' },
   { id: 'ascension', labelKey: 'character.tab.ascension' },
+  // Solo si el personaje tiene los datos (de momento, los agentes de Zenless).
+  { id: 'habilidades', labelKey: 'character.tab.skills' },
+  { id: 'cine', labelKey: 'character.tab.mindscapes' },
 ]
+
+// Como se llaman las mejoras por duplicado en cada juego.
+const MINDSCAPE_LABELS = {
+  'zenless-zone-zero': 'character.tab.mindscapes.zzz',
+}
 
 // Las biografias vienen de las wikis con saltos de linea: los volvemos parrafos.
 function splitParagraphs(text) {
@@ -139,6 +148,10 @@ function CharacterDetail() {
   const elementStyle = getElementStyle(character?.element)
   const hasAscension =
     Array.isArray(character?.ascension) && character.ascension.length > 0
+  const categoriasHabilidad = Array.isArray(character?.skills?.categorias) ? character.skills.categorias : []
+  const materialesHabilidad = Array.isArray(character?.skills?.materiales) ? character.skills.materiales : []
+  const cine = Array.isArray(character?.mindscapes) ? character.mindscapes : []
+  const perfil = Array.isArray(character?.profile) ? character.profile : []
   const [pathKey, signatureKey] = PATH_LABELS[gameId] ?? [
     'character.path.default',
     'character.signature.default',
@@ -256,23 +269,25 @@ function CharacterDetail() {
                 )}
               </div>
 
-              <div className="mb-6 flex gap-1 rounded-xl border border-white/10 bg-white/[0.03] p-1">
+              <div className="mb-6 flex gap-1 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-1 [scrollbar-width:none]">
                 {TABS.filter((tab) => {
                   if (tab.id === 'stats') return Boolean(character.level_cap)
                   if (tab.id === 'ascension') return hasAscension
+                  if (tab.id === 'habilidades') return categoriasHabilidad.length > 0
+                  if (tab.id === 'cine') return cine.length > 0
                   return true
                 }).map((tab) => (
                   <button
                     key={tab.id}
                     type="button"
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/30 ${
+                    className={`flex-1 whitespace-nowrap rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-white/30 ${
                       activeTab === tab.id
                         ? 'bg-white text-black'
                         : 'text-zinc-400 hover:bg-white/5 hover:text-white'
                     }`}
                   >
-                    {t(tab.labelKey)}
+                    {t(tab.id === 'cine' ? (MINDSCAPE_LABELS[gameId] ?? tab.labelKey) : tab.labelKey)}
                   </button>
                 ))}
               </div>
@@ -289,6 +304,8 @@ function CharacterDetail() {
                     [pathLabel, character.path ?? t('character.undefined')],
                     [signatureLabel, character.signature ?? t('character.undefined')],
                     [t('character.game'), game?.name ?? gameId],
+                    // Perfil de la wiki oficial (afiliacion, cumpleanos, voces...).
+                    ...perfil.map((item) => [item.campo, item.valor]),
                   ].map(([label, value]) => (
                     <div
                       key={label}
@@ -301,6 +318,68 @@ function CharacterDetail() {
                     </div>
                   ))}
                 </dl>
+              )}
+
+              {activeTab === 'habilidades' && categoriasHabilidad.length > 0 && (
+                <div className="mb-8 space-y-4">
+                  {categoriasHabilidad.map((categoria) => (
+                    <section key={categoria.categoria} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+                      <h3 className="mb-3 flex items-center gap-2.5 text-base font-semibold text-white">
+                        {categoria.icono && (
+                          <img src={categoria.icono} alt="" loading="lazy" className="h-8 w-8 rounded-lg bg-black/40 object-contain p-1" />
+                        )}
+                        {categoria.categoria}
+                      </h3>
+                      <ul className="space-y-3">
+                        {(categoria.tecnicas ?? []).map((tecnica, index) => (
+                          <li key={`${tecnica.nombre}-${index}`}>
+                            <p className="text-sm font-semibold text-zinc-100">{tecnica.nombre}</p>
+                            <p className="whitespace-pre-wrap text-[13px] leading-relaxed text-zinc-400">{tecnica.descripcion}</p>
+                          </li>
+                        ))}
+                      </ul>
+                      <LevelTable atributos={categoria.atributos} />
+                    </section>
+                  ))}
+
+                  {materialesHabilidad.length > 0 && (
+                    <section className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+                      <h3 className="mb-3 text-base font-semibold text-white">{t('skills.materials')}</h3>
+                      <AscensionMaterials
+                        ascension={materialesHabilidad}
+                        gameId={gameId}
+                        hintKey="skills.materialsHint"
+                        totalKey="skills.materialsTotal"
+                      />
+                    </section>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'cine' && cine.length > 0 && (
+                <ol className="mb-8 space-y-3">
+                  {cine.map((nivel) => (
+                    <li key={nivel.nivel} className="flex gap-3.5 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-black/40 p-1">
+                        {nivel.icono ? (
+                          <img src={nivel.icono} alt="" loading="lazy" className="h-full w-full object-contain" />
+                        ) : (
+                          <span className="text-sm font-bold text-white">{nivel.nivel}</span>
+                        )}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-[11px] font-semibold uppercase tracking-wide text-[#7aa7ff]">
+                          {t('character.mindscapeLevel', { level: nivel.nivel })}
+                        </p>
+                        <h3 className="mb-1 text-sm font-semibold text-white">{nivel.nombre}</h3>
+                        <p className="whitespace-pre-wrap text-[13px] leading-relaxed text-zinc-300">{nivel.efecto}</p>
+                        {nivel.cita && (
+                          <p className="mt-2 whitespace-pre-wrap text-[12px] italic leading-relaxed text-zinc-500">{nivel.cita}</p>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ol>
               )}
 
               {activeTab === 'biografia' && (

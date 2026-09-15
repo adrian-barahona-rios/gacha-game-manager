@@ -18,6 +18,10 @@ const ELEMENT_STYLES = {
   Eléctrico: { badge: 'bg-blue-500/15 text-blue-300 ring-blue-400/30', tile: 'from-blue-500/40 to-blue-900/10' },
   Éter: { badge: 'bg-fuchsia-500/15 text-fuchsia-300 ring-fuchsia-400/30', tile: 'from-fuchsia-500/40 to-fuchsia-900/10' },
   Etéreo: { badge: 'bg-fuchsia-500/15 text-fuchsia-300 ring-fuchsia-400/30', tile: 'from-fuchsia-500/40 to-fuchsia-900/10' },
+  // Nombres de los atributos de Zenless tal y como salen en la wiki oficial.
+  Ígneo: { badge: 'bg-orange-500/15 text-orange-300 ring-orange-400/30', tile: 'from-orange-500/40 to-orange-900/10' },
+  Glacial: { badge: 'bg-sky-500/15 text-sky-300 ring-sky-400/30', tile: 'from-sky-500/40 to-sky-900/10' },
+  Aéreo: { badge: 'bg-emerald-500/15 text-emerald-300 ring-emerald-400/30', tile: 'from-emerald-500/40 to-emerald-900/10' },
   Lumen: { badge: 'bg-yellow-200/15 text-yellow-100 ring-yellow-200/30', tile: 'from-yellow-200/40 to-amber-800/10' },
   'Multi-elemento': { badge: 'bg-pink-500/15 text-pink-300 ring-pink-400/30', tile: 'from-pink-500/40 to-indigo-900/10' },
 }

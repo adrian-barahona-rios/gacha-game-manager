@@ -1,6 +1,6 @@
 # Base de datos (Supabase)
 
-Todo lo que necesita la base de datos de la app, en 19 archivos. Se ejecutan en
+Todo lo que necesita la base de datos de la app, en 24 archivos. Se ejecutan en
 **Supabase → SQL Editor → New query → Run**, en orden:
 
 | Archivo | Qué hace |
@@ -24,6 +24,11 @@ Todo lo que necesita la base de datos de la app, en 19 archivos. Se ejecutan en
 | `17_artefactos_genshin.sql` | Los 63 conjuntos de artefactos de Genshin, con efectos, piezas y dónde se consiguen. |
 | `18_builds_genshin.sql` | La build recomendada de los 119 personajes de Genshin (guías de Game8). Necesita 02, 06 y 17. |
 | `19_endgame_genshin.sql` | La rotación actual de la Espiral del Abismo, el Teatro Fantasía y la Conflagración estigia. Necesita 16. Hay que regenerarlo cuando cambie la rotación. |
+| `20_enemigos_zzz_1.sql` … `_2.sql` | Los 220 enemigos de Zenless (jefes, élites y esbirros), con afiliación, clasificación, debilidades, resistencias, informes de combate, trasfondo, versiones relacionadas e imagen (textos oficiales de HoYoWiki). |
+| `21_bangbus_zzz.sql` | Los 41 bangbús de Zenless, con stats por nivel, habilidades con sus valores, materiales de ascensión e ilustración. |
+| `22_builds_zzz.sql` | La build de los 60 agentes de Zenless (guías de Game8): amplificadores, discos, stats por ranura, equipos con bangbú, sustitutos y prioridad de técnicas. Necesita 04, 08, 09 y 21. |
+| `23_endgame_zzz.sql` | La rotación actual de la Defensa de Shiyu (nodo crítico) y del Asalto mortal, con enemigos, efectos y equipos. Necesita 20 y 21. Hay que regenerarlo cuando cambie la rotación. |
+| `24_agentes_zzz_1.sql` … `_7.sql` | Habilidades, Cine mental y perfil de los agentes de Zenless (HoYoWiki), y la biografía de los que no tenían. Necesita 04. |
 
 ## Cómo funcionan
 
@@ -39,7 +44,7 @@ Todo lo que necesita la base de datos de la app, en 19 archivos. Se ejecutan en
 
 ## Montar una base de datos nueva
 
-Ejecuta los 19 en orden y ya está. Después, para tener un administrador:
+Ejecuta los 24 en orden y ya está. Después, para tener un administrador:
 regístrate en la app y cambia tu fila en **Table Editor → profiles**, poniendo
 `role` a `admin`.
 

@@ -33,7 +33,9 @@ function Creditos({ amount, gameId }) {
   )
 }
 
-function AscensionMaterials({ ascension, gameId }) {
+// hintKey y totalKey cambian los textos cuando se usa para otra cosa (los
+// niveles de habilidad de los agentes de Zenless).
+function AscensionMaterials({ ascension, gameId, hintKey = 'weapons.ascensionHint', totalKey = 'weapons.ascensionTotal' }) {
   const { t } = useI18n()
   const tramos = Array.isArray(ascension) ? ascension : []
 
@@ -63,7 +65,7 @@ function AscensionMaterials({ ascension, gameId }) {
   return (
     <>
       <p className="mb-4 text-sm text-zinc-500">
-        {t('weapons.ascensionHint', { from: tramos[0].desde, to: tramos.at(-1).hasta })}
+        {t(hintKey, { from: tramos[0].desde, to: tramos.at(-1).hasta })}
       </p>
 
       <div className="space-y-3">
@@ -91,7 +93,7 @@ function AscensionMaterials({ ascension, gameId }) {
       {total.creditos > 0 && (
         <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
           <p className="mb-2.5 text-sm font-semibold text-white">
-            {t('weapons.ascensionTotal', { to: tramos.at(-1).hasta })}
+            {t(totalKey, { to: tramos.at(-1).hasta })}
           </p>
           <div className="flex flex-wrap items-center gap-2.5">
             {totalMateriales.map((material) => (

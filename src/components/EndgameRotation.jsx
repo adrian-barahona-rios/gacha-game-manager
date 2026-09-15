@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { CalendarDays, ChevronDown, Loader2, Skull, Sparkles, Users } from 'lucide-react'
+import { Bot, CalendarDays, ChevronDown, Loader2, Skull, Sparkles, Users } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getElementChip } from '../data/characterStyles'
@@ -85,6 +85,54 @@ function GruposPersonajes({ grupos, personajes, onOpen }) {
   )
 }
 
+// Equipos recomendados dentro de una mitad, sala o jefe (Zenless): iconos de
+// los agentes, su bangbu y, en el Asalto mortal, el beneficio que conviene.
+function EquiposMitad({ equipos, personajes, bangbus, onPersonaje, onBangbu, t }) {
+  return (
+    <div className="mt-3">
+      <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">{t('endgame.teams')}</p>
+      <ul className="space-y-1.5">
+        {equipos.map((equipo, index) => (
+          <li key={index} className="flex flex-wrap items-center gap-1.5">
+            {(equipo.personajes ?? []).map((id) => {
+              const pj = personajes[id]
+              if (!pj) return null
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  title={pj.name}
+                  onClick={() => onPersonaje(id)}
+                  className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-black/40 transition hover:border-white/30 focus:outline-none focus:ring-4 focus:ring-white/15"
+                >
+                  {pj.image_url ? <img src={pj.image_url} alt={pj.name} loading="lazy" className="h-full w-full object-cover" /> : <Users className="h-4 w-4 text-zinc-600" />}
+                </button>
+              )
+            })}
+            {equipo.bangbu && bangbus[equipo.bangbu] && (
+              <button
+                type="button"
+                title={bangbus[equipo.bangbu].name}
+                onClick={() => onBangbu(equipo.bangbu)}
+                className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-lg border border-amber-400/30 bg-black/40 transition hover:border-amber-300/60 focus:outline-none focus:ring-4 focus:ring-white/15"
+              >
+                {bangbus[equipo.bangbu].icon_url ? (
+                  <img src={bangbus[equipo.bangbu].icon_url} alt={bangbus[equipo.bangbu].name} loading="lazy" className="h-full w-full object-contain" />
+                ) : (
+                  <Bot className="h-4 w-4 text-zinc-600" />
+                )}
+              </button>
+            )}
+            {equipo.buff && (
+              <span className="rounded-full bg-sky-500/10 px-2 py-0.5 text-[11px] text-sky-200 ring-1 ring-sky-400/25">{equipo.buff}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 // Enemigos que no tienen ficha en la app se guardan como "nombre:...".
 const SIN_FICHA = 'nombre:'
 
@@ -116,19 +164,27 @@ function EndgameRotation({ gameId, modeId }) {
             ),
           ),
         ].filter((id) => !id.startsWith(SIN_FICHA))
+        const equiposMitades = rotaciones.flatMap((r) =>
+          (r.floors ?? []).flatMap((p) => (p.mitades ?? []).flatMap((m) => m.equipos ?? [])),
+        )
         const idsPersonajes = [
-          ...new Set(
-            rotaciones.flatMap((r) =>
+          ...new Set([
+            ...rotaciones.flatMap((r) =>
               [...(r.extra?.grupos ?? []), ...(r.extra?.equipos ?? [])].flatMap((g) => g.personajes ?? []),
             ),
-          ),
+            ...equiposMitades.flatMap((e) => e.personajes ?? []),
+          ]),
         ]
-        const [{ data: enemigos }, { data: personajes }] = await Promise.all([
+        const idsBangbus = [...new Set(equiposMitades.map((e) => e.bangbu).filter(Boolean))]
+        const [{ data: enemigos }, { data: personajes }, { data: bangbus }] = await Promise.all([
           ids.length
             ? supabase.from('enemies').select('id, name, image_url, weaknesses').in('id', ids)
             : { data: [] },
           idsPersonajes.length
             ? supabase.from('characters').select('id, name, image_url').in('id', idsPersonajes)
+            : { data: [] },
+          idsBangbus.length
+            ? supabase.from('bangboos').select('id, name, icon_url').in('id', idsBangbus)
             : { data: [] },
         ])
         if (!active) return
@@ -137,6 +193,7 @@ function EndgameRotation({ gameId, modeId }) {
           rotaciones,
           enemigos: Object.fromEntries((enemigos ?? []).map((e) => [e.id, e])),
           personajes: Object.fromEntries((personajes ?? []).map((p) => [p.id, p])),
+          bangbus: Object.fromEntries((bangbus ?? []).map((b) => [b.id, b])),
         })
       })
 
@@ -283,6 +340,18 @@ function EndgameRotation({ gameId, modeId }) {
                                   <Elementos lista={mitad.elementos} />
                                 </>
                               )}
+                              {(mitad.debilidades ?? []).length > 0 && (
+                                <>
+                                  <span className="text-[11px] text-zinc-500">· {t('enemies.weakTo')}</span>
+                                  <Elementos lista={mitad.debilidades} />
+                                </>
+                              )}
+                              {(mitad.resistencias ?? []).length > 0 && (
+                                <>
+                                  <span className="text-[11px] text-zinc-500">· {t('enemies.resists')}</span>
+                                  <Elementos lista={mitad.resistencias} />
+                                </>
+                              )}
                             </div>
 
                             <div className="space-y-2">
@@ -337,6 +406,17 @@ function EndgameRotation({ gameId, modeId }) {
                               <div className="mt-3">
                                 <Efectos lista={mitad.efectos} t={t} />
                               </div>
+                            )}
+
+                            {(mitad.equipos ?? []).length > 0 && (
+                              <EquiposMitad
+                                equipos={mitad.equipos}
+                                personajes={cargado.personajes}
+                                bangbus={cargado.bangbus}
+                                onPersonaje={(id) => navigate(`/game/${gameId}/characters/${id}`)}
+                                onBangbu={(id) => navigate(`/game/${gameId}/bangboos/${id}`)}
+                                t={t}
+                              />
                             )}
                           </div>
                         ))}

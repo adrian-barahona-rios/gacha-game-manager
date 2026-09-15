@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { AlertCircle, ArrowLeft, Layers, Lightbulb, Loader2, Package, Shield, Skull, Sparkles, Target } from 'lucide-react'
+import { AlertCircle, ArrowLeft, FileText, Layers, Lightbulb, Loader2, Package, Shield, Skull, Sparkles, Target } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
@@ -44,7 +44,10 @@ function Resistencias({ lista, t }) {
           className={`flex items-center gap-2 rounded-lg bg-white/[0.03] px-3 py-1 text-sm ring-1 ${getElementChip(r.elemento)}`}
         >
           {r.elemento}
-          <span className="font-semibold text-white">{r.inmune ? t('enemies.immune') : `${r.valor}%`}</span>
+          {/* Zenless no da porcentaje: solo se sabe que resiste. */}
+          {(r.inmune || r.valor != null) && (
+            <span className="font-semibold text-white">{r.inmune ? t('enemies.immune') : `${r.valor}%`}</span>
+          )}
         </li>
       ))}
     </ul>
@@ -94,6 +97,8 @@ function EnemyDetail() {
   const botin = Array.isArray(enemy?.drops) ? enemy.drops : []
   // Genshin guarda consejos de combate en vez de habilidades.
   const soloConsejos = habilidades.length > 0 && habilidades.every((h) => h.tipo === 'consejo')
+  // Zenless guarda los informes de la wiki (combate, informe actual...).
+  const soloInformes = habilidades.length > 0 && habilidades.every((h) => h.tipo === 'informe')
 
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
@@ -168,6 +173,16 @@ function EnemyDetail() {
                       {t('enemies.faction', { faction: enemy.faction })}
                     </span>
                   )}
+                  {enemy.classification && (
+                    <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-zinc-300 ring-1 ring-white/15">
+                      {t('enemies.classification', { value: enemy.classification })}
+                    </span>
+                  )}
+                  {enemy.version && (
+                    <span className="rounded-full bg-white/5 px-3 py-1 text-xs text-zinc-400 ring-1 ring-white/10">
+                      {t('enemies.version', { version: enemy.version })}
+                    </span>
+                  )}
                 </div>
 
                 {enemy.description && (
@@ -194,16 +209,36 @@ function EnemyDetail() {
 
             {variantes.length > 1 && (
               <Bloque icon={Layers} title={t('enemies.variants')}>
-                <p className="mb-4 text-sm text-zinc-400">{t('enemies.variantsHint')}</p>
+                <p className="mb-4 text-sm text-zinc-400">
+                  {t(variantes.some((v) => v.nombre) ? 'enemies.relatedHint' : 'enemies.variantsHint')}
+                </p>
                 <ul className="space-y-3">
                   {variantes.map((variante, index) => (
                     <li
                       key={index}
                       className="rounded-xl border border-white/10 bg-black/20 p-4"
                     >
-                      <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
-                        {t('enemies.variant', { number: index + 1 })}
-                      </p>
+                      {variante.nombre ? (
+                        // Zenless: cada variante es otra ficha de enemigo.
+                        variante.id && variante.id !== enemy.id ? (
+                          <button
+                            type="button"
+                            onClick={() => navigate(`/game/${gameId}/enemies/${variante.id}`)}
+                            className="mb-2 text-left text-sm font-semibold text-white underline-offset-4 hover:underline focus:outline-none"
+                          >
+                            {variante.nombre}
+                          </button>
+                        ) : (
+                          <p className="mb-2 text-sm font-semibold text-white">
+                            {variante.nombre}
+                            <span className="ml-2 text-[11px] font-normal text-zinc-500">{t('enemies.thisOne')}</span>
+                          </p>
+                        )
+                      ) : (
+                        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-zinc-500">
+                          {t('enemies.variant', { number: index + 1 })}
+                        </p>
+                      )}
                       <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
                         <span className="text-xs text-zinc-400">{t('enemies.weakTo')}</span>
                         {(variante.debilidades ?? []).length > 0 ? (
@@ -241,6 +276,7 @@ function EnemyDetail() {
                         {item.rareza && (
                           <span className="block text-[11px] text-amber-300/80">{'★'.repeat(item.rareza)}</span>
                         )}
+                        {item.cantidad > 0 && <span className="block text-[11px] text-zinc-500">×{item.cantidad}</span>}
                       </span>
                     </li>
                   ))}
@@ -249,7 +285,10 @@ function EnemyDetail() {
             )}
 
             {habilidades.length > 0 && (
-              <Bloque icon={soloConsejos ? Lightbulb : Sparkles} title={t(soloConsejos ? 'enemies.tips' : 'enemies.skills')}>
+              <Bloque
+                icon={soloConsejos ? Lightbulb : soloInformes ? FileText : Sparkles}
+                title={t(soloConsejos ? 'enemies.tips' : soloInformes ? 'enemies.reports' : 'enemies.skills')}
+              >
                 <ul className="space-y-4">
                   {habilidades.map((habilidad, index) => (
                     <li key={`${habilidad.nombre}-${index}`} className="border-b border-white/5 pb-4 last:border-0 last:pb-0">

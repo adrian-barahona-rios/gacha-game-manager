@@ -46,7 +46,7 @@ function EnemyList() {
 
     supabase
       .from('enemies')
-      .select('id, name, name_en, category, rank, faction, image_url, weaknesses, resistances, variants')
+      .select('id, name, name_en, category, rank, faction, classification, image_url, weaknesses, resistances, variants')
       .eq('game_id', gameId)
       .order('name', { ascending: true })
       .then(({ data, error: loadError }) => {
@@ -88,7 +88,7 @@ function EnemyList() {
     (enemy) =>
       pasaFiltro(enemy) &&
       (!needle ||
-        [enemy.name, enemy.name_en, enemy.faction].some((texto) =>
+        [enemy.name, enemy.name_en, enemy.faction, enemy.classification].some((texto) =>
           sinAcentos(texto ?? '').includes(needle),
         )),
   )
@@ -251,6 +251,21 @@ function EnemyList() {
                         ))}
                       </span>
                     )}
+                    {/* Zenless: resistencias sin porcentaje, solo el elemento. */}
+                    {section.filter === 'weakTo' &&
+                      (enemy.resistances ?? []).some((r) => r.valor == null) && (
+                        <span className="mt-auto flex flex-wrap items-center gap-1">
+                          <span className="text-[10px] text-zinc-500">{t('enemies.resists')}</span>
+                          {enemy.resistances.map((r) => (
+                            <span
+                              key={r.elemento}
+                              className={`rounded-md bg-white/[0.03] px-1.5 py-0.5 text-[10px] font-medium ring-1 ${getElementChip(r.elemento)}`}
+                            >
+                              {r.elemento}
+                            </span>
+                          ))}
+                        </span>
+                      )}
                     {section.filter === 'notResistant' && resistenciasAltas(enemy).length > 0 && (
                       <span className="mt-auto flex flex-wrap items-center gap-1">
                         <span className="text-[10px] text-zinc-500">{t('enemies.resists')}</span>

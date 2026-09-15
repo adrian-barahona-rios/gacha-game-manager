@@ -2,6 +2,8 @@ import { Suspense, lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import AdminGuard from './components/AdminGuard'
 import AdminPanel from './components/AdminPanel'
+import BangbooDetail from './components/BangbooDetail'
+import BangbooList from './components/BangbooList'
 import CharacterDetail from './components/CharacterDetail'
 import CharacterGrid from './components/CharacterGrid'
 import CharacterGuides from './components/CharacterGuides'
@@ -76,6 +78,8 @@ function App() {
       <Route path="/game/:gameId/weapons" element={<WeaponList />} />
       <Route path="/game/:gameId/weapons/:weaponId" element={<WeaponDetail />} />
       <Route path="/game/:gameId/discs" element={<DriveDiscList />} />
+      <Route path="/game/:gameId/bangboos" element={<BangbooList />} />
+      <Route path="/game/:gameId/bangboos/:bangbooId" element={<BangbooDetail />} />
       <Route path="/game/:gameId/enemies" element={<EnemyList />} />
       <Route path="/game/:gameId/enemies/:enemyId" element={<EnemyDetail />} />
       <Route path="/game/:gameId/relics" element={<RelicSetList />} />
