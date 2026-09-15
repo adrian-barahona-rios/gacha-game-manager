@@ -1,5 +1,9 @@
 // Funcion serverless de Vercel: GET /api/youtube-search?query=...&lang=es
 //
+// Con &recent=0 se buscan directamente los videos mas relevantes, sin mirar
+// primero los de la ultima semana. Es lo que usan las rutas de exploracion:
+// una ruta de hace un ano sigue sirviendo.
+//
 // La clave se lee de process.env.YOUTUBE_API_KEY y nunca sale de aqui. El
 // nombre NO lleva el prefijo VITE_ a proposito: Vite incrusta el valor de
 // cualquier variable VITE_* en el JavaScript que descarga el navegador, asi
@@ -55,9 +59,10 @@ export default async function handler(request, response) {
   }
 
   const lang = request.query.lang === 'en' ? 'en' : 'es'
+  const onlyRecentFirst = request.query.recent !== '0'
 
   try {
-    const since = new Date(Date.now() - WEEK_MS).toISOString()
+    const since = onlyRecentFirst ? new Date(Date.now() - WEEK_MS).toISOString() : null
     let search = await fetch(buildUrl(key, query, lang, since))
     let payload = await search.json()
 
@@ -69,12 +74,12 @@ export default async function handler(request, response) {
     }
 
     let videos = toVideos(payload)
-    let window = 'week'
+    let window = onlyRecentFirst ? 'week' : 'all'
 
     // Un personaje poco popular puede no tener nada de la ultima semana. En
     // ese caso se repite la busqueda sin limite de fecha y se avisa de ello,
     // que es mejor que devolver una seccion vacia.
-    if (videos.length === 0) {
+    if (videos.length === 0 && onlyRecentFirst) {
       search = await fetch(buildUrl(key, query, lang, null))
       payload = await search.json()
       if (search.ok) {
@@ -84,7 +89,13 @@ export default async function handler(request, response) {
     }
 
     // Una hora en la cache de Vercel: la cuota diaria de YouTube es limitada.
-    response.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate=86400')
+    // Las busquedas sin fecha apenas cambian, asi que esas duran una semana.
+    response.setHeader(
+      'Cache-Control',
+      onlyRecentFirst
+        ? 's-maxage=3600, stale-while-revalidate=86400'
+        : 's-maxage=604800, stale-while-revalidate=604800',
+    )
     response.status(200).json({ videos, window, query, lang })
   } catch (error) {
     response.status(502).json({ error: 'fetch_failed', detail: error.message })

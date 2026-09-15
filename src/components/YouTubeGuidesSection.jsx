@@ -11,11 +11,13 @@ const ERROR_KEYS = {
   not_found: 'guides.video.error.notFound',
 }
 
-function YouTubeGuidesSection({ query }) {
+// recent=false busca los mas relevantes sin mirar antes la ultima semana
+// (rutas de exploracion). subtitleKey y emptyKey cambian los textos.
+function YouTubeGuidesSection({ query, recent = true, subtitleKey, emptyKey }) {
   const { t, activeLanguage } = useI18n()
   const [loaded, setLoaded] = useState(null)
 
-  const key = `${query}|${activeLanguage}`
+  const key = `${query}|${activeLanguage}|${recent}`
   const isLoading = loaded?.key !== key
   const result = loaded?.key === key ? loaded : null
 
@@ -25,7 +27,7 @@ function YouTubeGuidesSection({ query }) {
     }
 
     let active = true
-    const url = `/api/youtube-search?query=${encodeURIComponent(query)}&lang=${activeLanguage}`
+    const url = `/api/youtube-search?query=${encodeURIComponent(query)}&lang=${activeLanguage}${recent ? '' : '&recent=0'}`
 
     fetch(url)
       .then(async (response) => {
@@ -56,7 +58,7 @@ function YouTubeGuidesSection({ query }) {
     return () => {
       active = false
     }
-  }, [query, activeLanguage, key])
+  }, [query, activeLanguage, recent, key])
 
   return (
     <section className="rounded-3xl border border-white/10 bg-[#111114]/80 p-6 backdrop-blur-xl sm:p-8">
@@ -65,7 +67,11 @@ function YouTubeGuidesSection({ query }) {
         {t('guides.video.title')}
       </h2>
       <p className="mb-6 text-sm text-zinc-500">
-        {result?.window === 'all' ? t('guides.video.subtitleAll') : t('guides.video.subtitle')}
+        {subtitleKey
+          ? t(subtitleKey)
+          : result?.window === 'all'
+            ? t('guides.video.subtitleAll')
+            : t('guides.video.subtitle')}
       </p>
 
       {isLoading ? (
@@ -81,7 +87,7 @@ function YouTubeGuidesSection({ query }) {
       ) : result.videos.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-white/15 bg-white/[0.02] p-10 text-center">
           <PlayCircle className="mx-auto mb-4 h-9 w-9 text-zinc-600" />
-          <p className="text-sm text-zinc-400">{t('guides.video.empty')}</p>
+          <p className="text-sm text-zinc-400">{t(emptyKey ?? 'guides.video.empty')}</p>
         </div>
       ) : (
         <div className="grid gap-6 sm:grid-cols-2">

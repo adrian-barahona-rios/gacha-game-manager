@@ -81,7 +81,7 @@ function CharacterGuides() {
           </div>
         ) : (
           <>
-            <MetaGuide characterId={characterId} />
+            <MetaGuide characterId={characterId} gameId={gameId} />
             <MyGuides gameId={gameId} characterId={characterId} embedded />
             <YouTubeGuidesSection query={query} key={activeLanguage} />
           </>

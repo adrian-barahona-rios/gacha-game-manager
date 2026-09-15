@@ -4,6 +4,8 @@ import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
 import { getGameMode, getModeName } from '../data/gameModes'
 import YouTubeGuidesSection from './YouTubeGuidesSection'
+import EndgameRotation from './EndgameRotation'
+import { hasEndgameRotations } from '../data/relics'
 import ProfileButton from './ProfileButton'
 
 function GameModeGuide() {
@@ -97,6 +99,8 @@ function GameModeGuide() {
                 </p>
               )}
             </section>
+
+            {hasEndgameRotations(gameId) && <EndgameRotation gameId={gameId} modeId={mode.id} />}
 
             <YouTubeGuidesSection query={query} key={activeLanguage} />
           </>

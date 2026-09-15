@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { AlertCircle, ExternalLink, Loader2, Swords } from 'lucide-react'
 import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
+import StructuredBuild from './StructuredBuild'
 
 // Los tres campos de la build, en el orden en que se leen.
 const BLOCKS = [
@@ -10,7 +11,7 @@ const BLOCKS = [
   { field: 'variations', labelKey: 'guides.meta.variations' },
 ]
 
-function MetaGuide({ characterId }) {
+function MetaGuide({ characterId, gameId }) {
   const { t } = useI18n()
   const [loaded, setLoaded] = useState(null)
   const [error, setError] = useState('')
@@ -23,7 +24,7 @@ function MetaGuide({ characterId }) {
 
     supabase
       .from('character_meta_guides')
-      .select('mode, equipment_build, stats, variations, source, updated_at')
+      .select('mode, equipment_build, stats, variations, source, updated_at, build')
       .eq('character_id', characterId)
       .order('mode', { ascending: true })
       .then(({ data, error: loadError }) => {
@@ -79,6 +80,9 @@ function MetaGuide({ characterId }) {
                 {guide.mode}
               </h3>
 
+              {guide.build ? (
+                <StructuredBuild build={guide.build} gameId={gameId} />
+              ) : (
               <dl className="space-y-5">
                 {BLOCKS.filter((block) => guide[block.field]).map((block) => (
                   <div key={block.field}>
@@ -91,6 +95,7 @@ function MetaGuide({ characterId }) {
                   </div>
                 ))}
               </dl>
+              )}
 
               {guide.source && (
                 <a

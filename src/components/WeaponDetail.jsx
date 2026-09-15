@@ -16,6 +16,7 @@ import { getGameById } from '../data/games'
 import { WEAPON_SECTIONS, getCategoryStyle, rarityLabel, rarityRank } from '../data/weapons'
 import AscensionMaterials from './AscensionMaterials'
 import ProfileButton from './ProfileButton'
+import RecommendedCharacters from './RecommendedCharacters'
 
 const RARITY_STYLES = {
   5: 'border-amber-500/50 bg-amber-950',
@@ -231,7 +232,13 @@ function WeaponDetail() {
             )}
 
             <Bloque icon={Users} title={t('weapons.goodFor')}>
-              {weapon.good_for ? (
+              {Array.isArray(weapon.recommended) && weapon.recommended.length > 0 ? (
+                <RecommendedCharacters
+                  recommended={weapon.recommended}
+                  fallbackText={weapon.good_for}
+                  gameId={gameId}
+                />
+              ) : weapon.good_for ? (
                 <p className="whitespace-pre-wrap text-[15px] leading-relaxed text-zinc-300">
                   {weapon.good_for}
                 </p>

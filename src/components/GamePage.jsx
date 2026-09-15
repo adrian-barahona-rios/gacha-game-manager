@@ -4,10 +4,13 @@ import {
   ArrowLeft,
   BookOpen,
   ChevronDown,
+  Compass,
   Disc3,
+  Gem,
   Globe,
   Home,
   ListOrdered,
+  Skull,
   Swords,
   Users,
 } from 'lucide-react'
@@ -16,6 +19,9 @@ import ProfileButton from './ProfileButton'
 import { getGameById, getGameCopy } from '../data/games'
 import { getGameModes } from '../data/gameModes'
 import { WEAPON_SECTIONS, hasDriveDiscs, hasWeapons } from '../data/weapons'
+import { hasEnemies } from '../data/enemies'
+import { RELIC_SECTIONS, hasRelics } from '../data/relics'
+import { hasExploration } from '../data/exploration'
 import { useI18n } from '../i18n/useI18n'
 
 const STARS = [
@@ -768,6 +774,12 @@ const MENU_ITEMS = [
   { id: 'armas', labelKey: 'game.menu.weapons', icon: Swords },
   // Solo en Zenless: en los demas juegos no existe y no se ensena.
   { id: 'discos', labelKey: 'game.menu.discs', icon: Disc3 },
+  // Reliquias (Honkai) o artefactos (Genshin), y enemigos: solo en los juegos
+  // que tienen los datos cargados.
+  { id: 'reliquias', labelKey: 'game.menu.relics', icon: Gem },
+  { id: 'enemigos', labelKey: 'game.menu.enemies', icon: Skull },
+  // Mapa interactivo: de momento solo Genshin.
+  { id: 'exploracion', labelKey: 'game.menu.exploration', icon: Compass },
   { id: 'tierlist', labelKey: 'game.menu.tierList', icon: ListOrdered },
   { id: 'guias', labelKey: 'game.menu.guides', icon: BookOpen },
 ]
@@ -903,7 +915,11 @@ function GamePage() {
                         )
                       })
                     : MENU_ITEMS.filter(
-                        (item) => item.id !== 'discos' || hasDriveDiscs(game.id),
+                        (item) =>
+                          (item.id !== 'discos' || hasDriveDiscs(game.id)) &&
+                          (item.id !== 'enemigos' || hasEnemies(game.id)) &&
+                          (item.id !== 'reliquias' || hasRelics(game.id)) &&
+                          (item.id !== 'exploracion' || hasExploration(game.id)),
                       ).map((item) => {
                         const Icon = item.icon
                         const isCurrent = item.id === 'inicio'
@@ -912,13 +928,19 @@ function GamePage() {
                         const isGuides = item.id === 'guias'
                         const isWeapons = item.id === 'armas'
                         const isDiscs = item.id === 'discos'
+                        const isEnemies = item.id === 'enemigos'
+                        const isRelics = item.id === 'reliquias'
+                        const isExploration = item.id === 'exploracion'
                         const isEnabled =
                           isCurrent ||
                           (isCharacters && hasCharacters) ||
                           (isTierList && hasTierList) ||
                           (isGuides && hasGuides) ||
                           (isWeapons && hasWeaponSection) ||
-                          isDiscs
+                          isDiscs ||
+                          isEnemies ||
+                          isRelics ||
+                          isExploration
 
                         return (
                           <button
@@ -934,6 +956,12 @@ function GamePage() {
                                 navigate(`/game/${gameId}/weapons`)
                               } else if (isDiscs) {
                                 navigate(`/game/${gameId}/discs`)
+                              } else if (isRelics) {
+                                navigate(`/game/${gameId}/relics`)
+                              } else if (isEnemies) {
+                                navigate(`/game/${gameId}/enemies`)
+                              } else if (isExploration) {
+                                navigate(`/game/${gameId}/exploration`)
                               } else if (isTierList) {
                                 navigate(`/game/${gameId}/tierlist/official`)
                               } else if (isGuides) {
@@ -954,7 +982,9 @@ function GamePage() {
                                 isWeapons
                                   ? (WEAPON_SECTIONS[game.id]?.menuKey ??
                                       'game.menu.weapons')
-                                  : item.labelKey,
+                                  : isRelics
+                                    ? (RELIC_SECTIONS[game.id]?.menuKey ?? item.labelKey)
+                                    : item.labelKey,
                               )}
                             </span>
                             {!isEnabled && (

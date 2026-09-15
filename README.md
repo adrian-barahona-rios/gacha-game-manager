@@ -5,8 +5,8 @@
 Si juegas a varios gacha a la vez, sabes lo que pasa: los personajes que te faltan
 están en una lista, las builds en un vídeo que ya no encuentras, y lo que opinas
 de cada personaje solo en tu cabeza. Gacha Game Manager reúne todo eso en una web:
-tu biblioteca de juegos, las fichas de todos los personajes, tus tier lists, tus
-guías y las de YouTube, y lo que tienen tus amigos.
+tu biblioteca de juegos, las fichas de todos los personajes y de sus armas, tus
+tier lists, tus guías y las de YouTube, y lo que tienen tus amigos.
 
 Es un proyecto personal, gratuito y sin anuncios.
 
@@ -16,7 +16,13 @@ Es un proyecto personal, gratuito y sin anuncios.
 
 - **Gestionar varios juegos a la vez** — añade a tu biblioteca solo los que juegas.
 - **Consultar a todos los personajes** — con su biografía oficial, elemento,
-  rareza, rol e icono del juego.
+  rareza, rol, icono del juego y los materiales que necesitas para subirlos de
+  nivel.
+- **Consultar las armas** — armas de Genshin, conos de luz de Honkai y
+  amplificadores de Zenless, con sus stats, su efecto en cada nivel, cómo
+  conseguirlas, sus materiales y para qué personajes van mejor.
+- **Ver los discos de Zenless** — el efecto de 2 y 4 piezas de cada conjunto y
+  qué stats puede tener cada ranura.
 - **Marcar favoritos** — cada juego tiene su propia lista, separada del resto.
 - **Ver tier lists** — la valoración oficial de la comunidad y la tuya propia,
   que montas arrastrando personajes.
@@ -32,9 +38,9 @@ Es un proyecto personal, gratuito y sin anuncios.
 
 | Juego | Qué encontrarás |
 |---|---|
-| **Genshin Impact** | 119 personajes, tier list, guías de Espiral del Abismo, Teatro Fantasía y Conflagración estigia |
-| **Honkai: Star Rail** | 81 personajes, tier list de sus tres modos, guías de Memory of Chaos, Pura ficción, Espejismo apocalíptico y Arbitraje atípico |
-| **Zenless Zone Zero** | 27 agentes, tier list, guías de Shiyu Defense, Deadly Assault, Hollow Zero y más |
+| **Genshin Impact** | 119 personajes, 246 armas, tier list, guías de Espiral del Abismo, Teatro Fantasía y Conflagración estigia |
+| **Honkai: Star Rail** | 92 personajes, 169 conos de luz, tier list de sus tres modos, guías de Memory of Chaos, Pura ficción, Espejismo apocalíptico y Arbitraje atípico |
+| **Zenless Zone Zero** | 60 agentes, 99 amplificadores, 30 conjuntos de discos, tier list, guías de Shiyu Defense, Deadly Assault, Hollow Zero y más |
 | **High School DxD: OPI** | 22 personajes con sus fichas |
 | **Umamusume: Pretty Derby** | 366 entrenadoras y 768 cartas de support, con versión Global y Japón por separado, cada una con sus propias guías |
 
@@ -42,14 +48,14 @@ Es un proyecto personal, gratuito y sin anuncios.
 
 ## 🚀 Cómo empezar
 
-1. **Entra en la web.** 👉 _(pendiente de publicar — aquí irá el enlace)_
+1. **Entra en la web.** 👉 [gacha-game-manager-app.vercel.app](https://gacha-game-manager-app.vercel.app)
 2. **Elige el idioma.** La primera vez te preguntamos si prefieres español o
    inglés. Luego lo puedes cambiar cuando quieras desde tu perfil.
 3. **Regístrate.** Necesitas un email, un nombre de usuario y una contraseña de
    al menos 6 caracteres. El nombre de usuario tiene que ser único: es como te
    verán tus amigos.
-4. **Confirma tu email.** Te llega un enlace al correo. Ábrelo y vuelve a la web
-   para iniciar sesión. _(Si no lo ves, mira en spam.)_
+4. **Confirma tu email.** Te llega un enlace al correo. Al abrirlo vuelves a la
+   web con la sesión ya iniciada. _(Si no lo ves, mira en spam.)_
 5. **Añade tus juegos** desde el botón **Agregar juego** y listo.
 
 > 🔑 ¿Se te olvida la contraseña algún día? En la pantalla de inicio de sesión
@@ -75,9 +81,31 @@ pestañas: **Todos** y **Favoritos**.
 - Pulsa el **corazón ❤️** de una tarjeta para añadir o quitar un personaje de
   favoritos. Los favoritos son independientes en cada juego: si marcas a alguien
   de Honkai, no aparecerá en la lista de Genshin.
-- Pulsa la tarjeta para abrir su ficha, con tres pestañas: **Detalles**
+- Pulsa la tarjeta para abrir su ficha, con sus pestañas: **Detalles**
   (elemento, rareza, rol…), **Biografía** (el texto oficial del juego, con
-  enlace a la fuente) y **Stats**.
+  enlace a la fuente), **Stats** y **Ascensión** (los materiales y el dinero
+  que cuesta cada subida de nivel, con el total al final).
+
+### ⚔️ Armas, conos de luz y amplificadores
+
+Cada juego tiene la suya en su menú: **Armas** en Genshin, **Conos de luz** en
+Honkai y **Amplificadores** en Zenless. Puedes buscar por nombre y filtrar, y al
+pulsar una se abre su ficha:
+
+- **Stats** base y, en Genshin, la stat secundaria.
+- **Su efecto**, con botones para verlo en cada nivel de refinamiento o
+  superposición.
+- **Cómo conseguirla** — gachapón, tienda, evento, pase de batalla…
+- **Ascensión** — los materiales de cada subida y el total.
+- **Para qué personajes va bien** — sacado de las guías de Game8. Salen con su
+  icono, separados entre los ideales y los que también le sacan partido. Pulsa
+  cualquiera para ir a su ficha.
+
+### 💿 Pistas de disco (Zenless)
+
+En el menú de Zenless, **Pistas de disco** lista todos los conjuntos con su
+efecto de 2 y 4 piezas, dónde se consiguen y qué stat principal puede salir en
+cada una de las 6 ranuras.
 
 ### 🏆 Tier lists
 
@@ -164,10 +192,14 @@ pégalo. Cuando acepte la solicitud, os veréis en la lista.
 **¿Mis guías las ve alguien más?**
 No. Las guías que escribes son privadas y solo aparecen en tu cuenta.
 
-**¿De dónde salen las biografías y los iconos?**
-De las wikis oficiales de cada juego. Cada biografía enlaza a su fuente. En los
-personajes cuya wiki no publica ficha en español verás un aviso de que el texto
-es una traducción.
+**¿De dónde salen los datos?**
+- **Biografías e iconos** — de las wikis de cada juego. Cada biografía enlaza a
+  su fuente. En los personajes cuya wiki no publica ficha en español verás un
+  aviso de que el texto es una traducción.
+- **Stats, efectos y materiales** — de HoYoWiki, la wiki oficial de HoYoverse, y
+  de Yatta, que saca los datos del propio juego.
+- **Personajes recomendados para cada arma** — de las guías de Game8. Es una
+  opinión de la comunidad, no un dato del juego.
 
 **¿Por qué no me salen vídeos en algún personaje?**
 Buscamos primero guías de la última semana. Si un personaje es poco popular y no
@@ -185,7 +217,9 @@ _(Pendiente de añadir capturas.)_
   personajes, tier list y guías.
 - **Personajes** — rejilla con el icono oficial de cada uno y filtro de favoritos.
 - **Ficha del personaje** — retrato grande, etiquetas de elemento y rareza, y las
-  pestañas de detalles, biografía y stats.
+  pestañas de detalles, biografía, stats y ascensión.
+- **Ficha del arma** — stats, efecto por nivel, materiales y los personajes
+  recomendados con su icono.
 - **Tier list** — niveles de colores y arrastrar y soltar.
 - **Guías** — modos de endgame y vídeos de YouTube embebidos.
 

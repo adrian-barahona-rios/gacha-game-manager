@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import AdminGuard from './components/AdminGuard'
 import AdminPanel from './components/AdminPanel'
@@ -19,6 +20,9 @@ import TierListOfficial from './components/TierListOfficial'
 import WeaponList from './components/WeaponList'
 import WeaponDetail from './components/WeaponDetail'
 import DriveDiscList from './components/DriveDiscList'
+import EnemyList from './components/EnemyList'
+import EnemyDetail from './components/EnemyDetail'
+import RelicSetList from './components/RelicSetList'
 import TierListPersonal from './components/TierListPersonal'
 import UmamusumeCharacters from './components/UmamusumeCharacters'
 import UmamusumeGuideTopic from './components/UmamusumeGuideTopic'
@@ -28,6 +32,9 @@ import UmamusumeSupportCards from './components/UmamusumeSupportCards'
 import UmamusumeSupportTierList from './components/UmamusumeSupportTierList'
 import ResetPassword from './components/ResetPassword'
 import UserProfile from './components/UserProfile'
+
+// El mapa lleva Leaflet, que pesa bastante: se descarga solo al entrar.
+const ExplorationPage = lazy(() => import('./components/ExplorationPage'))
 
 function App() {
   return (
@@ -69,6 +76,17 @@ function App() {
       <Route path="/game/:gameId/weapons" element={<WeaponList />} />
       <Route path="/game/:gameId/weapons/:weaponId" element={<WeaponDetail />} />
       <Route path="/game/:gameId/discs" element={<DriveDiscList />} />
+      <Route path="/game/:gameId/enemies" element={<EnemyList />} />
+      <Route path="/game/:gameId/enemies/:enemyId" element={<EnemyDetail />} />
+      <Route path="/game/:gameId/relics" element={<RelicSetList />} />
+      <Route
+        path="/game/:gameId/exploration"
+        element={
+          <Suspense fallback={<div className="min-h-screen bg-black" />}>
+            <ExplorationPage />
+          </Suspense>
+        }
+      />
       <Route
         path="/game/:gameId/tierlist/official"
         element={<TierListOfficial />}

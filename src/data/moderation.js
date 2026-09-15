@@ -22,7 +22,7 @@
 // El texto del usuario se normaliza igual antes de comparar, asi que da lo
 // mismo que escriba "MARICÓN", "mar1c0n" o "mariiiicon".
 //
-// Esta lista es el original: supabase/comments.sql lleva una copia para que la
+// Esta lista es el original: supabase/01_esquema.sql lleva una copia para que la
 // base de datos rechace tambien lo que llegue sin pasar por la aplicacion. Si
 // tocas una, toca la otra.
 

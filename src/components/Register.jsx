@@ -91,7 +91,12 @@ function Register() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { username: trimmedUsername } },
+      options: {
+        data: { username: trimmedUsername },
+        // Sin esto el enlace del correo lleva a la "Site URL" de Supabase, que
+        // puede ser localhost. Asi vuelve a la misma web desde la que se registro.
+        emailRedirectTo: `${window.location.origin}/dashboard`,
+      },
     })
     setIsSubmitting(false)
 

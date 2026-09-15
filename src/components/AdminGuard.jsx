@@ -6,7 +6,7 @@ import { useI18n } from '../i18n/useI18n'
 
 // El rol se comprueba contra la base de datos en cada carga, nunca se guarda en
 // el navegador: si alguien deja de ser admin, pierde el acceso al recargar.
-// La barrera real esta en las politicas RLS de Supabase (supabase/admin.sql);
+// La barrera real esta en las politicas RLS de Supabase (supabase/01_esquema.sql);
 // esto solo evita mostrar una pantalla que no serviria de nada.
 function AdminGuard({ children }) {
   const { t } = useI18n()
