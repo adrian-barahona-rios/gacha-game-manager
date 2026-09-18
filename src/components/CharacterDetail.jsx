@@ -17,6 +17,8 @@ import {
   getRarityStyle,
 } from '../data/characterStyles'
 import AscensionMaterials from './AscensionMaterials'
+import CreatureStats from './CreatureStats'
+import EvolutionTree from './EvolutionTree'
 import LevelTable from './LevelTable'
 import ProfileButton from './ProfileButton'
 
@@ -28,6 +30,7 @@ const TABS = [
   // Solo si el personaje tiene los datos (de momento, los agentes de Zenless).
   { id: 'habilidades', labelKey: 'character.tab.skills' },
   { id: 'cine', labelKey: 'character.tab.mindscapes' },
+  { id: 'evolucion', labelKey: 'character.tab.evolution' },
 ]
 
 // Como se llaman las mejoras por duplicado en cada juego.
@@ -47,6 +50,7 @@ function splitParagraphs(text) {
 const PATH_LABELS = {
   'honkai-star-rail': ['character.path.hsr', 'character.signature.hsr'],
   'zenless-zone-zero': ['character.path.zzz', 'character.signature.zzz'],
+  aniimo: ['character.path.aniimo', 'character.signature.aniimo'],
 }
 
 function CharacterDetail() {
@@ -61,6 +65,9 @@ function CharacterDetail() {
   const [userId, setUserId] = useState(null)
   const [isFavorite, setIsFavorite] = useState(false)
   const [isTogglingFavorite, setIsTogglingFavorite] = useState(false)
+  // Las criaturas de la linea de evolucion son otras fichas del mismo juego:
+  // se buscan por nombre para poder saltar a ellas.
+  const [hermanos, setHermanos] = useState([])
 
   useEffect(() => {
     let active = true
@@ -86,6 +93,22 @@ function CharacterDetail() {
       active = false
     }
   }, [characterId, t])
+
+  // Nombres de las demas criaturas del juego, para enlazar el arbol de evolucion.
+  useEffect(() => {
+    if (!character?.evolution?.arbol) return undefined
+    let active = true
+    supabase
+      .from('characters')
+      .select('id, name')
+      .eq('game_id', character.game_id)
+      .then(({ data }) => {
+        if (active) setHermanos(data ?? [])
+      })
+    return () => {
+      active = false
+    }
+  }, [character])
 
   useEffect(() => {
     let active = true
@@ -152,6 +175,10 @@ function CharacterDetail() {
   const materialesHabilidad = Array.isArray(character?.skills?.materiales) ? character.skills.materiales : []
   const cine = Array.isArray(character?.mindscapes) ? character.mindscapes : []
   const perfil = Array.isArray(character?.profile) ? character.profile : []
+  const evolucion = character?.evolution?.arbol ? character.evolution : null
+  // Aniimo: estadisticas base y zonas donde aparece la criatura.
+  const estadisticas = character?.stats?.valores?.length ? character.stats : null
+  const zonas = Array.isArray(character?.habitats) ? character.habitats : []
   const [pathKey, signatureKey] = PATH_LABELS[gameId] ?? [
     'character.path.default',
     'character.signature.default',
@@ -275,6 +302,7 @@ function CharacterDetail() {
                   if (tab.id === 'ascension') return hasAscension
                   if (tab.id === 'habilidades') return categoriasHabilidad.length > 0
                   if (tab.id === 'cine') return cine.length > 0
+                  if (tab.id === 'evolucion') return Boolean(evolucion)
                   return true
                 }).map((tab) => (
                   <button
@@ -294,19 +322,18 @@ function CharacterDetail() {
 
               {activeTab === 'detalles' && (
                 <dl className="mb-8 grid grid-cols-2 gap-4">
+                  {/* Los campos que el juego no usa (las criaturas de Aniimo no
+                      tienen rareza, por ejemplo) no se ensenan. */}
                   {[
-                    [
-                      t('character.rarity'),
-                      character.rarity ? formatRarity(character.rarity) : t('character.undefined'),
-                    ],
-                    [t('character.element'), character.element ?? t('character.undefined')],
-                    [t('character.role'), character.role ?? t('character.undefined')],
-                    [pathLabel, character.path ?? t('character.undefined')],
-                    [signatureLabel, character.signature ?? t('character.undefined')],
+                    [t('character.rarity'), character.rarity ? formatRarity(character.rarity) : null],
+                    [t('character.element'), character.element],
+                    [t('character.role'), character.role],
+                    [pathLabel, character.path],
+                    [signatureLabel, character.signature],
                     [t('character.game'), game?.name ?? gameId],
                     // Perfil de la wiki oficial (afiliacion, cumpleanos, voces...).
                     ...perfil.map((item) => [item.campo, item.valor]),
-                  ].map(([label, value]) => (
+                  ].filter(([, value]) => value).map(([label, value]) => (
                     <div
                       key={label}
                       className="rounded-xl border border-white/10 bg-white/[0.03] p-4"
@@ -318,6 +345,35 @@ function CharacterDetail() {
                     </div>
                   ))}
                 </dl>
+              )}
+
+              {activeTab === 'detalles' && estadisticas && <CreatureStats stats={estadisticas} />}
+
+              {activeTab === 'detalles' && zonas.length > 0 && (
+                <section className="mb-8 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+                  <h3 className="mb-1 text-base font-semibold text-white">{t('character.whereToFind')}</h3>
+                  <p className="mb-3 text-sm text-zinc-500">{t('character.whereToFindHint')}</p>
+                  <div className="flex flex-wrap gap-2">
+                    {zonas.map((zona) => (
+                      <button
+                        key={zona}
+                        type="button"
+                        onClick={() => navigate(`/game/${gameId}/zones#${encodeURIComponent(zona)}`)}
+                        className="rounded-full border border-white/15 bg-white/[0.03] px-3 py-1 text-xs font-medium text-zinc-200 transition hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-4 focus:ring-white/15"
+                      >
+                        {zona}
+                      </button>
+                    ))}
+                  </div>
+                </section>
+              )}
+
+              {activeTab === 'evolucion' && evolucion && (
+                <EvolutionTree
+                  evolution={evolucion}
+                  buscarId={(nombre) => hermanos.find((x) => x.name === nombre)?.id ?? null}
+                  onOpen={(id) => navigate(`/game/${gameId}/characters/${id}`)}
+                />
               )}
 
               {activeTab === 'habilidades' && categoriasHabilidad.length > 0 && (

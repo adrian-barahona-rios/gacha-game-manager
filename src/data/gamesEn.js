@@ -25,16 +25,16 @@ export const GAME_COPY_EN = {
       'Self-contained worlds, each planet with a story of its own.',
     ],
   },
-  'high-school-dxd-opi': {
-    release: 'April 22, 2025',
-    genre: 'Browser RPG based on the anime',
-    platforms: 'Browser on PC, tablet and mobile',
+  aniimo: {
+    release: 'September 16, 2026',
+    genre: 'Open-world creature-collecting RPG',
+    platforms: 'PC, PlayStation 5, Xbox Series X|S, iOS and Android',
     description:
-      'High School D×D: Operation Paradise Infinity is an RPG based on the High School D×D anime series. It brings together more than sixty characters from the show, Issei Hyodo and Rias Gremory among them, with artwork drawn exclusively for the game, and asks you to build the best team by playing to each one’s skills and attributes.',
+      'Aniimo is an open-world RPG where you roam the Breezy Plains catching creatures called aniimo. Each one has its element, its combat role and its own evolution line, and with the Twining mechanic you can turn into them yourself, both to fight and to travel across the map.',
     highlights: [
-      'More than 60 characters from the series, with art exclusive to the game.',
-      'HTML5 technology: it runs in the browser, with nothing to install.',
-      'Free to play, with optional in-game purchases.',
+      'More than eighty aniimo, each with its element, role and evolutions.',
+      'Creatures are not pulled from a gacha: you catch them in the world.',
+      'Free to play on PC, consoles and mobile.',
     ],
   },
   'umamusume-pretty-derby': {

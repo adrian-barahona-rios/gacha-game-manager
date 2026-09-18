@@ -43,12 +43,15 @@ export const ADMIN_GAMES = [
     levelCap: 60,
   },
   {
-    id: 'high-school-dxd-opi',
-    name: 'High School DxD: OPI',
+    id: 'aniimo',
+    name: 'Aniimo',
     table: 'characters',
-    prefix: 'dxd',
-    // La ficha de DxD solo guarda nombre y descripcion.
+    prefix: 'aniimo',
+    elementKey: 'admin.field.element',
+    elements: ['Agua', 'Eléctrico', 'Fuego', 'Hielo', 'Hierba', 'Oscuridad', 'Roca', 'Sagrado', 'Viento'],
     roleKey: 'admin.field.role',
+    pathKey: 'character.path.aniimo',
+    signatureKey: 'character.signature.aniimo',
   },
   {
     id: 'umamusume-pretty-derby',

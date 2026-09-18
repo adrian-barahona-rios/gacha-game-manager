@@ -5,7 +5,7 @@ import { supabase } from '../config/supabase'
 import { useI18n } from '../i18n/useI18n'
 import { getGameById } from '../data/games'
 import { getElementChip } from '../data/characterStyles'
-import { RANK_STYLES } from '../data/enemies'
+import { ENEMY_SECTIONS, RANK_STYLES } from '../data/enemies'
 import ProfileButton from './ProfileButton'
 
 function Bloque({ icon: Icon, title, children }) {
@@ -91,6 +91,8 @@ function EnemyDetail() {
   }, [enemyId, t])
 
   const debilidades = Array.isArray(enemy?.weaknesses) ? enemy.weaknesses : []
+  // En Aniimo no se conocen las debilidades de los jefes: el bloque no se pinta.
+  const conDebilidades = ENEMY_SECTIONS[gameId]?.filter !== 'ownElement'
   const resistencias = Array.isArray(enemy?.resistances) ? enemy.resistances : []
   const variantes = Array.isArray(enemy?.variants) ? enemy.variants : []
   const habilidades = Array.isArray(enemy?.skills) ? enemy.skills : []
@@ -193,13 +195,15 @@ function EnemyDetail() {
               </div>
             </section>
 
-            <Bloque icon={Target} title={t('enemies.weaknesses')}>
-              {debilidades.length > 0 ? (
-                <ElementChips elementos={debilidades} />
-              ) : (
-                <p className="text-sm text-zinc-500">{t('enemies.noWeaknesses')}</p>
-              )}
-            </Bloque>
+            {conDebilidades && (
+              <Bloque icon={Target} title={t('enemies.weaknesses')}>
+                {debilidades.length > 0 ? (
+                  <ElementChips elementos={debilidades} />
+                ) : (
+                  <p className="text-sm text-zinc-500">{t('enemies.noWeaknesses')}</p>
+                )}
+              </Bloque>
+            )}
 
             {resistencias.length > 0 && (
               <Bloque icon={Shield} title={t('enemies.resistances')}>

@@ -248,6 +248,17 @@ alter table public.characters add column if not exists profile jsonb;
 alter table public.characters add column if not exists skills jsonb;
 alter table public.characters add column if not exists mindscapes jsonb;
 
+-- Linea de evolucion (Aniimo): {"arbol": {"nombre", "icono", "etapa",
+-- "condiciones", "siguientes": [...]}, "formas": ["Basic Form", ...]}
+alter table public.characters add column if not exists evolution jsonb;
+
+-- Estadisticas base (Aniimo): {"total": 382, "valores": [{"campo": "PV",
+-- "valor": 67}, ...]}
+alter table public.characters add column if not exists stats jsonb;
+
+-- Zonas en las que aparece (Aniimo): ["Campos Nubosos", ...]
+alter table public.characters add column if not exists habitats jsonb;
+
 -- ===========================================================================
 -- Umamusume
 -- ===========================================================================

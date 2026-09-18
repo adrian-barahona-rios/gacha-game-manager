@@ -11,6 +11,8 @@ import {
   Globe,
   Home,
   ListOrdered,
+  MapPin,
+  PlayCircle,
   Skull,
   Swords,
   Users,
@@ -21,6 +23,8 @@ import { getGameById, getGameCopy } from '../data/games'
 import { getGameModes } from '../data/gameModes'
 import { WEAPON_SECTIONS, hasDriveDiscs, hasWeapons } from '../data/weapons'
 import { hasEnemies } from '../data/enemies'
+import { hasZones } from '../data/aniimoZones'
+import { hasVideoGuides } from '../data/videoGuides'
 import { RELIC_SECTIONS, hasRelics } from '../data/relics'
 import { hasExploration } from '../data/exploration'
 import { hasBangboos } from '../data/bangboos'
@@ -396,28 +400,55 @@ function GenshinBackground() {
   )
 }
 
-function DxdBackground() {
+// --- Llanura de Aniimo ----------------------------------------------------
+// Prado soleado con nubes que cruzan despacio y motas de polen subiendo, que
+// es la estampa con la que se presenta el juego.
+const ANIIMO_CLOUDS = [
+  'top-[12%] h-16 w-[22rem] opacity-80 [animation-duration:72s] [animation-delay:-10s]',
+  'top-[24%] h-12 w-[16rem] opacity-60 [animation-duration:96s] [animation-delay:-45s]',
+  'top-[6%] h-10 w-[12rem] opacity-50 [animation-duration:120s] [animation-delay:-25s]',
+]
+
+const ANIIMO_POLEN = [
+  'left-[12%] [animation-delay:0s] [animation-duration:15s]',
+  'left-[28%] [animation-delay:3s] [animation-duration:18s]',
+  'left-[46%] [animation-delay:6s] [animation-duration:13s]',
+  'left-[64%] [animation-delay:2s] [animation-duration:17s]',
+  'left-[82%] [animation-delay:8s] [animation-duration:20s]',
+  'left-[92%] [animation-delay:5s] [animation-duration:14s]',
+]
+
+function AniimoBackground() {
   return (
     <>
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_50%,rgba(190,18,60,0.16),transparent_62%)]" />
+      {/* Cielo de mediodia, mas claro cerca del horizonte. */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_bottom,#0b1b2b_0%,#123449_38%,#1d5566_58%,#2c6f56_72%)]" />
+      <div className="absolute inset-x-0 top-[46%] h-[26%] bg-[radial-gradient(ellipse_at_50%_100%,rgba(186,230,253,0.28),transparent_72%)] blur-2xl" />
 
-      <div className="absolute left-1/2 top-1/2 h-[26rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 animate-rune rounded-full border border-rose-500/40" />
-      <div className="absolute left-1/2 top-1/2 h-[19rem] w-[19rem] -translate-x-1/2 -translate-y-1/2 animate-rune rounded-full border border-dashed border-red-400/40 [animation-delay:1.5s] [animation-duration:12s]" />
-      <div className="absolute left-1/2 top-1/2 h-[12rem] w-[12rem] -translate-x-1/2 -translate-y-1/2 animate-rune rounded-full border border-rose-300/30 [animation-delay:3s] [animation-duration:15s]" />
+      {/* Sol suave arriba a la derecha. */}
+      <div className="absolute right-[16%] top-[12%] h-40 w-40 animate-twinkle rounded-full bg-amber-200/25 blur-3xl" />
 
-      <div className="absolute inset-x-0 bottom-0 h-52 animate-flicker bg-[linear-gradient(to_top,rgba(220,38,38,0.35),rgba(249,115,22,0.14),transparent)] blur-[30px]" />
-      <div className="absolute inset-y-0 left-0 w-32 animate-flicker bg-[linear-gradient(to_right,rgba(190,18,60,0.28),transparent)] blur-[40px] [animation-delay:2s]" />
-      <div className="absolute inset-y-0 right-0 w-32 animate-flicker bg-[linear-gradient(to_left,rgba(190,18,60,0.28),transparent)] blur-[40px] [animation-delay:3.5s]" />
-
-      <div className="absolute left-[12%] top-[24%] h-64 w-64 animate-smoke rounded-full bg-rose-900/25 blur-[90px]" />
-      <div className="absolute right-[10%] bottom-[18%] h-72 w-72 animate-smoke rounded-full bg-red-950/40 blur-[100px] [animation-delay:9s]" />
-
-      {STARS.slice(0, 8).map((symbol) => (
-        <span
-          key={symbol}
-          className={`absolute h-2 w-2 rotate-45 animate-twinkle bg-rose-400/70 shadow-[0_0_12px_rgba(251,113,133,0.9)] ${symbol}`}
+      {ANIIMO_CLOUDS.map((cloud) => (
+        <div
+          key={cloud}
+          className={`absolute -left-1/3 animate-cloud rounded-full bg-white/20 blur-2xl ${cloud}`}
         />
       ))}
+
+      {/* Colinas: la del fondo mas palida que la de delante. */}
+      <div className="absolute inset-x-[-10%] bottom-[16%] h-[26rem] rounded-[100%] bg-emerald-700/25 blur-sm" />
+      <div className="absolute inset-x-[-20%] bottom-[2%] h-[24rem] rounded-[100%] bg-emerald-600/35" />
+      <div className="absolute inset-x-[-25%] -bottom-24 h-[20rem] rounded-[100%] bg-emerald-900/50" />
+
+      {ANIIMO_POLEN.map((polen) => (
+        <span
+          key={polen}
+          className={`absolute bottom-[10%] h-1.5 w-1.5 animate-rise rounded-full bg-amber-100/70 ${polen}`}
+        />
+      ))}
+
+      {/* Velo superior para que la cabecera se siga leyendo. */}
+      <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/45 via-black/20 to-transparent" />
     </>
   )
 }
@@ -748,8 +779,8 @@ function UmamusumeBackground() {
 const BACKGROUNDS = {
   starrail: StarRailBackground,
   genshin: GenshinBackground,
-  dxd: DxdBackground,
   zzz: ZzzBackground,
+  aniimo: AniimoBackground,
   umamusume: UmamusumeBackground,
 }
 
@@ -757,15 +788,15 @@ const BACKGROUNDS = {
 const GAMES_WITH_CHARACTERS = [
   'genshin-impact',
   'honkai-star-rail',
-  'high-school-dxd-opi',
   'zenless-zone-zero',
+  'aniimo',
 ]
 
-// DxD queda fuera: no hay tier list publicada de ese juego.
 const GAMES_WITH_TIERLIST = [
   'genshin-impact',
   'honkai-star-rail',
   'zenless-zone-zero',
+  'aniimo',
 ]
 
 const MENU_ITEMS = [
@@ -784,6 +815,10 @@ const MENU_ITEMS = [
   { id: 'enemigos', labelKey: 'game.menu.enemies', icon: Skull },
   // Mapa interactivo: de momento solo Genshin.
   { id: 'exploracion', labelKey: 'game.menu.exploration', icon: Compass },
+  // Mapa por zonas y criaturas de cada una: de momento solo Aniimo.
+  { id: 'zonas', labelKey: 'game.menu.zones', icon: MapPin },
+  // Guias en video (gameplays, como empezar...): de momento solo Aniimo.
+  { id: 'videos', labelKey: 'game.menu.videos', icon: PlayCircle },
   { id: 'tierlist', labelKey: 'game.menu.tierList', icon: ListOrdered },
   { id: 'guias', labelKey: 'game.menu.guides', icon: BookOpen },
 ]
@@ -924,7 +959,9 @@ function GamePage() {
                           (item.id !== 'bangbus' || hasBangboos(game.id)) &&
                           (item.id !== 'enemigos' || hasEnemies(game.id)) &&
                           (item.id !== 'reliquias' || hasRelics(game.id)) &&
-                          (item.id !== 'exploracion' || hasExploration(game.id)),
+                          (item.id !== 'exploracion' || hasExploration(game.id)) &&
+                          (item.id !== 'zonas' || hasZones(game.id)) &&
+                          (item.id !== 'videos' || hasVideoGuides(game.id)),
                       ).map((item) => {
                         const Icon = item.icon
                         const isCurrent = item.id === 'inicio'
@@ -937,6 +974,8 @@ function GamePage() {
                         const isEnemies = item.id === 'enemigos'
                         const isRelics = item.id === 'reliquias'
                         const isExploration = item.id === 'exploracion'
+                        const isZones = item.id === 'zonas'
+                        const isVideos = item.id === 'videos'
                         const isEnabled =
                           isCurrent ||
                           (isCharacters && hasCharacters) ||
@@ -947,7 +986,9 @@ function GamePage() {
                           isBangboos ||
                           isEnemies ||
                           isRelics ||
-                          isExploration
+                          isExploration ||
+                          isZones ||
+                          isVideos
 
                         return (
                           <button
@@ -971,6 +1012,10 @@ function GamePage() {
                                 navigate(`/game/${gameId}/enemies`)
                               } else if (isExploration) {
                                 navigate(`/game/${gameId}/exploration`)
+                              } else if (isZones) {
+                                navigate(`/game/${gameId}/zones`)
+                              } else if (isVideos) {
+                                navigate(`/game/${gameId}/videos`)
                               } else if (isTierList) {
                                 navigate(`/game/${gameId}/tierlist/official`)
                               } else if (isGuides) {

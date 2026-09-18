@@ -23,6 +23,8 @@ import WeaponList from './components/WeaponList'
 import WeaponDetail from './components/WeaponDetail'
 import DriveDiscList from './components/DriveDiscList'
 import EnemyList from './components/EnemyList'
+import ZoneList from './components/ZoneList'
+import VideoGuides from './components/VideoGuides'
 import EnemyDetail from './components/EnemyDetail'
 import RelicSetList from './components/RelicSetList'
 import TierListPersonal from './components/TierListPersonal'
@@ -81,6 +83,8 @@ function App() {
       <Route path="/game/:gameId/bangboos" element={<BangbooList />} />
       <Route path="/game/:gameId/bangboos/:bangbooId" element={<BangbooDetail />} />
       <Route path="/game/:gameId/enemies" element={<EnemyList />} />
+      <Route path="/game/:gameId/zones" element={<ZoneList />} />
+      <Route path="/game/:gameId/videos" element={<VideoGuides />} />
       <Route path="/game/:gameId/enemies/:enemyId" element={<EnemyDetail />} />
       <Route path="/game/:gameId/relics" element={<RelicSetList />} />
       <Route

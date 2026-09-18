@@ -21,6 +21,13 @@ export const ENEMY_SECTIONS = {
     elements: ['Físico', 'Ígneo', 'Glacial', 'Eléctrico', 'Etéreo', 'Aéreo'],
     filter: 'weakTo',
   },
+  // Aniimo solo tiene jefes de campo (Alfa y Omega) y no se conocen sus
+  // debilidades, asi que el filtro va por el elemento del propio jefe.
+  aniimo: {
+    tabs: ['jefe'],
+    elements: ['Agua', 'Eléctrico', 'Fuego', 'Hielo', 'Hierba', 'Oscuridad', 'Roca', 'Sagrado', 'Viento'],
+    filter: 'ownElement',
+  },
 }
 
 export const hasEnemies = (gameId) => Boolean(ENEMY_SECTIONS[gameId])

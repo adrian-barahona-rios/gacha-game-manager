@@ -1,6 +1,6 @@
 import genshinLogo from '../assets/games/GenshinImpactLogo.jpg'
 import starRailLogo from '../assets/games/HonkaiStarRailLogo.jpg'
-import dxdArt from '../assets/games/hIghschooldxdOPILogo.jpg'
+import aniimoArt from '../assets/games/AniimoLogo.jpg'
 import umamusumeArt from '../assets/games/Umamusume-Pretty-Derby-logo.jpg'
 import zzzLogo from '../assets/games/ZenlesszonezeroLogo.jpg'
 import { GAME_COPY_EN } from './gamesEn'
@@ -59,27 +59,27 @@ export const GAME_CATALOG = [
     ],
   },
   {
-    id: 'high-school-dxd-opi',
-    name: 'High School DxD: OPI',
-    short: 'DxD',
-    image: dxdArt,
+    id: 'aniimo',
+    name: 'Aniimo',
+    short: 'ANI',
+    image: aniimoArt,
     imageFit: 'cover',
-    theme: 'dxd',
-    banner: 'from-rose-500/45 via-red-500/15 to-transparent',
-    glow: 'text-rose-200',
-    accent: 'text-rose-300',
-    accentRing: 'ring-rose-400/30',
-    tagline: 'Operation Paradise Infinity',
-    developer: 'G123',
-    release: '22 de abril de 2025',
-    genre: 'RPG de navegador basado en el anime',
-    platforms: 'Navegador en PC, tablet y móvil',
+    theme: 'aniimo',
+    banner: 'from-sky-400/45 via-emerald-400/15 to-transparent',
+    glow: 'text-sky-100',
+    accent: 'text-sky-300',
+    accentRing: 'ring-sky-400/30',
+    tagline: 'Captura, evoluciona y transfórmate',
+    developer: 'Pawprint Studio',
+    release: '16 de septiembre de 2026',
+    genre: 'RPG de mundo abierto de criaturas',
+    platforms: 'PC, PlayStation 5, Xbox Series X|S, iOS y Android',
     description:
-      'High School D×D: Operation Paradise Infinity es un RPG basado en la serie de anime High School D×D. Reúne a más de sesenta personajes de la obra, entre ellos Issei Hyodo y Rias Gremory, con ilustraciones creadas en exclusiva para el juego, y te pide formar el mejor equipo aprovechando las habilidades y atributos de cada uno.',
+      'Aniimo es un RPG de mundo abierto en el que recorres la región de Llanura Brisa capturando criaturas, los aniimo. Cada una tiene su elemento, su rol en combate y su propia línea de evolución, y con la mecánica de Enlace puedes transformarte tú en ellas para pelear o para moverte por el mapa.',
     highlights: [
-      'Más de 60 personajes de la serie, con arte exclusivo del juego.',
-      'Tecnología HTML5: se juega en el navegador, sin instalar nada.',
-      'Free to play, con compras opcionales dentro del juego.',
+      'Más de ochenta aniimo, cada uno con su elemento, su rol y sus evoluciones.',
+      'Las criaturas no salen por gachapón: se capturan en el mundo.',
+      'Gratis para jugar, en PC, consolas y móvil.',
     ],
   },
   {

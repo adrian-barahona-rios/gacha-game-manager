@@ -1,6 +1,6 @@
 # Base de datos (Supabase)
 
-Todo lo que necesita la base de datos de la app, en 24 archivos. Se ejecutan en
+Todo lo que necesita la base de datos de la app, en 26 archivos numerados. Se ejecutan en
 **Supabase → SQL Editor → New query → Run**, en orden:
 
 | Archivo | Qué hace |
@@ -9,7 +9,7 @@ Todo lo que necesita la base de datos de la app, en 24 archivos. Se ejecutan en
 | `02_personajes_genshin.sql` | Los 119 personajes de Genshin, cada uno con datos, icono, biografía y materiales de ascensión. |
 | `03_personajes_hsr.sql` | Los 92 personajes de Honkai: Star Rail. |
 | `04_personajes_zzz.sql` | Los 60 agentes de Zenless Zone Zero. |
-| `05_personajes_dxd.sql` | Los 22 personajes de High School DxD: OPI. |
+| `05_personajes_aniimo.sql` | Las 86 criaturas de Aniimo (wiki oficial): elemento, rol, etapa, rasgo, estadísticas base, zonas donde aparecen, habilidades, árbol de evolución y entrenamiento de resonancia. |
 | `06_armas_genshin_1.sql` … `_4.sql` | Las 246 armas de Genshin, con los personajes recomendados. Van en 4 partes porque el archivo entero no cabe en el SQL Editor. |
 | `07_conos_hsr.sql` | Los 169 conos de luz de Honkai. |
 | `08_amplificadores_zzz.sql` | Los 99 amplificadores de Zenless. |
@@ -29,6 +29,9 @@ Todo lo que necesita la base de datos de la app, en 24 archivos. Se ejecutan en
 | `22_builds_zzz.sql` | La build de los 60 agentes de Zenless (guías de Game8): amplificadores, discos, stats por ranura, equipos con bangbú, sustitutos y prioridad de técnicas. Necesita 04, 08, 09 y 21. |
 | `23_endgame_zzz.sql` | La rotación actual de la Defensa de Shiyu (nodo crítico) y del Asalto mortal, con enemigos, efectos y equipos. Necesita 20 y 21. Hay que regenerarlo cuando cambie la rotación. |
 | `24_agentes_zzz_1.sql` … `_7.sql` | Habilidades, Cine mental y perfil de los agentes de Zenless (HoYoWiki), y la biografía de los que no tenían. Necesita 04. |
+| `25_borrar_dxd.sql` | Borra High School DxD: OPI de la base de datos. De un solo uso: cuando esté hecho, no hay que volver a ejecutarlo. |
+| `26_tierlist_aniimo.sql` | La tier list general de Aniimo (Game8), 83 criaturas repartidas de S a D. Necesita 05. |
+| `27_jefes_aniimo.sql` | Los 20 jefes de campo de Aniimo (17 Alfa y 3 Omega): elemento, zona, cómo llegar y botín de la primera victoria. |
 
 ## Cómo funcionan
 
@@ -44,7 +47,7 @@ Todo lo que necesita la base de datos de la app, en 24 archivos. Se ejecutan en
 
 ## Montar una base de datos nueva
 
-Ejecuta los 24 en orden y ya está. Después, para tener un administrador:
+Ejecuta los archivos en orden y ya está. Después, para tener un administrador:
 regístrate en la app y cambia tu fila en **Table Editor → profiles**, poniendo
 `role` a `admin`.
 

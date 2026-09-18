@@ -41,7 +41,7 @@ Es un proyecto personal, gratuito y sin anuncios.
 | **Genshin Impact** | 119 personajes, 246 armas, tier list, guías de Espiral del Abismo, Teatro Fantasía y Conflagración estigia |
 | **Honkai: Star Rail** | 92 personajes, 169 conos de luz, tier list de sus tres modos, guías de Memory of Chaos, Pura ficción, Espejismo apocalíptico y Arbitraje atípico |
 | **Zenless Zone Zero** | 60 agentes, 99 amplificadores, 30 conjuntos de discos, tier list, guías de Shiyu Defense, Deadly Assault, Hollow Zero y más |
-| **High School DxD: OPI** | 22 personajes con sus fichas |
+| **Aniimo** | 86 criaturas con estadísticas, habilidades, árbol de evolución y tier list, 20 jefes de campo, un mapa por zonas con lo que se captura en cada una y guías en vídeo |
 | **Umamusume: Pretty Derby** | 366 entrenadoras y 768 cartas de support, con versión Global y Japón por separado, cada una con sus propias guías |
 
 ---

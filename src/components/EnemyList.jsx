@@ -75,9 +75,11 @@ function EnemyList() {
     return new Set([...(enemy.weaknesses ?? []), ...variantes.flatMap((v) => v.debilidades ?? [])])
   }
 
-  // En Genshin: que no resista mucho a ese elemento ni sea inmune.
+  // En Genshin: que no resista mucho a ese elemento ni sea inmune. En Aniimo
+  // el elemento del jefe viene dentro de su clasificacion ("Jefe Alfa · Fuego").
   const pasaFiltro = (enemy) => {
     if (!elementFilter) return true
+    if (section.filter === 'ownElement') return (enemy.classification ?? '').includes(elementFilter)
     if (section.filter === 'weakTo') return debilidadesDe(enemy).has(elementFilter)
     return !resistenciasAltas(enemy).some((r) => r.elemento === elementFilter)
   }
@@ -173,7 +175,13 @@ function EnemyList() {
 
         <div className="mb-8 flex flex-wrap items-center gap-2">
           <span className="mr-1 text-xs font-semibold uppercase tracking-wide text-zinc-500">
-            {t(section.filter === 'weakTo' ? 'enemies.weakTo' : 'enemies.notResistant')}
+            {t(
+              section.filter === 'ownElement'
+                ? 'enemies.ownElement'
+                : section.filter === 'weakTo'
+                  ? 'enemies.weakTo'
+                  : 'enemies.notResistant',
+            )}
           </span>
           {['', ...section.elements].map((elemento) => {
             const isActive = elementFilter === elemento
@@ -232,7 +240,21 @@ function EnemyList() {
                     <span className="line-clamp-2 text-sm font-semibold leading-snug text-white">
                       {enemy.name}
                     </span>
-                    {enemy.rank === 'elite' && (
+                    {/* Aniimo: el tipo de jefe y su elemento, que es lo unico
+                        que se sabe de el. */}
+                    {section.filter === 'ownElement' && enemy.classification && (
+                      <span className="flex flex-wrap gap-1">
+                        {enemy.classification.split(' · ').map((parte) => (
+                          <span
+                            key={parte}
+                            className={`rounded-md bg-white/[0.03] px-1.5 py-0.5 text-[10px] font-medium ring-1 ${getElementChip(parte)}`}
+                          >
+                            {parte}
+                          </span>
+                        ))}
+                      </span>
+                    )}
+                    {section.filter !== 'ownElement' && enemy.rank === 'elite' && (
                       <span
                         className={`self-start rounded-full px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ring-1 ${RANK_STYLES.elite}`}
                       >
