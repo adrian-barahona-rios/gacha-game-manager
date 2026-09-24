@@ -7,9 +7,11 @@ import { useFavorites } from '../data/useFavorites'
 import { getGameById } from '../data/games'
 import {
   formatRarity,
+  getElementChip,
   getElementStyle,
   getRarityStyle,
 } from '../data/characterStyles'
+import { ADMIN_GAMES } from '../data/adminConfig'
 import ProfileButton from './ProfileButton'
 
 function CharacterPortrait({ character, className }) {
@@ -52,6 +54,8 @@ function CharacterGrid() {
   const [error, setError] = useState('')
   const [view, setView] = useState('todos')
   const [term, setTerm] = useState('')
+  // Filtros por elemento, rol y camino/etapa. Vacio = sin filtrar.
+  const [filtros, setFiltros] = useState({ element: '', role: '', path: '' })
   const favorites = useFavorites('favorite_characters', { gameFilter: gameId })
 
   useEffect(() => {
@@ -96,6 +100,15 @@ function CharacterGrid() {
     if (showingFavorites && !favorites.favoriteIds.has(character.id)) {
       return false
     }
+    if (filtros.element && character.element !== filtros.element) {
+      return false
+    }
+    if (filtros.role && character.role !== filtros.role) {
+      return false
+    }
+    if (filtros.path && character.path !== filtros.path) {
+      return false
+    }
     if (!needle) {
       return true
     }
@@ -105,6 +118,20 @@ function CharacterGrid() {
       .toLowerCase()
       .includes(needle)
   })
+
+  // Cada filtro solo se ensena si el juego usa ese campo y hay donde elegir.
+  const valoresDe = (campo) =>
+    [...new Set(characters.map((character) => character[campo]).filter(Boolean))].sort((a, b) =>
+      a.localeCompare(b, 'es'),
+    )
+  const pathKey = ADMIN_GAMES.find((item) => item.id === gameId)?.pathKey ?? 'character.path.default'
+  const FILTROS = [
+    { campo: 'element', label: t('character.element'), valores: valoresDe('element') },
+    { campo: 'role', label: t('character.role'), valores: valoresDe('role') },
+    { campo: 'path', label: t(pathKey), valores: valoresDe('path') },
+    // Con un solo valor no hay nada que filtrar, y con demasiados la fila de
+    // botones se vuelve un muro: en ese caso mejor la busqueda por nombre.
+  ].filter((filtro) => filtro.valores.length > 1 && filtro.valores.length <= 12)
 
   const TABS = [
     { id: 'todos', label: t('favorites.all'), count: characters.length },
@@ -199,6 +226,39 @@ function CharacterGrid() {
             <Search className="pointer-events-none absolute left-3.5 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-zinc-500 transition-colors duration-300 peer-focus:text-white" />
           </div>
         </div>
+
+        {!isLoading &&
+          FILTROS.map((filtro) => (
+            <div key={filtro.campo} className="mb-3 flex flex-wrap items-center gap-2">
+              <span className="mr-1 w-20 shrink-0 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                {filtro.label}
+              </span>
+              {['', ...filtro.valores].map((valor) => {
+                const isActive = filtros[filtro.campo] === valor
+                return (
+                  <button
+                    key={valor || 'todos'}
+                    type="button"
+                    aria-pressed={isActive}
+                    onClick={() => setFiltros((actual) => ({ ...actual, [filtro.campo]: valor }))}
+                    className={`rounded-full px-3 py-1 text-xs font-medium ring-1 transition-all duration-200 focus:outline-none ${
+                      isActive
+                        ? 'bg-white text-black ring-white'
+                        : `bg-white/[0.03] hover:bg-white/10 ${
+                            valor && filtro.campo === 'element'
+                              ? getElementChip(valor)
+                              : 'text-zinc-300 ring-white/15'
+                          }`
+                    }`}
+                  >
+                    {valor || t('enemies.all')}
+                  </button>
+                )
+              })}
+            </div>
+          ))}
+
+        {FILTROS.length > 0 && <div className="mb-8" />}
 
         {isLoading ? (
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">

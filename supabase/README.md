@@ -1,6 +1,6 @@
 # Base de datos (Supabase)
 
-Todo lo que necesita la base de datos de la app, en 26 archivos numerados. Se ejecutan en
+Todo lo que necesita la base de datos de la app, en 29 archivos numerados. Se ejecutan en
 **Supabase → SQL Editor → New query → Run**, en orden:
 
 | Archivo | Qué hace |
@@ -30,8 +30,11 @@ Todo lo que necesita la base de datos de la app, en 26 archivos numerados. Se ej
 | `23_endgame_zzz.sql` | La rotación actual de la Defensa de Shiyu (nodo crítico) y del Asalto mortal, con enemigos, efectos y equipos. Necesita 20 y 21. Hay que regenerarlo cuando cambie la rotación. |
 | `24_agentes_zzz_1.sql` … `_7.sql` | Habilidades, Cine mental y perfil de los agentes de Zenless (HoYoWiki), y la biografía de los que no tenían. Necesita 04. |
 | `25_borrar_dxd.sql` | Borra High School DxD: OPI de la base de datos. De un solo uso: cuando esté hecho, no hay que volver a ejecutarlo. |
-| `26_tierlist_aniimo.sql` | La tier list general de Aniimo (Game8), 83 criaturas repartidas de S a D. Necesita 05. |
+| `26_tierlist_aniimo.sql` | La tier list general de Aniimo (Game8), 84 criaturas repartidas de S a D. Necesita 05. |
 | `27_jefes_aniimo.sql` | Los 20 jefes de campo de Aniimo (17 Alfa y 3 Omega): elemento, zona, cómo llegar y botín de la primera victoria. |
+| `28_tierlist_aniimo_roles.sql` | La tier list de Aniimo por roles (MetaBot.gg): 85 criaturas con su tier, su percentil y sus estadísticas. Necesita 01 y 05. |
+| `29_equipos_aniimo.sql` | Los 12 equipos meta de Aniimo (Game8), con sus cuatro huecos por rol y por qué funciona cada uno. Necesita 01 y 05. |
+| `30_rasgos_aniimo.sql` | Los 49 rasgos (pasivas) de Aniimo, con su efecto, su grupo y las criaturas que lleva cada uno. Necesita 01 y 05. |
 
 ## Cómo funcionan
 

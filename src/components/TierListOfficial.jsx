@@ -28,7 +28,18 @@ const MODE_ORDER = [
   'Memory of Chaos',
   'Pure Fiction',
   'Apocalyptic Shadow',
+  // Aniimo: un escalafon por rol, ademas del general.
+  'DPS',
+  'Ruptura',
+  'Apoyo',
+  'Curación',
+  'Regeneración',
 ]
+
+// Aniimo usa letras en vez de numeros: 0 es S y 4 es D.
+const TIER_LETTERS = {
+  aniimo: { 0: 'S', 1: 'A', 2: 'B', 3: 'C', 4: 'D' },
+}
 
 // Al entrar se abre Pura Ficcion, que es el modo que mas se consulta. Si el
 // juego no lo tiene (Genshin y Zenless solo traen "General"), cae al primero.
@@ -61,14 +72,14 @@ const FALLBACK_MODE_STYLE = {
 
 // La ficha del personaje: retrato arriba y nombre debajo. El nombre lleva el
 // color de su elemento, distinto del de la caja del tier que lo contiene.
-function CharacterChip({ character, onOpen }) {
+function CharacterChip({ character, note, percentile, onOpen }) {
   const { tile } = getElementStyle(character.element)
 
   return (
     <button
       type="button"
       onClick={onOpen}
-      title={character.role ?? undefined}
+      title={note ?? character.role ?? undefined}
       className={`w-[5.5rem] overflow-hidden rounded-xl border border-white/10 bg-[#141418] ring-1 transition-all duration-300 hover:-translate-y-1 hover:border-white/30 focus:outline-none focus:ring-4 focus:ring-white/20 sm:w-24 ${getElementChip(character.element)}`}
     >
       <span
@@ -90,6 +101,9 @@ function CharacterChip({ character, onOpen }) {
 
       <span className="block px-1.5 py-1.5 text-center text-[11px] font-semibold leading-tight">
         {character.name}
+        {percentile != null && (
+          <span className="mt-0.5 block text-[10px] font-normal text-zinc-400">P{percentile}</span>
+        )}
       </span>
     </button>
   )
@@ -103,7 +117,7 @@ function TierListOfficial() {
   const [modes, setModes] = useState([])
   const [mode, setMode] = useState('')
   const [isLoading, setIsLoading] = useState(true)
-  const { t } = useI18n()
+  const { t, activeLanguage } = useI18n()
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -112,7 +126,7 @@ function TierListOfficial() {
     supabase
       .from('tier_lists_oficial')
       .select(
-        'mode, rating, source, characters (id, name, element, rarity, role, image_url)',
+        'mode, rating, source, percentile, note_es, note_en, characters (id, name, element, rarity, role, image_url)',
       )
       .eq('game_id', gameId)
       .order('rating', { ascending: true })
@@ -150,7 +164,11 @@ function TierListOfficial() {
   const ratings = [...new Set(visible.map((row) => Number(row.rating)))].sort(
     (a, b) => a - b,
   )
-  const source = rows[0]?.source
+  // Cada modo puede venir de una fuente distinta (Game8 la general, MetaBot
+  // los escalafones por rol de Aniimo).
+  const source = visible[0]?.source ?? rows[0]?.source
+  const letras = TIER_LETTERS[gameId]
+  const conNotas = visible.some((row) => row.note_es || row.note_en)
 
   return (
     <div className="relative min-h-screen scheme-dark bg-black">
@@ -218,9 +236,18 @@ function TierListOfficial() {
         )}
 
         {source && (
-          <p className="mb-8 text-xs text-zinc-600">
-            Valoraciones de {source} · 0 es el tier más alto
+          <p className={`text-xs text-zinc-600 ${conNotas ? 'mb-3' : 'mb-8'}`}>
+            {t('tierlist.ratingsFrom', { source })}
           </p>
+        )}
+
+        {/* MetaBot ordena solo por estadisticas base: conviene decirlo. */}
+        {conNotas && (
+          <section className="mb-8 rounded-2xl border border-white/10 bg-white/[0.02] p-4">
+            <h2 className="mb-1.5 text-sm font-semibold text-white">{t('tierlist.method.title')}</h2>
+            <p className="mb-2 text-[13px] leading-relaxed text-zinc-400">{t('tierlist.method.weights')}</p>
+            <p className="text-[13px] leading-relaxed text-zinc-500">{t('tierlist.method.caveat')}</p>
+          </section>
         )}
 
         {isLoading ? (
@@ -251,7 +278,7 @@ function TierListOfficial() {
                 >
                   <div className="flex shrink-0 items-center gap-3 sm:w-24 sm:flex-col sm:items-start">
                     <span className="text-3xl font-bold tracking-tight">
-                      {rating}
+                      {letras?.[rating] ?? rating}
                     </span>
                     <span className="text-xs uppercase tracking-wide opacity-70">
                       {group.length}{' '}
@@ -264,6 +291,8 @@ function TierListOfficial() {
                       <CharacterChip
                         key={row.characters.id}
                         character={row.characters}
+                        note={activeLanguage === 'en' ? row.note_en : row.note_es}
+                        percentile={row.percentile}
                         onOpen={() =>
                           navigate(
                             `/game/${gameId}/characters/${row.characters.id}`,

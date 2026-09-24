@@ -7,15 +7,21 @@ import {
   ChevronDown,
   Compass,
   Disc3,
+  Gauge,
   Gem,
   Globe,
+  Grid3x3,
   Home,
   ListOrdered,
   MapPin,
   PlayCircle,
+  Shapes,
   Skull,
+  Sparkles,
   Swords,
   Users,
+  Users2,
+  Wand2,
 } from 'lucide-react'
 import GameArtwork from './GameArtwork'
 import ProfileButton from './ProfileButton'
@@ -25,6 +31,9 @@ import { WEAPON_SECTIONS, hasDriveDiscs, hasWeapons } from '../data/weapons'
 import { hasEnemies } from '../data/enemies'
 import { hasZones } from '../data/aniimoZones'
 import { hasVideoGuides } from '../data/videoGuides'
+import { hasMetaTeams, hasRolesGuide } from '../data/aniimoRoles'
+import { hasTraits } from '../data/aniimoTraits'
+import { hasTypeChart } from '../data/aniimoTypes'
 import { RELIC_SECTIONS, hasRelics } from '../data/relics'
 import { hasExploration } from '../data/exploration'
 import { hasBangboos } from '../data/bangboos'
@@ -801,6 +810,8 @@ const GAMES_WITH_TIERLIST = [
 
 const MENU_ITEMS = [
   { id: 'inicio', labelKey: 'game.menu.home', icon: Home },
+  // La guia de roles va antes de los personajes: explica que es cada rol.
+  { id: 'roles', labelKey: 'game.menu.roles', icon: Shapes },
   { id: 'personajes', labelKey: 'game.menu.characters', icon: Users },
   // La etiqueta cambia por juego: "Conos de luz" en Honkai y "Armas" en el
   // resto, asi que se resuelve al pintar el menu y no aqui.
@@ -818,8 +829,16 @@ const MENU_ITEMS = [
   // Mapa por zonas y criaturas de cada una: de momento solo Aniimo.
   { id: 'zonas', labelKey: 'game.menu.zones', icon: MapPin },
   // Guias en video (gameplays, como empezar...): de momento solo Aniimo.
+  // Tabla de tipos y guia de combate: de momento solo Aniimo.
+  { id: 'tipos', labelKey: 'game.menu.typeChart', icon: Grid3x3 },
+  { id: 'combate', labelKey: 'game.menu.battle', icon: Gauge },
   { id: 'videos', labelKey: 'game.menu.videos', icon: PlayCircle },
   { id: 'tierlist', labelKey: 'game.menu.tierList', icon: ListOrdered },
+  // Equipos meta: de momento solo Aniimo.
+  { id: 'equipos', labelKey: 'game.menu.teams', icon: Users2 },
+  // Rasgos y creador de equipos: de momento solo Aniimo.
+  { id: 'rasgos', labelKey: 'game.menu.traits', icon: Sparkles },
+  { id: 'creador', labelKey: 'game.menu.builder', icon: Wand2 },
   { id: 'guias', labelKey: 'game.menu.guides', icon: BookOpen },
 ]
 
@@ -961,7 +980,13 @@ function GamePage() {
                           (item.id !== 'reliquias' || hasRelics(game.id)) &&
                           (item.id !== 'exploracion' || hasExploration(game.id)) &&
                           (item.id !== 'zonas' || hasZones(game.id)) &&
-                          (item.id !== 'videos' || hasVideoGuides(game.id)),
+                          (item.id !== 'videos' || hasVideoGuides(game.id)) &&
+                          (item.id !== 'roles' || hasRolesGuide(game.id)) &&
+                          (item.id !== 'tipos' || hasTypeChart(game.id)) &&
+                          (item.id !== 'combate' || hasRolesGuide(game.id)) &&
+                          (item.id !== 'equipos' || hasMetaTeams(game.id)) &&
+                          (item.id !== 'rasgos' || hasTraits(game.id)) &&
+                          (item.id !== 'creador' || hasTraits(game.id)),
                       ).map((item) => {
                         const Icon = item.icon
                         const isCurrent = item.id === 'inicio'
@@ -976,6 +1001,12 @@ function GamePage() {
                         const isExploration = item.id === 'exploracion'
                         const isZones = item.id === 'zonas'
                         const isVideos = item.id === 'videos'
+                        const isRoles = item.id === 'roles'
+                        const isTypes = item.id === 'tipos'
+                        const isBattle = item.id === 'combate'
+                        const isTeams = item.id === 'equipos'
+                        const isTraits = item.id === 'rasgos'
+                        const isBuilder = item.id === 'creador'
                         const isEnabled =
                           isCurrent ||
                           (isCharacters && hasCharacters) ||
@@ -988,7 +1019,13 @@ function GamePage() {
                           isRelics ||
                           isExploration ||
                           isZones ||
-                          isVideos
+                          isVideos ||
+                          isRoles ||
+                          isTypes ||
+                          isBattle ||
+                          isTeams ||
+                          isTraits ||
+                          isBuilder
 
                         return (
                           <button
@@ -1016,6 +1053,18 @@ function GamePage() {
                                 navigate(`/game/${gameId}/zones`)
                               } else if (isVideos) {
                                 navigate(`/game/${gameId}/videos`)
+                              } else if (isRoles) {
+                                navigate(`/game/${gameId}/roles`)
+                              } else if (isTypes) {
+                                navigate(`/game/${gameId}/type-chart`)
+                              } else if (isBattle) {
+                                navigate(`/game/${gameId}/battle-guide`)
+                              } else if (isTeams) {
+                                navigate(`/game/${gameId}/teams`)
+                              } else if (isTraits) {
+                                navigate(`/game/${gameId}/traits`)
+                              } else if (isBuilder) {
+                                navigate(`/game/${gameId}/team-builder`)
                               } else if (isTierList) {
                                 navigate(`/game/${gameId}/tierlist/official`)
                               } else if (isGuides) {

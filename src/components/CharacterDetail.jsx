@@ -18,6 +18,7 @@ import {
 } from '../data/characterStyles'
 import AscensionMaterials from './AscensionMaterials'
 import CreatureStats from './CreatureStats'
+import { hasRolesGuide, roleByValue } from '../data/aniimoRoles'
 import EvolutionTree from './EvolutionTree'
 import LevelTable from './LevelTable'
 import ProfileButton from './ProfileButton'
@@ -176,6 +177,8 @@ function CharacterDetail() {
   const cine = Array.isArray(character?.mindscapes) ? character.mindscapes : []
   const perfil = Array.isArray(character?.profile) ? character.profile : []
   const evolucion = character?.evolution?.arbol ? character.evolution : null
+  // Rol del juego (Aniimo): se ensena junto al elemento y lleva a su guia.
+  const rol = hasRolesGuide(gameId) ? roleByValue(character?.role) : null
   // Aniimo: estadisticas base y zonas donde aparece la criatura.
   const estadisticas = character?.stats?.valores?.length ? character.stats : null
   const zonas = Array.isArray(character?.habitats) ? character.habitats : []
@@ -294,7 +297,30 @@ function CharacterDetail() {
                     {character.element}
                   </span>
                 )}
+                {rol && (
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/game/${gameId}/roles`)}
+                    title={t('character.whatIsRole', { role: t(`roles.${rol.id}.name`) })}
+                    className={`rounded-full px-3 py-1 text-sm font-medium ring-1 transition hover:brightness-125 focus:outline-none focus:ring-4 focus:ring-white/15 ${rol.chip}`}
+                  >
+                    {t(`roles.${rol.id}.name`)}
+                  </button>
+                )}
               </div>
+
+              {rol && (
+                <p className="-mt-4 mb-7 text-sm leading-relaxed text-zinc-500">
+                  {t(`roles.${rol.id}.specialty`)}{' '}
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/game/${gameId}/roles`)}
+                    className="font-medium text-zinc-300 underline-offset-4 hover:underline focus:outline-none"
+                  >
+                    {t('character.whatIsRole', { role: t(`roles.${rol.id}.name`) })}
+                  </button>
+                </p>
+              )}
 
               <div className="mb-6 flex gap-1 overflow-x-auto rounded-xl border border-white/10 bg-white/[0.03] p-1 [scrollbar-width:none]">
                 {TABS.filter((tab) => {

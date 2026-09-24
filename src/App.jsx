@@ -25,6 +25,12 @@ import DriveDiscList from './components/DriveDiscList'
 import EnemyList from './components/EnemyList'
 import ZoneList from './components/ZoneList'
 import VideoGuides from './components/VideoGuides'
+import RolesGuide from './components/RolesGuide'
+import TypeChart from './components/TypeChart'
+import BattleGuide from './components/BattleGuide'
+import MetaTeams from './components/MetaTeams'
+import TraitCatalog from './components/TraitCatalog'
+import TeamBuilder from './components/TeamBuilder'
 import EnemyDetail from './components/EnemyDetail'
 import RelicSetList from './components/RelicSetList'
 import TierListPersonal from './components/TierListPersonal'
@@ -85,6 +91,12 @@ function App() {
       <Route path="/game/:gameId/enemies" element={<EnemyList />} />
       <Route path="/game/:gameId/zones" element={<ZoneList />} />
       <Route path="/game/:gameId/videos" element={<VideoGuides />} />
+      <Route path="/game/:gameId/roles" element={<RolesGuide />} />
+      <Route path="/game/:gameId/type-chart" element={<TypeChart />} />
+      <Route path="/game/:gameId/battle-guide" element={<BattleGuide />} />
+      <Route path="/game/:gameId/teams" element={<MetaTeams />} />
+      <Route path="/game/:gameId/traits" element={<TraitCatalog />} />
+      <Route path="/game/:gameId/team-builder" element={<TeamBuilder />} />
       <Route path="/game/:gameId/enemies/:enemyId" element={<EnemyDetail />} />
       <Route path="/game/:gameId/relics" element={<RelicSetList />} />
       <Route

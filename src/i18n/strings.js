@@ -496,6 +496,229 @@ const es = {
   'enemies.tips': 'Consejos de combate',
   'game.menu.artifacts': 'Artefactos',
   'game.menu.exploration': 'Exploración',
+  'game.menu.traits': 'Rasgos',
+  'game.menu.builder': 'Crear equipo',
+
+  // Rasgos (Aniimo)
+  'traits.title': 'Rasgos',
+  'traits.hint':
+    'La pasiva de cada criatura. Están agrupadas por lo que hace su efecto, y debajo de cada una salen las criaturas que la llevan.',
+  'traits.search': 'Buscar por rasgo, efecto o criatura...',
+  'traits.count': '{count} rasgo',
+  'traits.countPlural': '{count} rasgos',
+  'traits.empty': 'Todavía no hay rasgos cargados para este juego.',
+  'traits.error.load': 'No se han podido cargar los rasgos: {message}',
+  'traits.source':
+    'Nombres y descripciones de la wiki oficial, que es la única con los números. El nombre en inglés y el icono salen de MetaBot, emparejados por las criaturas que llevan cada rasgo. El grupo de cada rasgo se saca de su propia descripción.',
+  'traits.type.equipo': 'Equipo',
+  'traits.type.familia': 'Familia',
+  'traits.type.cambio': 'Al cambiar',
+  'traits.type.sostenimiento': 'Aguante',
+  'traits.type.penalizacion': 'Penalización',
+  'traits.type.ruptura': 'Ruptura',
+  'traits.type.recursos': 'Energía',
+  'traits.type.critico': 'Crítico',
+  'traits.type.elemento': 'Elemento',
+  'traits.type.acumulacion': 'Acumulación',
+  'traits.type.movilidad': 'Movilidad',
+  'traits.type.otro': 'Otros',
+
+  // Creador de equipos (Aniimo)
+  'builder.title': 'Crear equipo',
+  'builder.hint':
+    'Elige cuatro criaturas y te digo cómo queda el equipo: el reparto de roles, qué elementos amenaza con ventaja y qué rasgos se aprovechan entre sí. Todo lo que ves sale de los datos del juego, no de opiniones.',
+  'builder.search': 'Buscar por nombre, rol o elemento...',
+  'builder.emptySlot': 'Hueco {number}',
+  'builder.remove': 'Quitar a {name}',
+  'builder.score': 'Nota del equipo',
+  'builder.roleBalance': 'Roles',
+  'builder.elementCoverage': 'Elementos',
+  'builder.traitSynergy': 'Rasgos',
+  'builder.scoreHint':
+    'Roles: 15 puntos por llevar curación o regeneración, 15 por llevar ruptura y 10 por llevar DPS. Elementos: cuántos de los nueve amenazas con ventaja. Rasgos: 10 puntos por cada rasgo que afecte al equipo, se active al cambiar o cumpla su condición de familia.',
+  'builder.warnings': 'Ojo con esto',
+  'builder.warning.noHeal': 'No llevas curación ni regeneración: las peleas largas se te van a caer.',
+  'builder.warning.noBreak': 'No llevas ruptura: contra jefes vas a tardar muchísimo.',
+  'builder.warning.noDps': 'No llevas DPS: te va a faltar daño cuando abras la ventana de ruptura.',
+  'builder.warning.tooManyDps': 'Más de dos DPS: te sobra daño y te falta de lo demás.',
+  'builder.warning.sameRole': 'Todas del mismo rol: al equipo le falta de todo lo demás.',
+  'builder.warning.sameElement': 'Todas del mismo elemento: un enemigo que lo resista te deja sin respuesta.',
+  'builder.warning.noSynergy': 'Ningún rasgo del equipo se apoya en los demás. Funciona, pero cada criatura va por su cuenta.',
+  'builder.synergies': 'Rasgos que suman',
+  'builder.noSynergies': 'Todavía no hay rasgos que se apoyen entre sí. Añade criaturas para verlo.',
+  'builder.elementMet': 'Aprovecha el elemento {element} de {names}.',
+  'builder.familyMet': 'Cumple su condición: {names} es de la familia {family}.',
+  'builder.familyMissing': 'Le falta un miembro de la familia {family} en el equipo.',
+  'builder.threatens': 'Elementos que amenaza',
+  'builder.threatensNone': 'Añade criaturas para ver contra qué elementos tienes ventaja.',
+  'builder.threatensHint': '{count} de los nueve elementos, contando los ×1.6 de cada criatura del equipo.',
+  'builder.error.load': 'No se ha podido cargar el creador de equipos: {message}',
+  'game.menu.teams': 'Equipos meta',
+
+  // Equipos meta (Aniimo)
+  'teams.title': 'Equipos meta',
+  'teams.hint':
+    'Las composiciones recomendadas para cada elemento, con los cuatro huecos repartidos por rol. Cuando un hueco tiene dos criaturas, son alternativas: eliges la que tengas.',
+  'teams.empty': 'Todavía no hay equipos cargados para este juego.',
+  'teams.error.load': 'No se han podido cargar los equipos: {message}',
+  'teams.source':
+    'Equipos de la guía de Game8, traducidos. Son recomendaciones de la comunidad con el juego recién salido, así que cambiarán. Las criaturas sin ficha todavía no están en la wiki oficial.',
+  'game.menu.roles': 'Guía de roles',
+
+  // Tier list
+  'tierlist.ratingsFrom': 'Valoraciones de {source} · el tier de arriba es el mejor',
+  'tierlist.method.title': 'Cómo se calcula esta lista',
+  'tierlist.method.weights':
+    'MetaBot puntúa solo con las estadísticas base, con este reparto: 34 % ATQ, 20 % PV, 12 % DEF F., 12 % DEF M., 12 % RUPT. y 10 % REGEN. El percentil (P##) dice en qué lugar queda la criatura dentro de su rol.',
+  'tierlist.method.caveat':
+    'Mide el cuerpo de la criatura, no sus habilidades ni su sinergia. Lo que rinda de verdad depende de tu equipo, del emparejamiento de elementos, de las habilidades y de cuánto la hayas subido. Para el criterio con habilidades y opinión de la comunidad, mira la lista General, que es la de Game8.',
+  'game.menu.typeChart': 'Tabla de tipos',
+  'game.menu.battle': 'Sistema de combate',
+
+  // Roles (Aniimo)
+  'roles.title': 'Guía de roles',
+  'roles.hint':
+    'Aniimo reparte a sus criaturas en cinco roles y solo llevas cuatro al combate, así que el reparto importa más que el nivel. Aquí tienes qué hace cada rol, qué estadísticas le importan y qué criaturas lo juegan.',
+  'roles.count': '{count} criatura',
+  'roles.countPlural': '{count} criaturas',
+  'roles.inBattle': 'En combate',
+  'roles.priorityStats': 'Estadísticas que importan',
+  'roles.inTeam': 'En el equipo',
+  'roles.mistake': 'Error típico',
+  'roles.examples': 'Criaturas de este rol',
+  'roles.error.load': 'No se han podido cargar las criaturas: {message}',
+  'roles.source':
+    'Los cinco roles y el rol de cada criatura salen de la wiki oficial (wiki.aniimo.com). Los consejos de equipo resumen las guías de combate publicadas y las composiciones de Game8.',
+
+  'roles.dps.name': 'DPS',
+  'roles.dps.specialty': 'Hacer el daño gordo cuando el enemigo está roto.',
+  'roles.dps.job':
+    'Es quien mata. Su ventana buena llega después de que un Ruptura tumbe la barra del enemigo: ahí es cuando sus números se disparan. Fuera de esa ventana pega, pero no es donde se decide la pelea.',
+  'roles.dps.functions':
+    'Aprovechar la ventana de ruptura con todo lo que tenga.\nLimpiar rápido a los enemigos pequeños.\nMantener la presión mientras los demás preparan la siguiente ventana.\nRematar al jefe cuando le queda poco.',
+  'roles.dps.stats': 'ATQ por encima de todo, y REGEN. para encadenar habilidades.',
+  'roles.dps.team': 'Lleva 1 o 2. Con más de dos te quedas sin quien rompa ni quien cure.',
+  'roles.dps.mistake': 'Ir con cuatro DPS del mismo elemento y sin curación: el primer jefe te para en seco.',
+
+  'roles.break.name': 'Ruptura',
+  'roles.break.specialty': 'Bajar la barra de ruptura para abrir la ventana de daño.',
+  'roles.break.job':
+    'Los enemigos serios tienen una barra de ruptura además de la vida. Mientras esa barra siga llena, el combate se hace eterno. El Ruptura existe para vaciarla y dejar al enemigo tambaleándose.',
+  'roles.break.functions':
+    'Vaciar la barra de ruptura del enemigo.\nDejarlo tambaleándose para que entre el DPS.\nAbrir ventanas una y otra vez en los jefes largos.\nEncargarse de los enemigos con mucha armadura.',
+  'roles.break.stats': 'ATQ y la propia RUPT., que es lo que mide cuánto baja la barra.',
+  'roles.break.team': 'Lleva 1, o 2 si el jefe es un muro.',
+  'roles.break.mistake': 'Quedarte con él después de romper: una vez abierta la ventana, cambia al DPS.',
+
+  'roles.support.name': 'Apoyo',
+  'roles.support.specialty': 'Mejorar al equipo y estorbar al enemigo.',
+  'roles.support.job':
+    'No mata ni aguanta, pero hace que los otros tres rindan más: sube estadísticas propias, baja las del enemigo y aporta utilidad. Es el rol que se cambia según la pelea.',
+  'roles.support.functions':
+    'Subir las estadísticas de los aliados.\nBajar las del enemigo.\nAportar utilidad: detección, velocidad, control.\nCubrir un elemento que al equipo le falta.',
+  'roles.support.stats': 'No busca ATQ: lo suyo es sobrevivir lo bastante para mantener sus efectos.',
+  'roles.support.team': 'Uno como mucho. Es el hueco flexible del equipo.',
+  'roles.support.mistake': 'Meterlo a la fuerza en todas las peleas, incluso donde hace falta otro Ruptura.',
+
+  'roles.heal.name': 'Curación',
+  'roles.heal.specialty': 'Devolver vida y sacarte de los apuros.',
+  'roles.heal.job':
+    'Es el botón de pánico del equipo. En Aniimo hay pocos (solo 5 de las 86 criaturas), así que el que consigas vale su hueco. Sin uno, las peleas largas contra Alfa y Omega se caen solas.',
+  'roles.heal.functions':
+    'Devolver vida al equipo cuando entra un golpe gordo.\nMantener vivo al DPS durante la ventana de ruptura.\nAguantar peleas largas contra jefes.\nSalvar una pelea que se ha torcido.',
+  'roles.heal.stats': 'PV y defensas: lo que necesita es no morirse él antes que los demás.',
+  'roles.heal.team': 'Uno, prácticamente obligatorio. Puede sustituirse por Regeneración si sabes lo que haces.',
+  'roles.heal.mistake': 'Usarlo solo para pegar y no tener su curación lista cuando hace falta.',
+
+  'roles.regen.name': 'Regeneración',
+  'roles.regen.specialty': 'Sostener al equipo poco a poco, sin picos.',
+  'roles.regen.job':
+    'Cura a goteo y aguanta el desgaste. No te saca de un golpe que casi te mata, pero hace que no llegues a ese punto. Es el compañero natural del Curación, no su sustituto directo.',
+  'roles.regen.functions':
+    'Recuperar vida y recursos de forma continua.\nSostener al equipo en peleas largas.\nQuitar presión al Curación.\nHacer que el desgaste del mundo abierto no te obligue a parar.',
+  'roles.regen.stats': 'REGEN. y defensas.',
+  'roles.regen.team': 'Uno como mucho, y normalmente en vez del Apoyo.',
+  'roles.regen.mistake': 'Tratarlo como un segundo Curación: no te salva de un golpe que te deja al mínimo.',
+
+  'roles.teamTitle': 'Cómo repartir los cuatro huecos',
+  'roles.teamHint':
+    'Solo llevas cuatro criaturas al campo y los roles son cinco, así que siempre te dejas uno fuera. Estos tres repartos cubren casi todo lo que te vas a encontrar.',
+  'roles.team.balanced.title': 'Equilibrado',
+  'roles.team.balanced.slots': 'Ruptura + DPS + Curación + libre',
+  'roles.team.balanced.why':
+    'El reparto por defecto. El hueco libre es para un Apoyo, un segundo DPS o lo que pida la pelea.',
+  'roles.team.boss.title': 'Contra jefes',
+  'roles.team.boss.slots': 'Ruptura + Ruptura + DPS + Curación',
+  'roles.team.boss.why':
+    'Los Alfa y Omega tienen barras de ruptura enormes: con dos rompedores abres ventanas el doble de veces.',
+  'roles.team.explore.title': 'Para explorar',
+  'roles.team.explore.slots': 'DPS + Ruptura + Regeneración + movilidad',
+  'roles.team.explore.why':
+    'Por el mundo abierto pesa más moverse bien y no tener que parar a curarse que el daño máximo.',
+  'roles.avoidTitle': 'Lo que no funciona',
+  'roles.avoid':
+    'Cuatro DPS: sin nadie que rompa, los jefes se hacen eternos.\nSin Curación ni Regeneración: cualquier pelea larga se te cae.\nTres criaturas del mismo rol: te sobra de una cosa y te falta de todo lo demás.\nCuatro del mismo elemento: el enemigo que resista ese elemento te deja sin respuesta.',
+
+  // Tabla de tipos (Aniimo)
+  'types.title': 'Tabla de tipos',
+  'types.hint':
+    'Nueve elementos y un solo multiplicador: ×1.6 si el elemento es fuerte contra el otro, ×0.625 si es débil y ×1 en el resto. No hay inmunidades. Pulsa un elemento para ver sus emparejamientos.',
+  'types.attacker': 'Ataca ↓',
+  'types.tableCaption': 'Multiplicador de daño de cada elemento contra los demás.',
+  'types.legendStrong': '×1.6 fuerte',
+  'types.legendWeak': '×0.625 débil',
+  'types.legendNeutral': '×1 normal',
+  'types.strongAgainst': 'Fuerte contra',
+  'types.strongAgainstHint': 'Les hace ×1.6 de daño.',
+  'types.weakAgainst': 'Flojo contra',
+  'types.weakAgainstHint': 'Les hace ×0.625 de daño.',
+  'types.vulnerableTo': 'Le hacen daño',
+  'types.vulnerableToHint': 'Estos elementos le pegan ×1.6.',
+  'types.resistantTo': 'Le hacen poco',
+  'types.resistantToHint': 'Estos elementos le pegan ×0.625.',
+  'types.none': 'Ninguno',
+  'types.source':
+    'Tabla publicada por la comunidad en aniimogame.net; la wiki oficial no publica la suya. Cuadra con lo que cuentan las guías de combate, pero alguna casilla puede cambiar con los parches.',
+
+  // Sistema de combate (Aniimo)
+  'battle.title': 'Sistema de combate',
+  'battle.hint':
+    'Cómo funciona una pelea en Aniimo: acción en tiempo real, la barra de ruptura, los cinco roles y los elementos. Lo que no está confirmado no aparece aquí.',
+  'battle.basics.title': 'Se pelea en tiempo real, y se pelea como la criatura',
+  'battle.basics.body':
+    'Aniimo no va por turnos: esquivas, fijas al enemigo y gastas habilidades en tiempo real.\nLa mecánica central es el Enlace (Twine): te metes dentro de tu criatura y peleas con su cuerpo y sus habilidades, con un plus de daño mientras estás enlazado. Quedarte fuera dando órdenes es la versión de tutorial de la misma pelea.\nEn el campo llevas cuatro criaturas y cambias entre ellas sin salir del enlace, así que un combate bueno es una cadena de cambios, no una sola criatura aguantando.',
+  'battle.break.title': 'La barra de ruptura manda más que la vida',
+  'battle.break.body':
+    'Los enemigos serios tienen dos barras: la vida y la de ruptura. Si solo bajas la vida, la pelea se alarga muchísimo y acabas comiendo un golpe que se lleva a tu curación.\nUn elemento con ventaja baja las dos barras a la vez, y por eso un buen emparejamiento se nota tanto.',
+  'battle.break.loop':
+    'Entra con el Ruptura y vacía la barra de ruptura.\nMira la barra, no los números de daño.\nEn cuanto el enemigo se tambalee, cambia al DPS.\nGasta ahí las habilidades fuertes.\nMantén viva a la criatura de Curación o Regeneración mientras tanto.',
+  'battle.roles.title': 'Cinco roles, cuatro huecos',
+  'battle.roles.body':
+    'Cada criatura tiene un rol fijo que no cambia al evolucionar: subir de Lumin a Gamma y a Nova mejora los números, no el trabajo que hace.\nComo solo llevas cuatro al campo, siempre dejas un rol fuera. El que casi nunca se deja fuera es la curación.',
+  'battle.roles.link': 'Ver la guía de roles',
+  'battle.types.title': 'Los elementos deciden más que veinte puntos de estadística',
+  'battle.types.body':
+    'Hay nueve elementos y un único multiplicador: ×1.6 a favor, ×0.625 en contra. Cambiar a la criatura con ventaja es gratis y vale más que subir de nivel.\nHay criaturas de dos elementos: atacan con los dos, así que amenazan más cosas, pero también las castigan más.\nMira el emparejamiento antes de empezar la pelea, no a mitad.',
+  'battle.types.link': 'Ver la tabla de tipos',
+  'battle.stance.title': 'Modo de combate y captura',
+  'battle.stance.body':
+    'El juego tiene modos de postura (captura, defensivo y ataque) y no son un detalle: en modo ataque te cargas a la criatura que querías capturar, y en modo captura una pelea contra un Alfa se hace eterna.\nElige el modo antes de entrar, según si vas a capturar o a matar.',
+  'battle.keys.title': 'Teclas en PC',
+  'battle.keys.body':
+    'Las que trae el juego por defecto. Se pueden cambiar en opciones y algún atajo puede moverse con los parches.',
+  'battle.keys.twine': 'Enlazarte con tu criatura o salir del enlace',
+  'battle.keys.dodge': 'Esquiva o impulso',
+  'battle.keys.basic': 'Habilidades normales, para ir gastando',
+  'battle.keys.burst': 'La habilidad fuerte: guárdala para la ventana de ruptura',
+  'battle.keys.mobility': 'Movilidad: volar, nadar, excavar o acercarte de golpe',
+  'battle.keys.chain': 'Ultimátum en cadena cuando la interfaz se enciende',
+  'battle.keys.lock': 'Fijar objetivo',
+  'battle.keys.swap': 'Cambiar entre tus cuatro criaturas',
+  'battle.keys.stance': 'Cambiar el modo: captura, defensivo o ataque',
+  'battle.source':
+    'Resumen de las guías de combate publicadas (aniimos.wiki y aniimogame.net) y de los cursos del propio juego. Los roles y la barra de ruptura son del juego; los atajos son los de la versión de PC y pueden cambiar.',
+
+  'character.whatIsRole': '¿Qué es un {role}?',
   'game.menu.zones': 'Mapa y zonas',
   'game.menu.videos': 'Guías en vídeo',
 
@@ -1166,6 +1389,228 @@ const en = {
   'enemies.tips': 'Combat tips',
   'game.menu.artifacts': 'Artifacts',
   'game.menu.exploration': 'Exploration',
+  'game.menu.traits': 'Traits',
+  'game.menu.builder': 'Team builder',
+
+  // Traits (Aniimo)
+  'traits.title': 'Traits',
+  'traits.hint':
+    "Each creature's passive. They are grouped by what the effect does, and every trait lists the creatures that carry it.",
+  'traits.search': 'Search by trait, effect or creature...',
+  'traits.count': '{count} trait',
+  'traits.countPlural': '{count} traits',
+  'traits.empty': 'No traits loaded for this game yet.',
+  'traits.error.load': 'Could not load the traits: {message}',
+  'traits.source':
+    'Names and descriptions from the official wiki, the only source with the numbers. The English name and the icon come from MetaBot, matched by the creatures that carry each trait. The group comes from the trait description itself.',
+  'traits.type.equipo': 'Team',
+  'traits.type.familia': 'Family',
+  'traits.type.cambio': 'On swap',
+  'traits.type.sostenimiento': 'Sustain',
+  'traits.type.penalizacion': 'Debuff',
+  'traits.type.ruptura': 'Break',
+  'traits.type.recursos': 'Energy',
+  'traits.type.critico': 'Crit',
+  'traits.type.elemento': 'Element',
+  'traits.type.acumulacion': 'Stacks',
+  'traits.type.movilidad': 'Mobility',
+  'traits.type.otro': 'Other',
+
+  // Team builder (Aniimo)
+  'builder.title': 'Team builder',
+  'builder.hint':
+    'Pick four creatures and I will tell you how the team looks: the role split, which elements it threatens with an advantage, and which traits feed each other. Everything here comes from game data, not opinions.',
+  'builder.search': 'Search by name, role or element...',
+  'builder.emptySlot': 'Slot {number}',
+  'builder.remove': 'Remove {name}',
+  'builder.score': 'Team score',
+  'builder.roleBalance': 'Roles',
+  'builder.elementCoverage': 'Elements',
+  'builder.traitSynergy': 'Traits',
+  'builder.scoreHint':
+    'Roles: 15 points for bringing heal or regen, 15 for break and 10 for DPS. Elements: how many of the nine you threaten with an advantage. Traits: 10 points per trait that buffs the team, triggers on swap, or has its family condition met.',
+  'builder.warnings': 'Watch out',
+  'builder.warning.noHeal': 'No heal and no regen: long fights will fall apart.',
+  'builder.warning.noBreak': 'No break: bosses will take forever.',
+  'builder.warning.noDps': 'No DPS: you will lack damage once the break window opens.',
+  'builder.warning.tooManyDps': 'More than two DPS: too much damage, not enough of everything else.',
+  'builder.warning.sameRole': 'All the same role: the team is missing everything else.',
+  'builder.warning.sameElement': 'All the same element: an enemy that resists it leaves you with no answer.',
+  'builder.warning.noSynergy': 'No trait in this team feeds the others. It works, but each creature is on its own.',
+  'builder.synergies': 'Traits that add up',
+  'builder.noSynergies': 'No traits feeding each other yet. Add creatures to see it.',
+  'builder.elementMet': 'Feeds the {element} damage of {names}.',
+  'builder.familyMet': 'Condition met: {names} is in the {family} family.',
+  'builder.familyMissing': 'It needs a {family} family member in the team.',
+  'builder.threatens': 'Elements threatened',
+  'builder.threatensNone': 'Add creatures to see which elements you have an advantage against.',
+  'builder.threatensHint': '{count} of the nine elements, counting the ×1.6 matchups of every creature in the team.',
+  'builder.error.load': 'Could not load the team builder: {message}',
+  'game.menu.teams': 'Meta teams',
+
+  // Meta teams (Aniimo)
+  'teams.title': 'Meta teams',
+  'teams.hint':
+    'The recommended composition for each element, with the four slots split by role. When a slot lists two creatures they are alternatives: use whichever you have.',
+  'teams.empty': 'No teams loaded for this game yet.',
+  'teams.error.load': 'Could not load the teams: {message}',
+  'teams.source':
+    "Teams from Game8's guide. These are community picks with the game barely out, so they will change. Creatures with no page are not in the official wiki yet.",
+  'game.menu.roles': 'Role guide',
+
+  // Tier list
+  'tierlist.ratingsFrom': 'Ratings from {source} · the top tier is the best one',
+  'tierlist.method.title': 'How this list is worked out',
+  'tierlist.method.weights':
+    'MetaBot scores base stats only, weighted like this: 34% ATK, 20% HP, 12% P.DEF, 12% M.DEF, 12% BREAK and 10% REGEN. The percentile (P##) is where the creature lands within its role.',
+  'tierlist.method.caveat':
+    "It measures the creature's body, not its skills or its synergy. Actual performance depends on your team, the element matchup, the skills and how much you have invested. For the skill-and-community take, check the General list, which is Game8's.",
+  'game.menu.typeChart': 'Type chart',
+  'game.menu.battle': 'Battle system',
+
+  // Roles (Aniimo)
+  'roles.title': 'Role guide',
+  'roles.hint':
+    'Aniimo splits its creatures into five roles and you only take four into battle, so the split matters more than levels. Here is what each role does, which stats it cares about and which creatures play it.',
+  'roles.count': '{count} creature',
+  'roles.countPlural': '{count} creatures',
+  'roles.inBattle': 'In battle',
+  'roles.priorityStats': 'Stats that matter',
+  'roles.inTeam': 'In the team',
+  'roles.mistake': 'Common mistake',
+  'roles.examples': 'Creatures with this role',
+  'roles.error.load': 'Could not load the creatures: {message}',
+  'roles.source':
+    "The five roles and each creature's role come from the official wiki (wiki.aniimo.com). The team advice summarises the published combat guides and Game8's team compositions.",
+
+  'roles.dps.name': 'DPS',
+  'roles.dps.specialty': 'Deals the big damage once the enemy is broken.',
+  'roles.dps.job':
+    'This is who kills. Its good window comes after a Break creature empties the enemy bar: that is when its numbers spike. Outside that window it still hits, but the fight is not decided there.',
+  'roles.dps.functions':
+    'Use the break window with everything it has.\nClear small enemies fast.\nKeep the pressure while the others set up the next window.\nFinish the boss off.',
+  'roles.dps.stats': 'ATK above all, plus REGEN to chain skills.',
+  'roles.dps.team': 'Bring 1 or 2. Any more and you have nobody to break or heal.',
+  'roles.dps.mistake': 'Four DPS of the same element and no healer: the first boss stops you dead.',
+
+  'roles.break.name': 'Break',
+  'roles.break.specialty': 'Empties the break bar to open the damage window.',
+  'roles.break.job':
+    'Serious enemies have a break bar on top of their health. While that bar stays full the fight drags forever. The Break role exists to empty it and leave the enemy staggered.',
+  'roles.break.functions':
+    "Empty the enemy's break bar.\nLeave it staggered so the DPS can come in.\nOpen windows over and over in long boss fights.\nDeal with heavily armoured enemies.",
+  'roles.break.stats': 'ATK and its own BREAK stat, which is what drains the bar.',
+  'roles.break.team': 'Bring 1, or 2 if the boss is a wall.',
+  'roles.break.mistake': 'Staying on it after the break: once the window is open, swap to your DPS.',
+
+  'roles.support.name': 'Support',
+  'roles.support.specialty': 'Makes the team better and the enemy worse.',
+  'roles.support.job':
+    'It neither kills nor tanks, but it makes the other three perform: it buffs your stats, lowers the enemy ones and adds utility. This is the slot you swap depending on the fight.',
+  'roles.support.functions':
+    'Buff your allies.\nDebuff the enemy.\nAdd utility: detection, speed, crowd control.\nCover an element the team is missing.',
+  'roles.support.stats': 'Not ATK: it needs to survive long enough to keep its effects up.',
+  'roles.support.team': 'One at most. This is the flexible slot.',
+  'roles.support.mistake': 'Forcing it into every fight, even where a second Break would do more.',
+
+  'roles.heal.name': 'Heal',
+  'roles.heal.specialty': 'Gives health back and saves the run.',
+  'roles.heal.job':
+    'The panic button. Aniimo has very few (only 5 of the 86 creatures), so whichever one you catch earns its slot. Without one, long Alpha and Omega fights fall apart on their own.',
+  'roles.heal.functions':
+    'Heal the team when a big hit lands.\nKeep the DPS alive during the break window.\nHold up long boss fights.\nSave a fight that went wrong.',
+  'roles.heal.stats': 'HP and defences: it mainly needs to outlive everyone else.',
+  'roles.heal.team': 'One, effectively mandatory. A Regen can replace it if you know what you are doing.',
+  'roles.heal.mistake': 'Using it only to attack and having no heal ready when it matters.',
+
+  'roles.regen.name': 'Regen',
+  'roles.regen.specialty': 'Sustains the team over time, without spikes.',
+  'roles.regen.job':
+    'It heals in a trickle and soaks up attrition. It will not pull you back from a near-death hit, but it keeps you from getting there. It pairs with a healer rather than replacing one.',
+  'roles.regen.functions':
+    'Recover health and resources continuously.\nSustain the team in long fights.\nTake pressure off the healer.\nKeep open-world attrition from forcing you to stop.',
+  'roles.regen.stats': 'REGEN and defences.',
+  'roles.regen.team': 'One at most, usually instead of the Support.',
+  'roles.regen.mistake': 'Treating it as a second healer: it will not save you from a hit that nearly kills.',
+
+  'roles.teamTitle': 'How to split the four slots',
+  'roles.teamHint':
+    'You only field four creatures and there are five roles, so one is always left out. These three splits cover nearly everything you will run into.',
+  'roles.team.balanced.title': 'Balanced',
+  'roles.team.balanced.slots': 'Break + DPS + Heal + free',
+  'roles.team.balanced.why': 'The default split. The free slot takes a Support, a second DPS or whatever the fight asks for.',
+  'roles.team.boss.title': 'Against bosses',
+  'roles.team.boss.slots': 'Break + Break + DPS + Heal',
+  'roles.team.boss.why':
+    'Alphas and Omegas have huge break bars: two breakers open twice as many windows.',
+  'roles.team.explore.title': 'For exploring',
+  'roles.team.explore.slots': 'DPS + Break + Regen + mobility',
+  'roles.team.explore.why':
+    'Out in the world, moving well and never stopping to heal beats raw damage.',
+  'roles.avoidTitle': 'What does not work',
+  'roles.avoid':
+    'Four DPS: with nobody breaking, bosses take forever.\nNo Heal and no Regen: any long fight collapses.\nThree creatures of the same role: too much of one thing, nothing of the rest.\nFour of the same element: an enemy that resists it leaves you with no answer.',
+
+  // Type chart (Aniimo)
+  'types.title': 'Type chart',
+  'types.hint':
+    'Nine elements and a single multiplier: ×1.6 when the element is strong against the other, ×0.625 when it is weak and ×1 otherwise. There are no immunities. Tap an element to see its matchups.',
+  'types.attacker': 'Attacks ↓',
+  'types.tableCaption': 'Damage multiplier of each element against the others.',
+  'types.legendStrong': '×1.6 strong',
+  'types.legendWeak': '×0.625 weak',
+  'types.legendNeutral': '×1 neutral',
+  'types.strongAgainst': 'Strong against',
+  'types.strongAgainstHint': 'Deals ×1.6 to them.',
+  'types.weakAgainst': 'Weak against',
+  'types.weakAgainstHint': 'Deals ×0.625 to them.',
+  'types.vulnerableTo': 'Vulnerable to',
+  'types.vulnerableToHint': 'These elements hit it for ×1.6.',
+  'types.resistantTo': 'Resistant to',
+  'types.resistantToHint': 'These elements hit it for ×0.625.',
+  'types.none': 'None',
+  'types.source':
+    'Chart published by the community on aniimogame.net; the official wiki does not publish one. It matches what the combat guides describe, but a cell may change with patches.',
+
+  // Battle system (Aniimo)
+  'battle.title': 'Battle system',
+  'battle.hint':
+    'How a fight works in Aniimo: real-time action, the break bar, the five roles and the elements. Anything unconfirmed is not here.',
+  'battle.basics.title': 'Real-time, and you fight as the creature',
+  'battle.basics.body':
+    'Aniimo is not turn-based: you dodge, lock on and spend skills in real time.\nThe core mechanic is Twining: you step inside your creature and fight with its body and its skills, with a damage bonus while twined. Standing outside giving orders is the tutorial version of the same fight.\nYou field four creatures and swap between them without leaving the twine, so a good fight is a chain of swaps, not one creature tanking everything.',
+  'battle.break.title': 'The break bar matters more than health',
+  'battle.break.body':
+    'Serious enemies have two bars: health and break. If you only chip at health the fight drags on and you eventually eat a hit that takes out your healer.\nAn element with the advantage drains both bars at once, which is why a good matchup shows up so clearly.',
+  'battle.break.loop':
+    'Lead with your Break creature and empty the break bar.\nWatch the bar, not the damage numbers.\nAs soon as the enemy staggers, swap to your DPS.\nSpend the big skills there.\nKeep your Heal or Regen alive throughout.',
+  'battle.roles.title': 'Five roles, four slots',
+  'battle.roles.body':
+    'Every creature has a fixed role that evolving does not change: going from Lumin to Gamma to Nova improves the numbers, not the job.\nSince you only field four, one role is always left out. The one you almost never leave out is healing.',
+  'battle.roles.link': 'Open the role guide',
+  'battle.types.title': 'Elements decide more than twenty stat points',
+  'battle.types.body':
+    'There are nine elements and one multiplier: ×1.6 in your favour, ×0.625 against. Swapping to the creature with the advantage is free and beats levelling up.\nSome creatures carry two elements: they attack with both, so they threaten more and get punished by more.\nCheck the matchup before the fight, not halfway through.',
+  'battle.types.link': 'Open the type chart',
+  'battle.stance.title': 'Battle and catching stances',
+  'battle.stance.body':
+    'The game has stances (catch, defensive and attack) and they are not decoration: in attack stance you kill the creature you wanted to catch, and in catch stance an Alpha fight drags on forever.\nPick the stance before you engage, depending on whether you are catching or killing.',
+  'battle.keys.title': 'PC keys',
+  'battle.keys.body':
+    'The defaults the game ships with. They can be rebound in the options and a shortcut may move with patches.',
+  'battle.keys.twine': 'Twine into your creature, or step back out',
+  'battle.keys.dodge': 'Dodge or dash',
+  'battle.keys.basic': 'Bread-and-butter skills, keep spending them',
+  'battle.keys.burst': 'The big skill: save it for the break window',
+  'battle.keys.mobility': 'Mobility: fly, swim, dig or close the gap',
+  'battle.keys.chain': 'Chain ultimate when the UI lights up',
+  'battle.keys.lock': 'Lock on',
+  'battle.keys.swap': 'Swap between your four creatures',
+  'battle.keys.stance': 'Change stance: catch, defensive or attack',
+  'battle.source':
+    "Summarised from the published combat guides (aniimos.wiki and aniimogame.net) and the game's own courses. The roles and the break bar are from the game; the shortcuts are the PC defaults and may change.",
+
+  'character.whatIsRole': 'What is a {role}?',
   'game.menu.zones': 'Map and areas',
   'game.menu.videos': 'Video guides',
 

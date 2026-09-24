@@ -374,6 +374,12 @@ create table if not exists public.tier_lists_oficial (
 create index if not exists tier_lists_oficial_game_mode_idx
   on public.tier_lists_oficial (game_id, mode);
 
+-- Percentil dentro de su escalafon y por que esta en ese tier (Aniimo, con
+-- los datos de MetaBot). El resto de juegos los deja vacios.
+alter table public.tier_lists_oficial add column if not exists percentile integer;
+alter table public.tier_lists_oficial add column if not exists note_es text;
+alter table public.tier_lists_oficial add column if not exists note_en text;
+
 alter table public.tier_lists_oficial enable row level security;
 
 drop policy if exists "Las tier lists oficiales se pueden consultar" on public.tier_lists_oficial;
@@ -1386,6 +1392,57 @@ create policy "Los admins borran rotaciones"
 -- ===========================================================================
 -- Bangbus (Zenless Zone Zero)
 -- ===========================================================================
+
+-- Rasgos (pasivas) de las criaturas. creature_ids: los ids de characters que
+-- llevan ese rasgo. tags: etiquetas sacadas de la propia descripcion.
+create table if not exists public.traits (
+  id text primary key,
+  game_id text not null,
+  name_es text not null,
+  name_en text not null,
+  description_es text,
+  description_en text,
+  icon_url text,
+  effect_type text,
+  tags jsonb not null default '[]'::jsonb,
+  creature_ids jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists traits_game_idx on public.traits (game_id, effect_type);
+
+alter table public.traits enable row level security;
+
+drop policy if exists "Los rasgos se pueden consultar" on public.traits;
+create policy "Los rasgos se pueden consultar"
+  on public.traits for select
+  using (true);
+
+-- Equipos meta: la composicion recomendada para cada elemento o modo, con
+-- sus huecos por rol. slots: [{"rol": "DPS", "opciones": [{"nombre", "id"}]}]
+create table if not exists public.meta_teams (
+  id text primary key,
+  game_id text not null,
+  name_es text not null,
+  name_en text not null,
+  element text,
+  style text,
+  slots jsonb not null default '[]'::jsonb,
+  why_es text,
+  why_en text,
+  source text not null default 'game8.co',
+  sort_order integer not null default 0,
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists meta_teams_game_idx on public.meta_teams (game_id, sort_order);
+
+alter table public.meta_teams enable row level security;
+
+drop policy if exists "Los equipos meta se pueden consultar" on public.meta_teams;
+create policy "Los equipos meta se pueden consultar"
+  on public.meta_teams for select
+  using (true);
 
 create table if not exists public.bangboos (
   id text primary key,
